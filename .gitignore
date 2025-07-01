@@ -1,0 +1,42 @@
+# Gradle files
+.gradle/
+build/
+**/build/
+
+# Local config files
+local.properties
+
+# IntelliJ / Android Studio / VSCode config
+.idea/
+.vscode/
+
+# Log/OS files
+*.log
+*.iml
+.DS_Store
+Thumbs.db
+
+# Keystore (if you add signing keys)
+*.jks
+*.keystore
+
+# Generated files
+/captures/
+/output/
+
+# Kotlin specific
+*.class
+
+# Compose preview caches
+.compose-cache/
+
+# Test results
+/test-results/
+/test-report/
+
+# Optional - if you use crashlytics or analytics
+fabric.properties
+
+# Optional - if you use dependency locking
+gradle/dependency-locks/
+
