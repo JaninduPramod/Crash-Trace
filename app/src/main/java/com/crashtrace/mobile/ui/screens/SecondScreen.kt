@@ -17,7 +17,7 @@ fun SecondScreen(navController: NavController) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "Second Screen")
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("first") }) {
+            Button(onClick = { navController.navigate("thread") }) {
                 Text("Next")
             }
         }
