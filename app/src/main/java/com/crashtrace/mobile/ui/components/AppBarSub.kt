@@ -1,24 +1,33 @@
 package com.crashtrace.mobile.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.crashtrace.mobile.R
 
 
 
 @Composable
-fun AppBarSub(title: String, showOverlay: Boolean = false) {
+fun AppBarSub(
+    title: String,
+    showOverlay: Boolean = false,
+    backButton: Boolean = false,
+    onBackClick: (() -> Unit)? = null
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,7 +49,7 @@ fun AppBarSub(title: String, showOverlay: Boolean = false) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xCC000000)) // 80% opacity black
+                    .background(Color(0x99000000)) // 80% opacity black
                     .zIndex(999f)
             )
         }
@@ -60,16 +69,37 @@ fun AppBarSub(title: String, showOverlay: Boolean = false) {
                     shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
                 )
         )
-        // Title text
-        Text(
-            text = title,
-            color = Color.White,
-            fontSize = 48.sp,
-            fontWeight = FontWeight.Bold,
+        // Title centered at the bottom
+        Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 20.dp, bottom = 40.dp)
-        )
+                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        // Back button at the right side corner with 10dp padding
+        if (backButton) {
+            Icon(
+                painter = painterResource(id = R.drawable.back_button_icon),
+                contentDescription = "Back",
+                tint = Color.White,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 20.dp, bottom = 50.dp)
+                    .size(32.dp)
+                    .clickable { onBackClick?.invoke() }
+            )
+        }
+
         Spacer(modifier = Modifier.width(15.dp))
         Box(
             modifier = Modifier
@@ -95,5 +125,5 @@ fun AppBarSub(title: String, showOverlay: Boolean = false) {
 @Preview(showBackground = true)
 @Composable
 fun AppBarSubPreview() {
-    AppBarSub(title = "Preview Title")
+    AppBarSub(title = "Preview Title", backButton = true)
 }
