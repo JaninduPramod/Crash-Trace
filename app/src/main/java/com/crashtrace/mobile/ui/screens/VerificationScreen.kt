@@ -42,7 +42,7 @@ fun VerificationScreen(navController: NavHostController) {
             .fillMaxSize()
             .background(Color(0xFFF3F6F8))
     ) {
-        AppBarSub(title = "Verification")
+        AppBarSub(title = "Verification", backButton = true)
         Box(
             modifier = Modifier
                 .fillMaxSize()
