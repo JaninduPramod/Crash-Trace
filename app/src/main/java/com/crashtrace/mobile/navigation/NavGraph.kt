@@ -5,15 +5,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.crashtrace.mobile.ui.screens.OnBoardScreen1
+import com.crashtrace.mobile.ui.screens.ProfileScreen
+import com.crashtrace.mobile.ui.screens.ResetScreen
 import com.crashtrace.mobile.ui.screens.SignUpScreen
 import com.crashtrace.mobile.ui.screens.SigningInScreen
 
 import com.crashtrace.mobile.ui.screens.SplashScreen
+import com.crashtrace.mobile.ui.screens.VerificationScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "splash") {
-        composable("splash") { SigningInScreen(navController) }
+        composable("splash") { ProfileScreen(navController) }
         composable("first") {
             OnBoardScreen1(
                 navController = navController,

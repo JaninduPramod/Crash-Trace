@@ -15,15 +15,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 
+
+
 @Composable
-fun AppBarSub(title: String) {
+fun AppBarSub(title: String, showOverlay: Boolean = false) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(170.dp)
             .shadow(
                 elevation = 10.dp,
-                shape = RoundedCornerShape(bottomEnd  = 20.dp, bottomStart = 20.dp),
+                shape = RoundedCornerShape(bottomEnd = 20.dp, bottomStart = 20.dp),
                 clip = false
             )
     ) {
@@ -33,6 +35,15 @@ fun AppBarSub(title: String) {
                 .fillMaxSize()
                 .background(Color(0xFFFF2D2D))
         )
+        // Overlay when alert is shown (dark area over app bar)
+        if (showOverlay) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xCC000000))
+                    .zIndex(999f)
+            )
+        }
         // --- Inner shadow at the bottom of the red area ---
         Box(
             modifier = Modifier
@@ -42,8 +53,8 @@ fun AppBarSub(title: String) {
                 .background(
                     brush = androidx.compose.ui.graphics.Brush.verticalGradient(
                         colors = listOf(
-                            Color.Transparent, // Start transparent at the top
-                            Color.Black.copy(alpha = 0.3f) // End with shadow at the bottom
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.3f)
                         )
                     ),
                     shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
@@ -72,10 +83,6 @@ fun AppBarSub(title: String) {
                     ambientColor = Color.Black,
                     spotColor = Color.Black,
                     clip = false
-                )
-                .background(
-                    color = Color(0xFFF3F6F8),
-                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
         )
     }

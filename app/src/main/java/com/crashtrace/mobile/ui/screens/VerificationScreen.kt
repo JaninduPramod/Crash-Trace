@@ -36,31 +36,26 @@ import com.crashtrace.mobile.ui.components.AppBarSub
 fun VerificationScreen(navController: NavHostController) {
 
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    var rememberMe by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF3F6F8))
     ) {
-        AppBarSub(title = "Sign In!")
+        AppBarSub(title = "Verification")
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
                 .background(Color(0xFFF3F6F8))
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 0.dp),
+                    .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-//                Spacer(modifier = Modifier.height(32.dp))
                 Text(
-                    text = "Sign in to\nyour account",
+                    text = "Verify\nyour account",
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     color = Color(0xFF222222),
@@ -73,22 +68,12 @@ fun VerificationScreen(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Don't have an account?",
+                        text = "We need your Email to send the OTP code and Verify Your email and Account?",
                         color = Color(0xFF888888),
                         fontSize = 14.sp
                     )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(
-                        text = "Sign up",
-                        color = Color(0xFFFF2D2D),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        modifier = Modifier.clickable { /* TODO: Navigate to sign up */ }
-                    )
                 }
-                Spacer(modifier = Modifier.height(50.dp))
-
-                // Email Field
+                Spacer(modifier = Modifier.height(35.dp))
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -117,8 +102,8 @@ fun VerificationScreen(navController: NavHostController) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(28.dp), // Slightly larger placeholder area
-                            contentAlignment = Alignment.BottomStart // Place text at the bottom
+                                .height(28.dp),
+                            contentAlignment = Alignment.BottomStart
                         ) {
                             Text(
                                 text = "Enter your email",
@@ -129,97 +114,7 @@ fun VerificationScreen(navController: NavHostController) {
                         }
                     }
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                // Password Field
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.lock),
-                            contentDescription = "Password",
-                            modifier = Modifier.size(22.dp),
-                            tint = Color(0xFF272727)
-                        )
-                    },
-                    placeholder = {
-                        Text(
-                            text = "Enter your password",
-                            color = Color(0xFFCACACA),
-                            fontSize = 15.sp,
-                            maxLines = 1
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        val icon = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = "Toggle Password Visibility",
-                                tint = Color(0xFFCACACA) // Changed eye icon color
-                            )
-                        }
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFCACACA),
-                        focusedBorderColor = Color(0xFFCACACA),
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        disabledContainerColor = Color.White,
-                        errorContainerColor = Color.White
-                    )
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                // Remember Me and Forgot Password Row
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 5.dp, end = 0.dp, bottom = 30.dp)
-                ) {
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = Color.Transparent
-                    ) {
-                        Checkbox(
-                            checked = rememberMe,
-                            onCheckedChange = { rememberMe = it },
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = Color(0xFFFF2D2D),
-                                uncheckedColor = Color(0xFFCACACA),
-                                checkmarkColor = Color.White,
-                                disabledCheckedColor = Color.LightGray,
-                                disabledUncheckedColor = Color.LightGray,
-                                disabledIndeterminateColor = Color.LightGray
-                            ),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    Text(
-                        text = "Remember me",
-                        color = Color(0xFF888888),
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = "Forgot password",
-                        color = Color(0xFF008CFF),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier
-                            .clickable { /* TODO: Forgot password logic */ }
-                            .padding(end = 4.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.height(230.dp))
-                // Sign Up Button
+                Spacer(modifier = Modifier.height(440.dp))
                 Button(
                     onClick = { /* TODO: Sign up logic */ },
                     modifier = Modifier
@@ -229,55 +124,13 @@ fun VerificationScreen(navController: NavHostController) {
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Text(
-                        text = "Sign In",
+                        text = "Verify",
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
-                // Divider with text
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Divider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
-                    Text(
-                        text = "  or sign up with  ",
-                        color = Color(0xFF888888),
-                        fontSize = 14.sp
-                    )
-                    Divider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-                // Google Sign Up Button
-                OutlinedButton(
-                    onClick = { /* TODO: Google sign up */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(15.dp),
-                    colors = ButtonDefaults.outlinedButtonColors( // Material 3 ButtonDefaults
-                        containerColor = Color.White, // CORRECTED: Use containerColor for M3
-                        contentColor = Color(0xFF222222) // Optional: If you want to ensure text/icon color contrasts
-                    ),
-                    border = BorderStroke(1.dp, Color(0xFFCACACA))
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.google_default),
-                        contentDescription = "Google",
-                        modifier = Modifier.size(22.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Sign up with Google",
-                        // Text color can also be set directly on Text composable if not using contentColor above
-                        // color = Color(0xFF222222),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                Spacer(modifier = Modifier.height(40.dp))
+
 
             }
         }
@@ -286,7 +139,6 @@ fun VerificationScreen(navController: NavHostController) {
 
 @Preview(showBackground = true)
 @Composable
-fun VeficationScreenPreview() {
-    // Use rememberNavController() directly, no need for remember { ... }
+fun VerificationScreenPreview() {
     VerificationScreen(navController = rememberNavController())
 }
