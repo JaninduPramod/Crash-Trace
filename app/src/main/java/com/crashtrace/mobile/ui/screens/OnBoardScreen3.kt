@@ -62,7 +62,7 @@ fun OnBoardScreen3(navController: NavController, onSkip: () -> Unit, onNext: () 
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { /* TODO: handle back action */ },
+                onClick = { navController.popBackStack() },
                 modifier = Modifier
                     .background(Color(0xFFFF2D2D), shape = RoundedCornerShape(15.dp))
                     .size(50.dp)
@@ -150,7 +150,7 @@ fun OnBoardScreen3(navController: NavController, onSkip: () -> Unit, onNext: () 
         }
         // Place the Button at the bottom of the Box
         Button(
-            onClick = onNext,
+            onClick = { navController.navigate("signup") },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(start = 24.dp, end = 24.dp, bottom = 32.dp)

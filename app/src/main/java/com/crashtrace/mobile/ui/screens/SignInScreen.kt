@@ -82,7 +82,7 @@ fun SigningInScreen(navController: NavHostController) {
                         color = Color(0xFFFF2D2D),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        modifier = Modifier.clickable { /* TODO: Navigate to sign up */ }
+                        modifier = Modifier.clickable { navController.navigate("signup") }
                     )
                 }
                 Spacer(modifier = Modifier.height(50.dp))
@@ -213,14 +213,14 @@ fun SigningInScreen(navController: NavHostController) {
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier
-                            .clickable { /* TODO: Forgot password logic */ }
+                            .clickable {  navController.navigate("reset")  }
                             .padding(end = 4.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(230.dp))
                 // Sign Up Button
                 Button(
-                    onClick = { /* TODO: Sign up logic */ },
+                    onClick = { navController.navigate("profile") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

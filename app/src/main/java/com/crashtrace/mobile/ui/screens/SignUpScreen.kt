@@ -79,7 +79,7 @@ fun SignUpScreen(navController: NavHostController) {
                         color = Color(0xFFFF2D2D),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        modifier = Modifier.clickable { /* TODO: Navigate to sign in */ }
+                        modifier = Modifier.clickable {  navController.navigate("signin") }
                     )
                 }
                 Spacer(modifier = Modifier.height(50.dp))

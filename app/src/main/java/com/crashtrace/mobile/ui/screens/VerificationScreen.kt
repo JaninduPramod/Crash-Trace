@@ -116,7 +116,7 @@ fun VerificationScreen(navController: NavHostController) {
                 )
                 Spacer(modifier = Modifier.height(440.dp))
                 Button(
-                    onClick = { /* TODO: Sign up logic */ },
+                    onClick = { navController.navigate("otpVerify") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

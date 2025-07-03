@@ -73,7 +73,7 @@ fun OtpCodeScreen(navController: NavHostController) {
                         text = "Change EMAIL",
                         color = Color(0xFFFF2D2D),
                         fontSize = 15.sp,
-                        modifier = Modifier.clickable { /* TODO: Handle email change */ }
+                        modifier = Modifier.clickable  { navController.navigate("reset") }
                     )
                 }
 
@@ -179,7 +179,7 @@ fun OtpCodeScreen(navController: NavHostController) {
 
                 // Submit Button
                 Button(
-                    onClick = { /* TODO: Submit OTP logic */ },
+                    onClick = { navController.navigate("newPassword")  },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

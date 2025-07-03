@@ -200,7 +200,7 @@ fun ProfileScreen(navController: NavHostController) {
                     com.crashtrace.mobile.ui.components.LogoutAlertBox(
                         onDelete = {
                             showLogoutDialog = false
-                            // TODO: Add your logout logic here
+                             navController.navigate("signin")
                         },
                         onDismiss = { showLogoutDialog = false }
                     )

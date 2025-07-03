@@ -48,7 +48,7 @@ fun OnBoardScreen1(navController: NavController, onSkip: () -> Unit, onNext: () 
             // No start content, so just add a Spacer to push "Skip" to the right
             Spacer(modifier = Modifier.weight(1f))
             TextButton(
-                onClick = onSkip,
+                onClick = { navController.navigate("signup") },
             ) {
                 Text(
                     text = "Skip",
@@ -135,7 +135,7 @@ fun OnBoardScreen1(navController: NavController, onSkip: () -> Unit, onNext: () 
         }
         // Place the Button at the bottom of the Box
         Button(
-            onClick = onNext,
+            onClick = { navController.navigate("second") },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(start = 24.dp, end = 24.dp, bottom = 32.dp)

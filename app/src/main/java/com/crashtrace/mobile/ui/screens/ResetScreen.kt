@@ -169,7 +169,7 @@ fun ResetScreen(navController: NavHostController) {
 
                 // Save Button
                 Button(
-                    onClick = { /* TODO: Save password logic */ },
+                    onClick = { navController.navigate("profile") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(54.dp),
