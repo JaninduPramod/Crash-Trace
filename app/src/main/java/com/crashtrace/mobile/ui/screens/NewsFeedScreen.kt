@@ -67,7 +67,7 @@ fun NewsFeedScreen() {
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                // Accident image section
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -88,7 +88,7 @@ fun NewsFeedScreen() {
                             .clip(androidx.compose.foundation.shape.RoundedCornerShape(0.dp)),
                         contentScale = ContentScale.Crop
                     )
-                    // HOT NEWS white card overlay
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()

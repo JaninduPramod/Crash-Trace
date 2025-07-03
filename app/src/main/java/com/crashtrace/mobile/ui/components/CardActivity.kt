@@ -107,7 +107,7 @@ fun MyCustomCardPreview() {
             title = "Sample Title",
             description = "This is a sample description for the card. It can be a bit longer to show ellipsis.",
             imagePlaceholderColor = Color.Gray,
-            accentColor = Color.Blue,
+            accentColor = Color.Red,
 //            isExpanded = false
         )
     )

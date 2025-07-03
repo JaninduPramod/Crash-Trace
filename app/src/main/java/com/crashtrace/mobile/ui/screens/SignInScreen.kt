@@ -256,7 +256,7 @@ fun SigningInScreen(navController: NavHostController) {
                         .fillMaxWidth()
                         .height(52.dp),
                     shape = RoundedCornerShape(15.dp),
-                    colors = ButtonDefaults.outlinedButtonColors( // Material 3 ButtonDefaults
+                    colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = Color.White, // CORRECTED: Use containerColor for M3
                         contentColor = Color(0xFF222222) // Optional: If you want to ensure text/icon color contrasts
                     ),
@@ -270,8 +270,6 @@ fun SigningInScreen(navController: NavHostController) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Sign up with Google",
-                        // Text color can also be set directly on Text composable if not using contentColor above
-                        // color = Color(0xFF222222),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )

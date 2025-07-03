@@ -33,22 +33,22 @@ fun AppBarMain(
             .fillMaxWidth()
             .height(90.dp)
     ) {
-        // Red background
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFFF2D2D))
         )
-        // Overlay when alert is shown (dark area over app bar)
+
         if (showOverlay) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xCC000000)) // 80% opacity black
+                    .background(Color(0xCC000000))
                     .zIndex(999f)
             )
         }
-        // Top Row: Back, Title, Profile
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,8 +56,8 @@ fun AppBarMain(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Back Button (conditionally shown)
-            if (backButton) {
+
+            if (BackButton) {
                 Image(
                     painter = painterResource(id = R.drawable.back_button_icon),
                     contentDescription = "Back",
@@ -68,7 +68,7 @@ fun AppBarMain(
             } else {
                 Spacer(modifier = Modifier.width(32.dp))
             }
-            // Title
+
             Text(
                 text = title,
                 color = Color.White,
@@ -80,7 +80,7 @@ fun AppBarMain(
                     .padding(horizontal = 8.dp)
                     .wrapContentWidth(Alignment.CenterHorizontally)
             )
-            // Profile Icon
+
             Image(
                 painter = painterResource(id = R.drawable.user2_icon_profile),
                 contentDescription = "Profile",

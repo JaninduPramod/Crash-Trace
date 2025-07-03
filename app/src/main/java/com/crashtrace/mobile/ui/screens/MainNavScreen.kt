@@ -15,7 +15,7 @@ fun MainNavScreen() {
             when (selectedIndex) {
                 0 -> HomeFeedScreen()
                 1 -> NewsFeedScreen()
-                2 -> ReportFeedScreen()
+                2 -> SearchReportScreen()
                 3 -> NewsDraftScreen()
             }
         }
