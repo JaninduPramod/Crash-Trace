@@ -8,7 +8,7 @@ import com.crashtrace.mobile.ui.components.AppBarMain
 @Composable
 fun NewsDraftScreen() {
     Column {
-        AppBarMain(title = "Write", backButton = false)
+        AppBarMain(title = "Write", BackButton = false)
         Text("Write Report")
     }
 }

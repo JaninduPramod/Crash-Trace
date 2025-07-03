@@ -8,7 +8,7 @@ import com.crashtrace.mobile.ui.components.AppBarMain
 @Composable
 fun HomeFeedScreen() {
     Column {
-        AppBarMain(title = "Home", backButton = false)
+        AppBarMain(title = "Home", BackButton = false)
         Text("Home Feed")
     }
 }

@@ -8,7 +8,7 @@ import com.crashtrace.mobile.ui.components.AppBarMain
 @Composable
 fun ReportFeedScreen() {
     Column {
-        AppBarMain(title = "Report", backButton = false)
+        AppBarMain(title = "Report", BackButton = false)
         Text("Report Feed")
     }
 }

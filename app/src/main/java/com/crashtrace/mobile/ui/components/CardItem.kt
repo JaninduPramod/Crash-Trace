@@ -1,6 +1,7 @@
 package com.crashtrace.mobile.ui.components
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 
 data class CardItem(
     val cardId: String,
@@ -8,5 +9,5 @@ data class CardItem(
     val description: String,
     val imagePlaceholderColor: Color,
     val accentColor: Color,
-    var isExpanded: Boolean = false
+    val imagePainter: Painter? = null
 )

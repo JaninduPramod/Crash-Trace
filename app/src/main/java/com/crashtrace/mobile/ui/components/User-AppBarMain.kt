@@ -4,13 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -28,7 +25,8 @@ fun AppBarMain(
     showOverlay: Boolean = false,
     backButton: Boolean = true,
     onBackClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    BackButton: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -97,5 +95,5 @@ fun AppBarMain(
 @Preview(showBackground = true)
 @Composable
 fun AppBarMainPreview() {
-    AppBarMain(title = "FIND LOCATION", backButton = true)
+    AppBarMain(title = "FIND LOCATION", BackButton = false)
 }

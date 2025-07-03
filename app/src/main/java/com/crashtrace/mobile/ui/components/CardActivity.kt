@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -44,13 +45,20 @@ fun MyCustomCard(cardItem: CardItem, modifier: Modifier = Modifier) {
                     .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp))
                     .background(Color.DarkGray)
             ) {
-                Image(
-                    painter = ColorPainter(cardItem.imagePlaceholderColor),
-                    contentDescription = cardItem.title,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.Center)
-                )
+                if (cardItem.imagePainter != null) {
+                    Image(
+                        painter = cardItem.imagePainter,
+                        contentDescription = cardItem.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = ColorPainter(cardItem.imagePlaceholderColor),
+                        contentDescription = cardItem.title,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
 
             Spacer(
@@ -80,7 +88,7 @@ fun MyCustomCard(cardItem: CardItem, modifier: Modifier = Modifier) {
                 Text(
                     text = cardItem.description,
                     fontSize = 10.sp,
-                    color = Color.Black.copy(alpha = 0.7f),
+                    color = Color.Black.copy(alpha = 0.5f),
                     style = LocalTextStyle.current.copy(lineHeight = 12.sp),
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
@@ -100,7 +108,7 @@ fun MyCustomCardPreview() {
             description = "This is a sample description for the card. It can be a bit longer to show ellipsis.",
             imagePlaceholderColor = Color.Gray,
             accentColor = Color.Blue,
-            isExpanded = false
+//            isExpanded = false
         )
     )
 }
