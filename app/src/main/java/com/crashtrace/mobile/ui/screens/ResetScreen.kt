@@ -41,7 +41,7 @@ fun ResetScreen(navController: NavHostController) {
             .fillMaxSize()
             .background(Color(0xFFF3F6F8))
     ) {
-        AppBarSub(title = "Reset")
+        AppBarSub(title = "Reset" ,backButton = true)
         Box(
             modifier = Modifier
                 .fillMaxSize()

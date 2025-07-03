@@ -20,7 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.screens.ResetScreen
@@ -30,12 +29,11 @@ fun LogoutAlertBox(
     onDelete: () -> Unit,
     onDismiss: () -> Unit
 ) {
-
+    // Cover the whole page, including AppBarSub, with dark overlay
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xCC000000))
-            .zIndex(999f),
+            .background(Color(0x99000000)), // semi-transparent background
         contentAlignment = Alignment.Center
     ) {
         Box(

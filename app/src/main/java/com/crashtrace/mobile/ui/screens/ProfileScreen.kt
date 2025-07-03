@@ -59,7 +59,7 @@ fun ProfileScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            AppBarSub(title = "Profile", showOverlay = showLogoutDialog)
+            AppBarSub(title = "Profile", backButton = true, showOverlay = showLogoutDialog)
             // ...existing Box and Column code...
             Box(
                 modifier = Modifier
