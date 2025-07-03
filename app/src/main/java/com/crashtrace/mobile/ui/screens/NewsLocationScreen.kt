@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
-import com.crashtrace.mobile.ui.components.CardItem
+
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.maps.android.compose.*
 import com.google.android.gms.maps.model.CameraPosition

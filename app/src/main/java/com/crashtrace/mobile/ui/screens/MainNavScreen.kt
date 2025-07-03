@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.crashtrace.mobile.ui.components.NavBar
 
+
 @Composable
 fun MainNavScreen() {
     var selectedIndex by remember { mutableStateOf(0) }
@@ -13,8 +14,9 @@ fun MainNavScreen() {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
             when (selectedIndex) {
-                0 -> HomeFeedScreen()
-                1 -> NewsFeedScreen()
+
+                0 -> NewsFeedScreen()
+                1 -> NewsGalleryScreen()
                 2 -> SearchReportScreen()
                 3 -> NewsDraftScreen()
             }
