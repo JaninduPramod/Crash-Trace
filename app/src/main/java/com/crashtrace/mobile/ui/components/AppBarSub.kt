@@ -40,7 +40,7 @@ fun AppBarSub(title: String, showOverlay: Boolean = false) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xCC000000))
+                    .background(Color(0xCC000000)) // 80% opacity black
                     .zIndex(999f)
             )
         }
@@ -83,6 +83,10 @@ fun AppBarSub(title: String, showOverlay: Boolean = false) {
                     ambientColor = Color.Black,
                     spotColor = Color.Black,
                     clip = false
+                )
+                .background(
+                    color = Color(0xFFF3F6F8),
+                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
         )
     }

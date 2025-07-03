@@ -50,155 +50,161 @@ fun ProfileScreen(navController: NavHostController) {
     val user = getMockUserProfile()
     var showLogoutDialog by remember { mutableStateOf(false) } // State for alert box
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF3F6F8))
     ) {
-        AppBarSub(title = "Profile")
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF3F6F8))
         ) {
-            Column(
+            AppBarSub(title = "Profile", showOverlay = showLogoutDialog)
+            // ...existing Box and Column code...
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 0.dp),
-                horizontalAlignment = Alignment.Start
+                    .fillMaxSize()
+                    .background(Color(0xFFF3F6F8))
             ) {
-                // White rounded box
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-
+                        .padding(horizontal = 0.dp),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    Column(
+                    // White rounded box
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp, 0.dp, 10.dp, 0.dp),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Hi ${user.userName}\nWelcome !",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp,
-                            color = Color(0xFF222222),
-                            modifier = Modifier.padding(20.dp, 0.dp ,0.dp ,20.dp)
-                        )
-                        // Profile row
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp ,10.dp,0.dp,16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.sia_croven),
-                                contentDescription = "Profile",
-                                modifier = Modifier
-                                    .size(66.dp)
-                                    .clip(CircleShape)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                Text(
-                                    text = user.userNick,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
-                                    color = Color(0xFF222222)
-                                )
-                                Text(
-                                    text = user.userEmail,
-                                    color = Color(0xFF888888),
-                                    fontSize = 14.sp
-                                )
-                            }
-                        }
-                        // Info cards
 
-                        ProfileInfoItem(
-                            icon = R.drawable.user_icon,
-                            label = "Name:",
-                            value = user.userName,
-                            onClick = null,
-                            backgroundColor = Color(0xFFEAEAEA) // light gray for white background
-                        )
-                        ProfileInfoItem(
-                            icon = R.drawable.email_icon,
-                            label = "Email:",
-                            value = user.userEmail,
-                            onClick = null,
-                            backgroundColor = Color(0xFFEAEAEA)
-                        )
-                        ProfileInfoItem(
-                            icon = R.drawable.nic_nub_icon,
-                            label = "NIC no:",
-                            value = user.userNIC,
-                            onClick = null,
-                            backgroundColor = Color(0xFFEAEAEA)
-                        )
-                        ProfileInfoItem(
-                            icon = R.drawable.location_icon,
-                            label = "Address:",
-                            value = user.userAddress,
-                            onClick = null,
-                            backgroundColor = Color(0xFFEAEAEA)
-                        )
-                        ProfileInfoItem(
-                            icon = R.drawable.phone_icon,
-                            label = "Mobile no:",
-                            value = user.userMobile,
-                            onClick = null,
-                            backgroundColor = Color(0xFFEAEAEA)
-                        )
-                        Spacer(modifier = Modifier.height(75.dp))
-                        Divider(
-                            color = Color(0xFFD0D0D0),
-                            modifier = Modifier.padding(20.dp,0.dp,10.dp,0.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row(
+                    ) {
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(20.dp, 0.dp, 10.dp, 0.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(0.dp, 0.dp, 10.dp, 0.dp),
+                            horizontalAlignment = Alignment.Start
                         ) {
+                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "if you want to log out?",
-                                color = Color(0xFF676767),
-                                fontSize = 14.sp,
-                                modifier = Modifier.weight(1f)
+                                text = "Hi ${user.userName}\nWelcome !",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 28.sp,
+                                color = Color(0xFF222222),
+                                modifier = Modifier.padding(20.dp, 0.dp ,0.dp ,20.dp)
                             )
-                            Button(
-                                onClick = { showLogoutDialog = true }, // Show alert box on click
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF2D2D)),
-                                shape = RoundedCornerShape(12.dp),
+                            // Profile row
+                            Row(
                                 modifier = Modifier
-                                    .height(44.dp)
-                                    .width(120.dp)
+                                    .fillMaxWidth()
+                                    .padding(20.dp ,10.dp,0.dp,16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.sia_croven),
+                                    contentDescription = "Profile",
+                                    modifier = Modifier
+                                        .size(66.dp)
+                                        .clip(CircleShape)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        text = user.userNick,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp,
+                                        color = Color(0xFF222222)
+                                    )
+                                    Text(
+                                        text = user.userEmail,
+                                        color = Color(0xFF888888),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+                            // Info cards
+
+                            ProfileInfoItem(
+                                icon = R.drawable.user_icon,
+                                label = "Name:",
+                                value = user.userName,
+                                onClick = null,
+                                backgroundColor = Color(0xFFEAEAEA) // light gray for white background
+                            )
+                            ProfileInfoItem(
+                                icon = R.drawable.email_icon,
+                                label = "Email:",
+                                value = user.userEmail,
+                                onClick = null,
+                                backgroundColor = Color(0xFFEAEAEA)
+                            )
+                            ProfileInfoItem(
+                                icon = R.drawable.nic_nub_icon,
+                                label = "NIC no:",
+                                value = user.userNIC,
+                                onClick = null,
+                                backgroundColor = Color(0xFFEAEAEA)
+                            )
+                            ProfileInfoItem(
+                                icon = R.drawable.location_icon,
+                                label = "Address:",
+                                value = user.userAddress,
+                                onClick = null,
+                                backgroundColor = Color(0xFFEAEAEA)
+                            )
+                            ProfileInfoItem(
+                                icon = R.drawable.phone_icon,
+                                label = "Mobile no:",
+                                value = user.userMobile,
+                                onClick = null,
+                                backgroundColor = Color(0xFFEAEAEA)
+                            )
+                            Spacer(modifier = Modifier.height(75.dp))
+                            Divider(
+                                color = Color(0xFFD0D0D0),
+                                modifier = Modifier.padding(20.dp,0.dp,10.dp,0.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(20.dp, 0.dp, 10.dp, 0.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Log out",
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp
+                                    text = "if you want to log out?",
+                                    color = Color(0xFF676767),
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.weight(1f)
                                 )
+                                Button(
+                                    onClick = { showLogoutDialog = true }, // Show alert box on click
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF2D2D)),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier
+                                        .height(44.dp)
+                                        .width(120.dp)
+                                ) {
+                                    Text(
+                                        text = "Log out",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
-            // Show LogoutAlertBox if state is true
-            if (showLogoutDialog) {
-                com.crashtrace.mobile.ui.components.LogoutAlertBox(
-                    onDelete = {
-                        showLogoutDialog = false
-                        // TODO: Add your logout logic here
-                    },
-                    onDismiss = { showLogoutDialog = false }
-                )
+                // Show LogoutAlertBox if state is true, overlaying all content
+                if (showLogoutDialog) {
+                    com.crashtrace.mobile.ui.components.LogoutAlertBox(
+                        onDelete = {
+                            showLogoutDialog = false
+                            // TODO: Add your logout logic here
+                        },
+                        onDismiss = { showLogoutDialog = false }
+                    )
+                }
             }
         }
     }
