@@ -40,7 +40,9 @@ fun AppNavGraph(navController: NavHostController) {
         composable("reset") { VerificationScreen(navController) }
         composable("otpVerify") { OtpCodeScreen(navController) }
         composable("newPassword") { ResetScreen(navController) }
-        composable("profile") { MainNavScreen() }
+        composable("profile") { ProfileScreen(navController) }
+        composable("home") { MainNavScreen(navController) }
+        composable("card") { NewsInfoScreen() }
 
         composable("first") {
             OnBoardScreen1(
@@ -64,7 +66,6 @@ fun AppNavGraph(navController: NavHostController) {
                 onNext = { /* TODO: handle next navigation */ }
             )
         }
-
 
     }
 }

@@ -61,7 +61,7 @@ fun NewsInfoScreen() {
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            AppBarMain(title = "", BackButton = false)
+            AppBarMain(title = "", BackButton = true)
 
             // Scrollable content
             Column(
