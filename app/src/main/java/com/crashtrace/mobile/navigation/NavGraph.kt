@@ -43,6 +43,9 @@ fun AppNavGraph(navController: NavHostController) {
         composable("profile") { ProfileScreen(navController) }
         composable("home") { MainNavScreen(navController) }
         composable("card") { NewsInfoScreen() }
+        composable("newsGallery") { NewsGalleryScreen() }
+
+
 
         composable("first") {
             OnBoardScreen1(

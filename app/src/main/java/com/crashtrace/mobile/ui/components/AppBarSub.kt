@@ -17,15 +17,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
 import com.crashtrace.mobile.R
-
-
 
 @Composable
 fun AppBarSub(
     title: String,
     showOverlay: Boolean = false,
     backButton: Boolean = false,
+    navController: NavController? = null,
     onBackClick: (() -> Unit)? = null
 ) {
     Box(
@@ -96,7 +96,9 @@ fun AppBarSub(
                     .align(Alignment.BottomEnd)
                     .padding(end = 20.dp, bottom = 50.dp)
                     .size(32.dp)
-                    .clickable { onBackClick?.invoke() }
+                    .clickable {
+                        navController?.popBackStack() ?: onBackClick?.invoke()
+                    }
             )
         }
 

@@ -224,7 +224,7 @@ fun NewsFeedScreen(navController: NavController) {
 
                 // Bottom Show More button
                 Button(
-                    onClick = { },
+                    onClick = { navController.navigate("newsGallery")},
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
