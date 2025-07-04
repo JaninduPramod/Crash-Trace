@@ -35,7 +35,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
-fun NewsInfoScreen() {
+fun NewsLocationScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
         // Background image
         Image(
@@ -45,7 +45,6 @@ fun NewsInfoScreen() {
             contentScale = ContentScale.Crop
         )
 
-        // White top gradient
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -61,9 +60,9 @@ fun NewsInfoScreen() {
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            AppBarMain(title = "", BackButton = true)
+            AppBarMain(title = "FIND LOCATION", BackButton = false)
 
-            // Scrollable content
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -74,22 +73,21 @@ fun NewsInfoScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    // Image
-                    Image(
-                        painter = painterResource(id = R.drawable.accident),
-                        contentDescription = "Main News",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(250.dp),
-                        contentScale = ContentScale.Crop
+
+                    Text(
+                        text = "NEWS Location",
+                        color = Color(0xFF343434),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp,
+                        modifier = Modifier.padding(start = 16.dp, top = 30.dp, bottom = 0.dp)
                     )
 
-                    // Overlaid card
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp)
-                            .padding(top = 200.dp) // overlap effect
+                            .padding(top = 80.dp)
                             .shadow(
                                 elevation = 8.dp,
                                 shape = RoundedCornerShape(16.dp),
@@ -101,26 +99,6 @@ fun NewsInfoScreen() {
                         Column(
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            Text(
-                                text = "2025/04/28",
-                                fontWeight = FontWeight.Medium,
-                                color = Color(0xFFFF2D2D),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(bottom = 4.dp)
-                            )
-                            Text(
-                                text = "Preview Card Title",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
-                                color = Color.Black
-                            )
-                            Text(
-                                text = "Another common cause of auto damage: having a parked vehicle hit by another car. Whether you're leaving your car in a parking lot or on the road, take steps to help avoid parked car collisions and claims. Here are some suggestions:\n\nhaving a parked vehicle hit by another car.  hit by another car to help avoid parked car",
-                                color = Color.Black.copy(alpha = 0.5f),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                            Spacer(modifier = Modifier.height(20.dp))
 
                             Text(
                                 text = "Location",
@@ -144,7 +122,7 @@ fun NewsInfoScreen() {
                             GoogleMap(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(330.dp)
+                                    .height(600.dp)
                                     .padding(top = 8.dp)
                                     .clip(RoundedCornerShape(8.dp)),
                                 cameraPositionState = cameraPositionState
@@ -166,6 +144,6 @@ fun NewsInfoScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun NewsInfoScreenPreview() {
-    NewsInfoScreen()
+fun NewsLocationPreview() {
+    NewsLocationScreen()
 }

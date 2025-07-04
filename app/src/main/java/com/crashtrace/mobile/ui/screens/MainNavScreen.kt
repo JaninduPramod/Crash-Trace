@@ -13,8 +13,9 @@ fun MainNavScreen() {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
             when (selectedIndex) {
-                0 -> HomeFeedScreen()
-                1 -> NewsFeedScreen()
+//                0 -> HomeFeedScreen()
+                0 -> NewsFeedScreen()
+                1 -> NewsGalleryScreen()
                 2 -> SearchReportScreen()
                 3 -> NewsDraftScreen()
             }

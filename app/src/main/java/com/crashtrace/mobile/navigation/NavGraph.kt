@@ -24,6 +24,8 @@ import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
+import com.crashtrace.mobile.ui.screens.AdminNewsGalleryScreen
+import com.crashtrace.mobile.ui.screens.AdminNewsViewScreen
 import com.crashtrace.mobile.ui.screens.MainNavScreen
 import com.crashtrace.mobile.ui.screens.NewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.NewsInfoScreen
@@ -34,7 +36,7 @@ import com.crashtrace.mobile.ui.screens.SearchReportScreen
 fun AppNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "splash") {
 //        composable("splash") { SearchReportScreen() }
-        composable("splash") { SplashScreen(navController) }
+        composable("splash") { AdminNewsViewScreen() }
         composable("signup") { SignUpScreen(navController) }
         composable("signin") { SigningInScreen(navController) }
         composable("reset") { VerificationScreen(navController) }
