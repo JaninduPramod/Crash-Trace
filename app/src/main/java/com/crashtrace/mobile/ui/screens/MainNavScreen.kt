@@ -15,7 +15,9 @@ fun MainNavScreen(navController: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
             when (selectedIndex) {
+
                 0 -> NewsFeedScreen(navController)
+
                 1 -> NewsGalleryScreen()
                 2 -> SearchReportScreen()
                 3 -> NewsDraftScreen()

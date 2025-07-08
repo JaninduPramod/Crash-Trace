@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import com.crashtrace.mobile.ui.screens.MainNavScreen
 import com.crashtrace.mobile.ui.screens.NewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.NewsInfoScreen
+import com.crashtrace.mobile.ui.screens.NewsLocationPreview
 import com.crashtrace.mobile.ui.screens.NewsLocationScreen
 import com.crashtrace.mobile.ui.screens.SearchReportScreen
 
@@ -34,14 +35,17 @@ import com.crashtrace.mobile.ui.screens.SearchReportScreen
 fun AppNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "splash") {
 //        composable("splash") { SearchReportScreen() }
-        composable("splash") { SplashScreen(navController) }
+        composable("splash") { NewsLocationPreview() }
         composable("signup") { SignUpScreen(navController) }
         composable("signin") { SigningInScreen(navController) }
         composable("reset") { VerificationScreen(navController) }
         composable("otpVerify") { OtpCodeScreen(navController) }
         composable("newPassword") { ResetScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
+
         composable("home") { MainNavScreen(navController) }
+
+
         composable("card") { NewsInfoScreen() }
 
         composable("first") {

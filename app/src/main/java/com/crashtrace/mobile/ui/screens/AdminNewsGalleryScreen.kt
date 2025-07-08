@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.sp
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
+
+import com.crashtrace.mobile.ui.components.CardItem
+
 import androidx.compose.ui.tooling.preview.Preview
 import com.crashtrace.mobile.ui.components.CardActivityAdminCard
 
@@ -88,7 +91,9 @@ fun AdminNewsGalleryScreen() {
 
                 val newsList = listOf(
                     CardItemAdmin(
-                        cardId = "2",
+
+                        cardId = "0202",
+
                         title = "Card Title 2",
                         description = "Latest head lines show that sed do eius mod tempor headlines show that sed do eiusmod tempor headlines show that sed do eiusmod tempor incididunt ut labore.",
                         imagePlaceholderColor = Color.Gray,
@@ -96,7 +101,9 @@ fun AdminNewsGalleryScreen() {
                         status = "pending"
                     ),
                     CardItemAdmin(
-                        cardId = "3",
+
+                        cardId = "0203",
+
                         title = "Card Title 3",
                         description = "Aliquam erat volutpat. Ut enim ad minim veniam, quis nostrud exercitation.",
                         imagePlaceholderColor = Color.Gray,
@@ -104,7 +111,9 @@ fun AdminNewsGalleryScreen() {
                         status = "ok"
                     ),
                     CardItemAdmin(
-                        cardId = "5",
+
+                        cardId = "0205",
+
                         title = "Card Title 5",
                         description = "Quick update: Excepteur sint occaecat cupidatat non proident, sunt in culpa.",
                         imagePlaceholderColor = Color.Gray,
@@ -112,7 +121,9 @@ fun AdminNewsGalleryScreen() {
                         status = "bad"
                     ),
                     CardItemAdmin(
-                        cardId = "6",
+
+                        cardId = "0206",
+
                         title = "Card Title 6",
                         description = "Flash report: Nemo enim ipsam voluptatem quia voluptas sit aspernatur.",
                         imagePlaceholderColor = Color.Gray,
@@ -120,7 +131,9 @@ fun AdminNewsGalleryScreen() {
                         status = "ok"
                     ),
                     CardItemAdmin(
-                        cardId = "7",
+
+                        cardId = "0207",
+
                         title = "Card Title 7",
                         description = "In-depth analysis: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.",
                         imagePlaceholderColor = Color.Gray,
@@ -128,7 +141,9 @@ fun AdminNewsGalleryScreen() {
                         status = "pending"
                     ),
                     CardItemAdmin(
-                        cardId = "8",
+
+                        cardId = "0208",
+
                         title = "Card Title 8",
                         description = "Special feature: Lorem ipsum dolor sit headlines show that sed do eiusmod tempor headlines show that sed do eiusmod tempor amet, consectetur adipiscing elit.",
                         imagePlaceholderColor = Color.Gray,
@@ -136,7 +151,9 @@ fun AdminNewsGalleryScreen() {
                         status = "ok"
                     ),
                     CardItemAdmin(
-                        cardId = "4",
+
+                        cardId = "0204",
+
                         title = "Card Title 4",
                         description = "New developments revealed: Duis headlines show that sed do eiusmod tempor aute irure dolor in reprehenderit.",
                         imagePlaceholderColor = Color.Gray,
@@ -144,7 +161,9 @@ fun AdminNewsGalleryScreen() {
                         status = "bad"
                     ),
                     CardItemAdmin(
-                        cardId = "9",
+
+                        cardId = "0209",
+
                         title = "Card Title 9",
                         description = "Update just in: Sed ut perspiciatis unde omnis iste natus error sit voluptatem.",
                         imagePlaceholderColor = Color.Gray,
@@ -152,7 +171,9 @@ fun AdminNewsGalleryScreen() {
                         status = "ok"
                     ),
                     CardItemAdmin(
-                        cardId = "10",
+
+                        cardId = "0210",
+
                         title = "Card Title 10",
                         description = "Insight: But I must explain to you how all this mistaken idea of denouncing pleasure.",
                         imagePlaceholderColor = Color.Gray,
@@ -160,7 +181,9 @@ fun AdminNewsGalleryScreen() {
                         status = "pending"
                     ),
                     CardItemAdmin(
-                        cardId = "11",
+
+                        cardId = "02111",
+
                         title = "Card Title 11",
                         description = "Field report: At vero eos et accusamus et iusto odio headlines show that sed do eiusmod tempor dignissimos ducimus.",
                         imagePlaceholderColor = Color.Gray,
@@ -168,7 +191,9 @@ fun AdminNewsGalleryScreen() {
                         status = "bad"
                     ),
                     CardItemAdmin(
-                        cardId = "12",
+
+                        cardId = "0212",
+
                         title = "Card Title 12",
                         description = "News highlight: On the other hand, we denounce with righteous indignation.",
                         imagePlaceholderColor = Color.Gray,
@@ -176,7 +201,9 @@ fun AdminNewsGalleryScreen() {
                         status = "ok"
                     ),
                     CardItemAdmin(
-                        cardId = "13",
+
+                        cardId = "0213",
+
                         title = "Card Title 13",
                         description = "Detailed review: These cases are perfectly headlines show that sed do eiusmod tempor simple and easy to distinguish.",
                         imagePlaceholderColor = Color.Gray,
@@ -184,7 +211,9 @@ fun AdminNewsGalleryScreen() {
                         status = "pending"
                     ),
                     CardItemAdmin(
-                        cardId = "14",
+
+                        cardId = "0214",
+
                         title = "Card Title 14",
                         description = "Trending: Nor again is there anyone who loves or pursues or desires pain.",
                         imagePlaceholderColor = Color.Gray,
@@ -192,11 +221,13 @@ fun AdminNewsGalleryScreen() {
                         status = "ok"
                     ),
                     CardItemAdmin(
-                        cardId = "15",
+
+                        cardId = "0215",
                         title = "Card Title 15",
                         description = "Editorial: Because it is pain, but because occasionally headlines show that sed do eiusmod tempor circumstances occur.",
                         imagePlaceholderColor = Color.Gray,
-                        accentColor = Color(0xFF808080),
+                        accentColor = Color(0xFF989797),
+
                         status = "bad"
                     )
                 )
