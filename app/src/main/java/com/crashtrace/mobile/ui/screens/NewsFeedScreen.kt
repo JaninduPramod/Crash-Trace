@@ -28,9 +28,10 @@ import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
 import com.crashtrace.mobile.ui.components.CardItem
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 
 @Composable
-fun NewsFeedScreen() {
+fun NewsFeedScreen(navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -132,7 +133,7 @@ fun NewsFeedScreen() {
                                 modifier = Modifier.padding(vertical = 8.dp)
                             )
                             Button(
-                                onClick = { /* TODO: Show more */ },
+                                onClick = { navController.navigate("card") },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(52.dp)
@@ -223,7 +224,7 @@ fun NewsFeedScreen() {
 
                 // Bottom Show More button
                 Button(
-                    onClick = { /* TODO: Show more */ },
+                    onClick = { },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
@@ -259,5 +260,5 @@ fun NewsFeedScreen() {
 @Preview(showBackground = true)
 @Composable
 fun NewsFeedScreenPreview() {
-    NewsFeedScreen()
+//    NewsFeedScreen()
 }

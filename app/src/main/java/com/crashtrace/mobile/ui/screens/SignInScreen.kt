@@ -220,7 +220,7 @@ fun SigningInScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(230.dp))
                 // Sign Up Button
                 Button(
-                    onClick = { navController.navigate("profile") },
+                    onClick = { navController.navigate("home") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

@@ -86,7 +86,9 @@ fun AppBarMain(
                 contentDescription = "Profile",
                 modifier = Modifier
                     .size(32.dp)
-                    .clickable { onProfileClick() }
+                    .clickable {
+                        onProfileClick()
+                    }
             )
         }
     }
@@ -95,5 +97,5 @@ fun AppBarMain(
 @Preview(showBackground = true)
 @Composable
 fun AppBarMainPreview() {
-    AppBarMain(title = "FIND LOCATION", BackButton = false)
+    AppBarMain(onProfileClick = {}, title = "FIND LOCATION", BackButton = false)
 }

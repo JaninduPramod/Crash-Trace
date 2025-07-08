@@ -42,7 +42,10 @@ fun AppNavGraph(navController: NavHostController) {
         composable("otpVerify") { OtpCodeScreen(navController) }
         composable("newPassword") { ResetScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
-//        composable("home") { MainNavScreen(navController) }
+
+        composable("home") { MainNavScreen(navController) }
+
+
         composable("card") { NewsInfoScreen() }
 
         composable("first") {

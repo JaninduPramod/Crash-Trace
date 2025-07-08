@@ -28,9 +28,11 @@ import androidx.compose.ui.unit.sp
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
+
 import com.crashtrace.mobile.ui.components.CardItem
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+
 import com.google.maps.android.compose.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -61,7 +63,9 @@ fun NewsLocationScreen() {
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            AppBarMain(title = "FIND LOCATION", BackButton = false, )
+
+            AppBarMain(title = "FIND LOCATION", BackButton = false)
+
 
 
             Column(
@@ -128,12 +132,17 @@ fun NewsLocationScreen() {
                                     .clip(RoundedCornerShape(8.dp)),
                                 cameraPositionState = cameraPositionState
 
+
+
                             ) {
                                 Marker(
                                     state = MarkerState(position = mirihana),
                                     title = "Mirihana",
+                          snippet = "Accident Location"
+
                                     snippet = "Accident Location",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
+
                                 )
                             }
                         }

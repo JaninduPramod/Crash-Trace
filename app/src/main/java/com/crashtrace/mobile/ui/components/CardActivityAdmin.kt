@@ -37,19 +37,21 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
                 .padding(start = 0.dp, top = 5.dp, end = 5.dp, bottom = 5.dp),
+
             shape = RoundedCornerShape(
                 topStart = 0.dp,
                 topEnd = 20.dp,
                 bottomEnd = 20.dp,
                 bottomStart = 0.dp
             ),
+
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Vertical Column for the two boxes
+
                 Column(
                     modifier = Modifier
                         .weight(0.5f)
@@ -107,6 +109,7 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                 }
 
                 // Dotted Line Separator
+
                 DottedLine(
                     modifier = Modifier
                         .width(4.dp)
@@ -119,12 +122,14 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                     isVertical = true
                 )
 
+
                 // Content Column
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
                         .padding(start = 10.dp, end = 10.dp),
+
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
@@ -211,10 +216,12 @@ fun getStatusIconPainter(status: String): Painter {
 fun CardActivityAdminCardView() {
     CardActivityAdminCard(
         cardItem = CardItemAdmin(
+
             cardId = "231",
             title = "Sample Title",
             description = "This is a sample description for the card. It can be a bit longer to show ellipsis.",
             imagePlaceholderColor = Color(0xFFDEDEDE),
+
             accentColor = Color.Gray,
             status = "ok" // Try: "pending", "bad", "ok"
         )
