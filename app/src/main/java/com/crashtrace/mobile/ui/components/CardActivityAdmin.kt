@@ -211,7 +211,7 @@ fun getStatusIconPainter(status: String): Painter {
 fun CardActivityAdminCardView() {
     CardActivityAdminCard(
         cardItem = CardItemAdmin(
-            cardId = "1",
+            cardId = "231",
             title = "Sample Title",
             description = "This is a sample description for the card. It can be a bit longer to show ellipsis.",
             imagePlaceholderColor = Color(0xFFDEDEDE),

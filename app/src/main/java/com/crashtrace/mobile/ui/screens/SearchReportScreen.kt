@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -295,7 +296,8 @@ fun SearchReportScreen() {
                             Marker(
                                 state = MarkerState(position = mirihana),
                                 title = "Mirihana",
-                                snippet = "Accident Location"
+                                snippet = "Accident Location",
+                                icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
                             )
                         }
                     }

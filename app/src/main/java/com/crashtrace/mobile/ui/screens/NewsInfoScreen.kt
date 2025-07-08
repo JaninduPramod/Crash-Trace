@@ -30,6 +30,7 @@ import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
 import com.crashtrace.mobile.ui.components.CardItem
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.maps.android.compose.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -152,7 +153,8 @@ fun NewsInfoScreen() {
                                 Marker(
                                     state = MarkerState(position = mirihana),
                                     title = "Mirihana",
-                                    snippet = "Accident Location"
+                                    snippet = "Accident Location",
+                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
                                 )
                             }
                         }

@@ -24,11 +24,10 @@ import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
-import com.crashtrace.mobile.ui.screens.AdminNewsGalleryScreen
-import com.crashtrace.mobile.ui.screens.AdminNewsViewScreen
 import com.crashtrace.mobile.ui.screens.MainNavScreen
 import com.crashtrace.mobile.ui.screens.NewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.NewsInfoScreen
+import com.crashtrace.mobile.ui.screens.NewsLocationPreview
 import com.crashtrace.mobile.ui.screens.NewsLocationScreen
 import com.crashtrace.mobile.ui.screens.SearchReportScreen
 
@@ -36,13 +35,15 @@ import com.crashtrace.mobile.ui.screens.SearchReportScreen
 fun AppNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "splash") {
 //        composable("splash") { SearchReportScreen() }
-        composable("splash") { AdminNewsViewScreen() }
+        composable("splash") { NewsLocationPreview() }
         composable("signup") { SignUpScreen(navController) }
         composable("signin") { SigningInScreen(navController) }
         composable("reset") { VerificationScreen(navController) }
         composable("otpVerify") { OtpCodeScreen(navController) }
         composable("newPassword") { ResetScreen(navController) }
-        composable("profile") { MainNavScreen() }
+        composable("profile") { ProfileScreen(navController) }
+//        composable("home") { MainNavScreen(navController) }
+        composable("card") { NewsInfoScreen() }
 
         composable("first") {
             OnBoardScreen1(
@@ -66,7 +67,6 @@ fun AppNavGraph(navController: NavHostController) {
                 onNext = { /* TODO: handle next navigation */ }
             )
         }
-
 
     }
 }
