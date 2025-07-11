@@ -13,6 +13,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +35,8 @@ import com.crashtrace.mobile.ui.components.MyCustomCard
 
 import com.crashtrace.mobile.ui.components.CardItem
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
 import com.google.maps.android.compose.*
@@ -38,7 +44,15 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
-fun NewsLocationScreen() {
+fun NewsLocationScreen( navController: NavController) {
+    var loadProfile by remember { mutableStateOf(false) }
+
+    if (loadProfile) {
+        navController.navigate("profile")
+        loadProfile = false
+    }
+
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Background image
         Image(
@@ -64,7 +78,10 @@ fun NewsLocationScreen() {
 
         Column(modifier = Modifier.fillMaxSize()) {
 
-            AppBarMain(title = "FIND LOCATION", BackButton = false)
+            AppBarMain(title = "FIND LOCATION", BackButton = false,
+                onProfileClick = { isProfile ->
+                    if (isProfile) loadProfile = true
+                })
 
 
 
@@ -138,11 +155,8 @@ fun NewsLocationScreen() {
                                 Marker(
                                     state = MarkerState(position = mirihana),
                                     title = "Mirihana",
-                          snippet = "Accident Location"
-
                                     snippet = "Accident Location",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
-
                                 )
                             }
                         }
@@ -157,5 +171,5 @@ fun NewsLocationScreen() {
 @Preview(showBackground = true)
 @Composable
 fun NewsLocationPreview() {
-    NewsLocationScreen()
+    NewsLocationScreen(navController = rememberNavController())
 }

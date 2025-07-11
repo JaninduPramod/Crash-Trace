@@ -8,6 +8,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
 
@@ -30,7 +36,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 
 @Composable
-fun SearchReportScreen() {
+fun SearchReportScreen(navController: NavHostController) {
+    var loadProfile by remember { mutableStateOf(false) }
+
+    if (loadProfile) {
+        navController.navigate("profile")
+        loadProfile = false
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.background_image),
@@ -54,8 +67,12 @@ fun SearchReportScreen() {
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            AppBarMain(title = "REPOTER VIEW", BackButton = false)
+            AppBarMain(title = "REPOTER VIEW", BackButton = false,
 
+                onProfileClick = { isProfile ->
+                    if (isProfile) loadProfile = true
+                }
+            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -316,5 +333,5 @@ fun SearchReportScreen() {
 @Preview(showBackground = true)
 @Composable
 fun SearchReportScreenPreview() {
-    SearchReportScreen()
+    SearchReportScreen(navController = rememberNavController())
 }

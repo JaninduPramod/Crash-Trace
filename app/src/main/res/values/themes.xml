@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Crash_Trace" parent="android:Theme.Material.Light.NoActionBar" />
+<!--    <style name="Theme.Crash_Trace" parent="android:Theme.Material.Light.NoActionBar" />-->
+    <style name="Theme.Crash_Trace" parent="android:Theme.Material.Light.NoActionBar">
+
+        <item name="android:colorControlActivated">#FF1500</item>
+        <item name="android:colorControlHighlight">#FFCDD2</item>
+
+    </style>
+    
+
 </resources>
