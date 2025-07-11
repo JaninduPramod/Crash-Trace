@@ -11,20 +11,113 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.crashtrace.mobile.ui.components.AppBarSub
-import androidx.compose.ui.tooling.preview.Preview
 import com.crashtrace.mobile.R
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 
-// Mock data function for user profile
+// ✅ AppBarSub Composable with working back button
+@Composable
+fun AppBarSub(
+    title: String,
+    showOverlay: Boolean = false,
+    backButton: Boolean = false,
+    onBackClick: (() -> Unit)? = null
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(170.dp)
+            .shadow(
+                elevation = 10.dp,
+                shape = RoundedCornerShape(bottomEnd = 20.dp, bottomStart = 20.dp),
+                clip = false
+            )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFFF2D2D))
+        )
+        if (showOverlay) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0x99000000))
+                    .zIndex(999f)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+                .align(Alignment.BottomCenter)
+                .background(
+                    brush = Brush.verticalGradient(
+                        listOf(Color.Transparent, Color.Black.copy(alpha = 0.3f))
+                    ),
+                    shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
+                )
+        )
+
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        if (backButton) {
+            Icon(
+                painter = painterResource(id = R.drawable.back_button_icon),
+                contentDescription = "Back",
+                tint = Color.White,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 20.dp, bottom = 50.dp)
+                    .size(32.dp)
+                    .clickable { onBackClick?.invoke() }
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .align(Alignment.BottomCenter)
+                .zIndex(1f)
+                .shadow(
+                    elevation = 10.dp,
+                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                    ambientColor = Color.Black,
+                    spotColor = Color.Black,
+                    clip = false
+                )
+                .background(
+                    color = Color(0xFFF3F6F8),
+                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                )
+        )
+    }
+}
+
+// ✅ Mock data
 data class UserProfile(
     val userName: String,
     val userNick: String,
@@ -48,19 +141,22 @@ fun getMockUserProfile(): UserProfile {
 @Composable
 fun ProfileScreen(navController: NavHostController) {
     val user = getMockUserProfile()
-    var showLogoutDialog by remember { mutableStateOf(false) } // State for alert box
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF3F6F8))
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            AppBarSub(title = "Profile", backButton = true, showOverlay = showLogoutDialog)
-            // ...existing Box and Column code...
+        Column(modifier = Modifier.fillMaxSize()) {
+            // ✅ AppBar with working back button
+            AppBarSub(
+                title = "Profile",
+                backButton = true,
+                showOverlay = showLogoutDialog,
+                onBackClick = { navController.popBackStack() }
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -72,12 +168,7 @@ fun ProfileScreen(navController: NavHostController) {
                         .padding(horizontal = 0.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    // White rounded box
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-
-                    ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -90,13 +181,12 @@ fun ProfileScreen(navController: NavHostController) {
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
                                 color = Color(0xFF222222),
-                                modifier = Modifier.padding(20.dp, 0.dp ,0.dp ,20.dp)
+                                modifier = Modifier.padding(20.dp, 0.dp, 0.dp, 20.dp)
                             )
-                            // Profile row
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(20.dp ,10.dp,0.dp,16.dp),
+                                    .padding(20.dp, 10.dp, 0.dp, 16.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Image(
@@ -121,14 +211,13 @@ fun ProfileScreen(navController: NavHostController) {
                                     )
                                 }
                             }
-                            // Info cards
 
                             ProfileInfoItem(
                                 icon = R.drawable.user_icon,
                                 label = "Name:",
                                 value = user.userName,
                                 onClick = null,
-                                backgroundColor = Color(0xFFEAEAEA) // light gray for white background
+                                backgroundColor = Color(0xFFEAEAEA)
                             )
                             ProfileInfoItem(
                                 icon = R.drawable.email_icon,
@@ -158,10 +247,11 @@ fun ProfileScreen(navController: NavHostController) {
                                 onClick = null,
                                 backgroundColor = Color(0xFFEAEAEA)
                             )
+
                             Spacer(modifier = Modifier.height(75.dp))
                             Divider(
                                 color = Color(0xFFD0D0D0),
-                                modifier = Modifier.padding(20.dp,0.dp,10.dp,0.dp)
+                                modifier = Modifier.padding(20.dp, 0.dp, 10.dp, 0.dp)
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Row(
@@ -177,7 +267,7 @@ fun ProfileScreen(navController: NavHostController) {
                                     modifier = Modifier.weight(1f)
                                 )
                                 Button(
-                                    onClick = { showLogoutDialog = true }, // Show alert box on click
+                                    onClick = { showLogoutDialog = true },
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF2D2D)),
                                     shape = RoundedCornerShape(12.dp),
                                     modifier = Modifier
@@ -195,12 +285,12 @@ fun ProfileScreen(navController: NavHostController) {
                         }
                     }
                 }
-                // Show LogoutAlertBox if state is true, overlaying all content
+
                 if (showLogoutDialog) {
                     com.crashtrace.mobile.ui.components.LogoutAlertBox(
                         onDelete = {
                             showLogoutDialog = false
-                             navController.navigate("signin")
+                            navController.navigate("signin")
                         },
                         onDismiss = { showLogoutDialog = false }
                     )
@@ -210,6 +300,7 @@ fun ProfileScreen(navController: NavHostController) {
     }
 }
 
+// ✅ Reusable profile info item
 @Composable
 fun ProfileInfoItem(
     icon: Int,
@@ -222,7 +313,7 @@ fun ProfileInfoItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        shape = RoundedCornerShape(0.dp,10.dp,10.dp,0.dp ),
+        shape = RoundedCornerShape(0.dp, 10.dp, 10.dp, 0.dp),
         color = backgroundColor,
         shadowElevation = 0.dp,
     ) {
@@ -230,12 +321,9 @@ fun ProfileInfoItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 10.dp)
-                .let { base ->
-                    if (onClick != null) base.clickable { onClick() } else base
-                },
+                .let { base -> if (onClick != null) base.clickable { onClick() } else base },
             verticalAlignment = Alignment.Top
         ) {
-            // Change icon size to 26.dp only for NIC no:
             val iconSize = if (icon == R.drawable.nic_nub_icon) 26.dp else 22.dp
             Image(
                 painter = painterResource(id = icon),

@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.crashtrace.mobile.R
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 
 @Composable
@@ -25,8 +29,9 @@ fun AppBarMain(
     showOverlay: Boolean = false,
     backButton: Boolean = true,
     onBackClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {},
-    BackButton: Boolean
+    navController: NavHostController? = null,
+    BackButton: Boolean,
+    onProfileClick: (Boolean) -> Unit = {} // <-- Always include this parameter
 ) {
     Box(
         modifier = Modifier
@@ -81,15 +86,21 @@ fun AppBarMain(
                     .wrapContentWidth(Alignment.CenterHorizontally)
             )
 
-            Image(
-                painter = painterResource(id = R.drawable.user2_icon_profile),
-                contentDescription = "Profile",
-                modifier = Modifier
-                    .size(32.dp)
-                    .clickable {
-                        onProfileClick()
-                    }
-            )
+            Button(
+                onClick = {
+                    onProfileClick(true) // <-- Always call this for profile button
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                contentPadding = PaddingValues(0.dp),
+                elevation = null,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.user2_icon_profile),
+                    contentDescription = "Profile",
+                    modifier = Modifier.size(32.dp)
+                )
+            }
         }
     }
 }
@@ -97,5 +108,10 @@ fun AppBarMain(
 @Preview(showBackground = true)
 @Composable
 fun AppBarMainPreview() {
-    AppBarMain(onProfileClick = {}, title = "FIND LOCATION", BackButton = false)
+    AppBarMain(
+        title = "FIND LOCATION",
+        navController = rememberNavController(),
+        BackButton = true,
+        onProfileClick = {}
+    )
 }

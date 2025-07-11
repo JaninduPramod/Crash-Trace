@@ -5,22 +5,25 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.crashtrace.mobile.ui.components.NavBar
 
 
 @Composable
-fun MainNavScreen(navController: NavController) {
-    var selectedIndex by remember { mutableStateOf(0) }
+fun MainNavScreen(navController: NavController, selectedIndex: Int = 0) {
+    var currentIndex by remember { mutableStateOf(selectedIndex) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
-            when (selectedIndex) {
-                0 -> NewsFeedScreen(navController)
-                1 -> NewsGalleryScreen()
-                2 -> SearchReportScreen()
-                3 -> NewsDraftScreen()
+            when (currentIndex) {
+
+                0 -> HomeFeedScreen(navController as NavHostController)
+
+                1 -> NewsFeedScreen(navController as NavHostController)
+                2 -> SearchReportScreen(navController as NavHostController)
+                3 -> NewsDraftScreen(navController as NavHostController)
             }
         }
-        NavBar(selectedIndex = selectedIndex, onItemSelected = { selectedIndex = it })
+        NavBar(selectedIndex = currentIndex, onItemSelected = { currentIndex = it })
     }
 }

@@ -37,36 +37,78 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
                 .padding(start = 0.dp, top = 5.dp, end = 5.dp, bottom = 5.dp),
-            shape = RoundedCornerShape(topStart = 0.dp, topEnd = 20.dp, bottomEnd = 20.dp, bottomStart = 0.dp),
+
+            shape = RoundedCornerShape(
+                topStart = 0.dp,
+                topEnd = 20.dp,
+                bottomEnd = 20.dp,
+                bottomStart = 0.dp
+            ),
+
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Box(
+
+                Column(
                     modifier = Modifier
-                        .weight(0.4f)
-                        .fillMaxHeight()
-                        .padding(start = 0.dp, top = 5.dp, end = 15.dp, bottom = 5.dp)
-                        .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp))
-                        .background(Color.DarkGray)
+                        .weight(0.5f)
+                        .padding(horizontal = 10.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    if (cardItem.imagePainter != null) {
-                        Image(
-                            painter = cardItem.imagePainter,
-                            contentDescription = cardItem.title,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Image(
-                            painter = ColorPainter(cardItem.imagePlaceholderColor),
-                            contentDescription = cardItem.title,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                    // First Box (NEWS ID)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .padding(top = 8.dp, bottom = 4.dp)
+                            .clip(RoundedCornerShape(15.dp))
+                            .background(Color(0xFFEAEAEA)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "NEWS ID:",
+                                fontSize = 20.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Medium,
+                            )
+
+                        }
+                    }
+
+                    // Second Box (Image)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .padding(top = 2.dp, bottom = 8.dp)
+                            .clip(RoundedCornerShape(15.dp))
+                            .background(Color(0xFFEAEAEA)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (cardItem.imagePainter != null) {
+                            Image(
+                                painter = cardItem.imagePainter,
+                                contentDescription = cardItem.title,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            // Show placeholder text when no image is available
+                            Text(
+                                text = cardItem.cardId,
+                                fontSize = 36.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = (Color(0xFF757575))
+                            )
+                        }
                     }
                 }
+
+                // Dotted Line Separator
 
                 DottedLine(
                     modifier = Modifier
@@ -80,11 +122,14 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                     isVertical = true
                 )
 
+
+                // Content Column
                 Column(
                     modifier = Modifier
-                        .weight(0.6f)
+                        .weight(1f)
                         .fillMaxHeight()
-                        .padding(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 14.dp),
+                        .padding(start = 10.dp, end = 10.dp),
+
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
@@ -171,10 +216,12 @@ fun getStatusIconPainter(status: String): Painter {
 fun CardActivityAdminCardView() {
     CardActivityAdminCard(
         cardItem = CardItemAdmin(
-            cardId = "1",
+
+            cardId = "231",
             title = "Sample Title",
             description = "This is a sample description for the card. It can be a bit longer to show ellipsis.",
-            imagePlaceholderColor = Color.Gray,
+            imagePlaceholderColor = Color(0xFFDEDEDE),
+
             accentColor = Color.Gray,
             status = "ok" // Try: "pending", "bad", "ok"
         )
