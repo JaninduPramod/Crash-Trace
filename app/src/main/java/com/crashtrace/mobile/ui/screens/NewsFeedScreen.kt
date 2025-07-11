@@ -11,6 +11,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,9 +30,17 @@ import com.crashtrace.mobile.ui.components.MyCustomCard
 import com.crashtrace.mobile.ui.components.CardItem
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun NewsFeedScreen(navController: NavController) {
+    var loadProfile by remember { mutableStateOf(false) }
+
+    if (loadProfile) {
+        navController.navigate("profile")
+        loadProfile = false
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -60,7 +69,13 @@ fun NewsFeedScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize()
         ) {
             // Static AppBar
-            AppBarMain(title = "HOT NEWS", BackButton = false)
+            AppBarMain(
+                title = "HOT NEWS",
+                BackButton = false,
+                onProfileClick = { isProfile ->
+                    if (isProfile) loadProfile = true
+                }
+            )
 
             // Scrollable content
             Column(
@@ -146,7 +161,7 @@ fun NewsFeedScreen(navController: NavController) {
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = "SHOW MORE",
+                                        text = "View NEWS",
                                         color = Color.White,
                                         fontWeight = FontWeight.Medium,
                                         fontSize = 14.sp
@@ -222,13 +237,15 @@ fun NewsFeedScreen(navController: NavController) {
                     }
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
                 // Bottom Show More button
                 Button(
-                    onClick = { },
+
+                    onClick = { navController.navigate("gallery") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF2D2D)),
                     shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
                 ) {
@@ -260,5 +277,5 @@ fun NewsFeedScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun NewsFeedScreenPreview() {
-//    NewsFeedScreen()
+    NewsFeedScreen(navController = rememberNavController())
 }

@@ -13,6 +13,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,13 +34,32 @@ import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
 import com.crashtrace.mobile.ui.components.CardItem
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun NewsGalleryScreen() {
+fun NewsGalleryScreen(
+    navController: NavController,
+    selectedIndex: Int = 1
+) {
+
+    var loadProfile by remember { mutableStateOf(false) }
+
+    if (loadProfile) {
+        navController.navigate("profile")
+        loadProfile = false
+    }
+    var backToFeed by remember { mutableStateOf(false) }
+
+    if (backToFeed) {
+        MainNavScreen(navController = navController, selectedIndex = selectedIndex)
+        return
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Background image
+
         Image(
             painter = painterResource(id = R.drawable.background_image),
             contentDescription = null,
@@ -65,25 +88,32 @@ fun NewsGalleryScreen() {
             modifier = Modifier.fillMaxSize()
         ) {
             // Static AppBar
-            AppBarMain(title = "NEWS GALLERY", BackButton = true)
+            AppBarMain(
+                title = "NEWS GALLERY",
+                BackButton = true,
+                onBackClick = { backToFeed = true },
+                onProfileClick = { isProfile ->
+                    if (isProfile) loadProfile = true
+                }
+            )
 
-            // Scrollable content
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // Section Title (STATIC)
+            Text(
+                text = "NEWS Gallery",
+                color = Color(0xFF343434),
+                fontWeight = FontWeight.Bold,
+                fontSize = 28.sp,
+                modifier = Modifier.padding(start = 16.dp, bottom = 0.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            // Scrollable content (only cards)
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                Spacer(modifier = Modifier.height(30.dp))
-
-                // Section Title
-                Text(
-                    text = "NEWS Gallery",
-                    color = Color(0xFF343434),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp,
-                    modifier = Modifier.padding(start = 16.dp, bottom = 0.dp)
-                )
-
                 // News items
                 val newsList = listOf(
                     CardItem(
@@ -129,5 +159,5 @@ fun NewsGalleryScreen() {
 @Preview(showBackground = true)
 @Composable
 fun NewsGalleryPreview() {
-    NewsGalleryScreen()
+    NewsGalleryScreen(navController = rememberNavController())
 }

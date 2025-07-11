@@ -34,8 +34,8 @@ import com.crashtrace.mobile.ui.screens.SearchReportScreen
 @Composable
 fun AppNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "splash") {
-//        composable("splash") { SearchReportScreen() }
-        composable("splash") { NewsLocationPreview() }
+       composable("splash") { MainNavScreen(navController) }
+//        composable("splash") {SplashScreen(navController) }
         composable("signup") { SignUpScreen(navController) }
         composable("signin") { SigningInScreen(navController) }
         composable("reset") { VerificationScreen(navController) }
@@ -46,7 +46,8 @@ fun AppNavGraph(navController: NavHostController) {
         composable("home") { MainNavScreen(navController) }
 
 
-        composable("card") { NewsInfoScreen() }
+        composable("card") { NewsInfoScreen(navController) }
+        composable("gallery") { NewsGalleryScreen(navController) }
 
         composable("first") {
             OnBoardScreen1(

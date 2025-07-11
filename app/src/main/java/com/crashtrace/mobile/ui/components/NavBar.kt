@@ -94,7 +94,7 @@ fun NavBarItem(
         Text(
             text = label,
             color = contentColor,
-            fontSize = 12.sp
+            fontSize = 10.sp
         )
     }
 }
