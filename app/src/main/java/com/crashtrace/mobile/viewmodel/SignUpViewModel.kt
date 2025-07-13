@@ -21,22 +21,10 @@ class SignUpViewModel(private val repository: SignUpRepository) : ViewModel() {
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> get() = _password
 
-
-    fun updateName(newName: String) {
-        _name.value = newName
-    }
-
-    fun updateNic(newNic: String) {
-        _nic.value = newNic
-    }
-
-    fun updateEmail(newEmail: String) {
-        _email.value = newEmail
-    }
-
-    fun updatePassword(newPassword: String) {
-        _password.value = newPassword
-    }
+    fun setName(value: String) { _name.value = value }
+    fun setNIC(value: String) { _nic.value = value }
+    fun setEmail(value: String) { _email.value = value }
+    fun setPassword(value: String) { _password.value = value }
 
     fun submitSignUpData() {
         viewModelScope.launch {

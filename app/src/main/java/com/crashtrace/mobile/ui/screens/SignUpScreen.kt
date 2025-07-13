@@ -93,7 +93,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Name Field
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { signUpViewModel.updateName(it) },
+                    onValueChange = { signUpViewModel.setName(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.user_icon),
@@ -130,7 +130,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // NIC Field
                 OutlinedTextField(
                     value = nic,
-                    onValueChange = { signUpViewModel.updateNic(it) },
+                    onValueChange = { signUpViewModel.setNIC(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.nic_nub_icon),
@@ -165,7 +165,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Email Field
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { signUpViewModel.updateEmail(it) },
+                    onValueChange = { signUpViewModel.setEmail(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.email_icon),
@@ -207,7 +207,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Password Field
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { signUpViewModel.updatePassword(it) },
+                    onValueChange = { signUpViewModel.setPassword(it) },
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.lock),
