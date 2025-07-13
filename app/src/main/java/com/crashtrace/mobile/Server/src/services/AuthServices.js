@@ -1,6 +1,7 @@
 import { CustomError } from "../middlewares/ErrorMiddleware.js";
 import User from "../models/User.js";
 import { ApiResponse } from "../response/ApiResponse.js";
+import { generateToken } from "../utilities/GenerateToken.js";
 
 export const testingService = async () => {
   let responseType = "failed";
@@ -39,10 +40,30 @@ export const registerUserService = async (data) => {
 };
 
 export const loginUserService = async (data) => {
-  if ((data.email && data.password) == "") {
+  if (!data.email || !data.password) {
     throw new CustomError("fields must not be empty !!!", 401);
   }
-  // Logic for logging in user goes here
+  try {
+    const user = await User.findOne({ email: data.email });
+    if (!user) {
+      throw new CustomError("Invalid email or password!", 401);
+    }
+
+    const isMatch = await user.matchPassword(data.password);
+    if (!isMatch) {
+      throw new CustomError("Invalid email or password!", 401);
+    }
+    // Generate token
+    const token = generateToken(user._id);
+
+    return new ApiResponse(
+      { token, role: user.role },
+      "Login successful",
+      true
+    );
+  } catch (err) {
+    throw new CustomError("Error logging in: " + err.message, 500);
+  }
 };
 
 export const sendOtpService = async (email) => {

@@ -27,7 +27,7 @@ export const registerUser = async (req, res, next) => {
       password,
     });
 
-    res.status(200).json({ data: response });
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }
@@ -40,7 +40,7 @@ export const loginUser = async (req, res, next) => {
       email,
       password,
     });
-    res.status(200).json({ data: response });
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }
