@@ -26,7 +26,7 @@ export const registerUserService = async (data) => {
     // Check if user with the given email already exists
     const existingUser = await User.findOne({ email: data.email });
     if (existingUser) {
-      throw new CustomError("Email already registered!", 409);
+      throw new CustomError("Email already registered!", 200);
     }
     // Create new user
     const user = new User({
