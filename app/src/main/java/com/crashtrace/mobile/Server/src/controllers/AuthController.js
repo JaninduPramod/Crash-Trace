@@ -60,7 +60,7 @@ export const verifyOtp = async (req, res, next) => {
   const { email, otp } = req.body;
   try {
     const response = await verifyOtpService({ email, otp });
-    res.status(200).json({ data: response });
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }
@@ -74,7 +74,7 @@ export const changePassword = async (req, res, next) => {
       password,
       confirmPassword,
     });
-    res.status(200).json({ data: response });
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }

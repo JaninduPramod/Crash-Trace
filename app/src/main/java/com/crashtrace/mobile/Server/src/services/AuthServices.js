@@ -1,7 +1,10 @@
 import { CustomError } from "../middlewares/ErrorMiddleware.js";
 import User from "../models/User.js";
+import OTP from "../models/Otp.js";
 import { ApiResponse } from "../response/ApiResponse.js";
 import { generateToken } from "../utilities/GenerateToken.js";
+import sendMail from "../utilities/SendMail.js";
+import generateOtp from "../utilities/GenerateOtp.js";
 
 export const testingService = async () => {
   let responseType = "failed";
@@ -34,8 +37,12 @@ export const registerUserService = async (data) => {
     });
     const response = await user.save();
     return new ApiResponse(response, "User registered successfully", true);
-  } catch (err) {
-    throw new CustomError("Error registering user: " + err.message, 500);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
+
+    throw new CustomError("Error Registering User !!!", 500);
   }
 };
 
@@ -61,8 +68,12 @@ export const loginUserService = async (data) => {
       "Login successful",
       true
     );
-  } catch (err) {
-    throw new CustomError("Error logging in: " + err.message, 500);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
+
+    throw new CustomError("Error Login User !!!", 500);
   }
 };
 
@@ -70,22 +81,98 @@ export const sendOtpService = async (email) => {
   if (email == "") {
     throw new CustomError("fields must not be empty !!!", 401);
   }
-  // Logic for sending OTP goes here
+  try {
+    const otp = generateOtp(4);
+    const subject = "Your OTP Code";
+    const html = `
+    <p>Your OTP code is: <strong>${otp}</strong></p><br>
+    <button>Verify</button>
+    
+    `;
+
+    const ExistingOTP = await OTP.findOne({ email });
+    const EmailExists = await User.findOne({ email });
+    if (!EmailExists) {
+      throw new CustomError("Email not registered!", 404);
+    }
+
+    if (!ExistingOTP) {
+      await OTP.create({ email, otp });
+
+      await sendMail({
+        to: email,
+        subject,
+        html,
+      });
+      return `OTP sent successfully to ${email}`;
+    } else {
+      ExistingOTP.otp = otp;
+      ExistingOTP.save();
+      await sendMail({
+        to: email,
+        subject,
+        html,
+      });
+
+      return new ApiResponse([], `New OTP sent successfully to ${email}`, true);
+    }
+  } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
+
+    throw new CustomError("Error sendinfg OTP !!!", 500);
+  }
 };
 
 export const verifyOtpService = async (data) => {
-  if ((data.email && data.otp) == "") {
+  const { email, otp } = data;
+  if ((email && otp) == "") {
     throw new CustomError("fields must not be empty !!!", 401);
   }
-  // Logic for verifying OTP goes here
+  try {
+    const otpExists = await OTP.findOne({ email });
+    if (!otpExists) {
+      throw new CustomError("No OTP found for the Email !!", 401);
+    }
+
+    if (otpExists.otp !== otp) {
+      throw new CustomError("OTP is incorrect !!", 404);
+    } else {
+      await OTP.deleteOne({ email });
+      return new ApiResponse([], "OTP verified Successfully ...", true);
+    }
+  } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
+    throw new CustomError("Error verifying OTP !!! " + error.message, 500);
+  }
 };
 
 export const changePasswordService = async (data) => {
-  if ((data.email && data.password && data.confirmPassword) == "") {
+  const { email, password, confirmPassword } = data;
+  if ((email && password && confirmPassword) == "") {
     throw new CustomError("fields must not be empty !!!", 401);
   }
-  if (data.password !== data.confirmPassword) {
+  if (password !== confirmPassword) {
     throw new CustomError("Passwords are not same !!!", 401);
   }
-  // Logic for change password goes here
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new CustomError("User not found with this email!", 404);
+    }
+    // Set new password and save
+    user.password = data.password;
+    await user.save();
+    return new ApiResponse([], "Password changed successfully", true);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
+
+    throw new CustomError("Failed to change password !!!", 500);
+  }
 };
