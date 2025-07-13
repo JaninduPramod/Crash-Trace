@@ -35,10 +35,12 @@ fun SignUpScreen(navController: NavHostController) {
     // Use Koin's koinViewModel function for dependency injection
     val signUpViewModel: SignUpViewModel = koinViewModel()
 
-    var name by remember { mutableStateOf("") }
-    var nic by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val name by signUpViewModel.name.collectAsState()
+    val nic by signUpViewModel.nic.collectAsState()
+    val email by signUpViewModel.email.collectAsState()
+    val password by signUpViewModel.password.collectAsState()
+
+
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
 
@@ -91,7 +93,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Name Field
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { signUpViewModel.updateName(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.user_icon),
@@ -128,7 +130,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // NIC Field
                 OutlinedTextField(
                     value = nic,
-                    onValueChange = { nic = it },
+                    onValueChange = { signUpViewModel.updateNic(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.nic_nub_icon),
@@ -163,7 +165,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Email Field
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { signUpViewModel.updateEmail(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.email_icon),
@@ -205,7 +207,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Password Field
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { signUpViewModel.updatePassword(it) },
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.lock),
@@ -285,7 +287,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Sign Up Button
                 Button(
                     onClick = {
-                        signUpViewModel.submitSignUpData(name, nic, email, password)
+                        signUpViewModel.submitSignUpData()
                     },
                     modifier = Modifier
                         .fillMaxWidth()

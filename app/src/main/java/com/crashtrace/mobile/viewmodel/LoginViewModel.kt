@@ -2,33 +2,17 @@ package com.crashtrace.mobile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.crashtrace.mobile.data.repository.SignUpRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import com.crashtrace.mobile.data.repository.LoginRepository
 import kotlinx.coroutines.launch
-
-class SignUpViewModel(private val repository: SignUpRepository) : ViewModel() {
-
-    private val _name = MutableStateFlow("")
-    val name: StateFlow<String> get() = _name
-
-    private val _nic = MutableStateFlow("")
-    val nic: StateFlow<String> get() = _nic
+class LoginViewModel (private val repository: LoginRepository) : ViewModel(){
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> get() = _email
 
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> get() = _password
-
-
-    fun updateName(newName: String) {
-        _name.value = newName
-    }
-
-    fun updateNic(newNic: String) {
-        _nic.value = newNic
-    }
 
     fun updateEmail(newEmail: String) {
         _email.value = newEmail
@@ -38,9 +22,11 @@ class SignUpViewModel(private val repository: SignUpRepository) : ViewModel() {
         _password.value = newPassword
     }
 
-    fun submitSignUpData() {
+
+    fun executeUserLogin() {
         viewModelScope.launch {
-            repository.saveSignUpData(_name.value, _nic.value, _email.value, _password.value)
+            repository.userLogin(_email.value, _password.value)
         }
     }
+
 }
