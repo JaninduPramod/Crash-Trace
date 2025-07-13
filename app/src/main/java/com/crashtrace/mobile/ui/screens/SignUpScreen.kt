@@ -27,9 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.crashtrace.mobile.ui.components.AppBarSub
+import com.crashtrace.mobile.viewmodel.SignUpViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
+    // Use Koin's koinViewModel function for dependency injection
+    val signUpViewModel: SignUpViewModel = koinViewModel()
+
     var name by remember { mutableStateOf("") }
     var nic by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -79,7 +84,7 @@ fun SignUpScreen(navController: NavHostController) {
                         color = Color(0xFFFF2D2D),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        modifier = Modifier.clickable {  navController.navigate("signin") }
+                        modifier = Modifier.clickable { navController.navigate("signin") }
                     )
                 }
                 Spacer(modifier = Modifier.height(50.dp))
@@ -248,7 +253,7 @@ fun SignUpScreen(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(5.dp,5.dp,0.dp, 30.dp) // Move 10dp from left
+                        .padding(5.dp, 5.dp, 0.dp, 30.dp) // Move 10dp from left
                 ) {
                     Surface(
                         shape = RoundedCornerShape(10.dp), // 10dp border radius
@@ -279,7 +284,9 @@ fun SignUpScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(12.dp))
                 // Sign Up Button
                 Button(
-                    onClick = { /* TODO: Sign up logic */ },
+                    onClick = {
+                        signUpViewModel.submitSignUpData(name, nic, email, password)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -357,8 +364,6 @@ fun SignUpScreen(navController: NavHostController) {
         }
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
