@@ -27,8 +27,19 @@ class SignUpViewModel(private val repository: SignUpRepository) : ViewModel() {
     fun setPassword(value: String) { _password.value = value }
 
     fun submitSignUpData() {
-        viewModelScope.launch {
-            repository.saveSignUpData(_name.value, _nic.value, _email.value, _password.value)
+
+    viewModelScope.launch {
+        val response = repository.saveSignUpData(_name.value, _nic.value, _email.value, _password.value)
+        if(response?.success == true)
+        {
+
+            println(response?.data)
+
         }
+        else{
+            println(response?.message)
+        }
+
     }
+}
 }

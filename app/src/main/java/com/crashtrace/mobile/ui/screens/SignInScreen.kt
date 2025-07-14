@@ -92,7 +92,7 @@ fun SigningInScreen(navController: NavHostController) {
                 OutlinedTextField(
                     value = email,
                     onValueChange = {
-                        loginViewModel.updateEmail(it)
+                        loginViewModel.setEmail(it)
                     },
                     leadingIcon = {
                         Image(
@@ -136,7 +136,7 @@ fun SigningInScreen(navController: NavHostController) {
                 OutlinedTextField(
                     value = password,
                     onValueChange = {
-                        loginViewModel.updatePassword(it)
+                        loginViewModel.setPassword(it)
                     },
                     leadingIcon = {
                         Icon(
@@ -258,7 +258,7 @@ fun SigningInScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(20.dp))
                 // Google Sign Up Button
                 OutlinedButton(
-                    onClick = { /* TODO: Google sign up */ },
+                    onClick = { loginViewModel.getJwtToken() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

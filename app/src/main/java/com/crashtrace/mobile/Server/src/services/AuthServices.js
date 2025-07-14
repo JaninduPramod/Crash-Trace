@@ -48,17 +48,17 @@ export const registerUserService = async (data) => {
 
 export const loginUserService = async (data) => {
   if (!data.email || !data.password) {
-    throw new CustomError("fields must not be empty !!!", 401);
+    throw new CustomError("fields must not be empty !!!", 200);
   }
   try {
     const user = await User.findOne({ email: data.email });
     if (!user) {
-      throw new CustomError("Invalid email or password!", 401);
+      throw new CustomError("Invalid email or password!", 200);
     }
 
     const isMatch = await user.matchPassword(data.password);
     if (!isMatch) {
-      throw new CustomError("Invalid email or password!", 401);
+      throw new CustomError("Invalid email or password!", 200);
     }
     // Generate token
     const token = generateToken(user._id);
