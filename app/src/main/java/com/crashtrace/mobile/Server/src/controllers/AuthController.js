@@ -50,7 +50,7 @@ export const sendOtp = async (req, res, next) => {
   const { email } = req.body;
   try {
     const response = await sendOtpService(email);
-    res.status(200).json({ data: response });
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }
