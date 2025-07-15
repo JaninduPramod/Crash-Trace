@@ -62,9 +62,13 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.android.libraries.places:places:3.3.0")
     implementation("com.google.maps.android:maps-compose:4.1.0")
-
-
-
+    implementation("io.insert-koin:koin-android:3.4.0")
+    implementation("io.insert-koin:koin-core:3.4.0")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
 }
 
