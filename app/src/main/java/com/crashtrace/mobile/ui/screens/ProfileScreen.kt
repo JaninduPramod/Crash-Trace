@@ -249,9 +249,10 @@ fun ProfileScreen(navController: NavHostController) {
                             )
 
                             Spacer(modifier = Modifier.height(75.dp))
-                            Divider(
-                                color = Color(0xFFD0D0D0),
-                                modifier = Modifier.padding(20.dp, 0.dp, 10.dp, 0.dp)
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = 1.dp,
+                                color = Color.Gray
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Row(
@@ -289,8 +290,13 @@ fun ProfileScreen(navController: NavHostController) {
                 if (showLogoutDialog) {
                     com.crashtrace.mobile.ui.components.LogoutAlertBox(
                         onDelete = {
+
+
+                            navController.navigate("signin") {
+                                popUpTo(0) { inclusive = true }
+                            }
+
                             showLogoutDialog = false
-                            navController.navigate("signin")
                         },
                         onDismiss = { showLogoutDialog = false }
                     )

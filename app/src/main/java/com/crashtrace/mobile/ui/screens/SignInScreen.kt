@@ -1,5 +1,6 @@
 package com.crashtrace.mobile.ui.screens
 
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -35,8 +37,25 @@ fun SigningInScreen(navController: NavHostController) {
 
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
+    val success by loginViewModel.success.collectAsState()
+    val message by loginViewModel.message.collectAsState()
+
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
+
+
+    fun handleLogin() {
+        loginViewModel.executeUserLogin()
+    }
+
+
+    LaunchedEffect(success) {
+        if (success) {
+
+            navController.navigate("profile")
+        }
+
+    }
 
     Column(
         modifier = Modifier
@@ -226,7 +245,7 @@ fun SigningInScreen(navController: NavHostController) {
                 // Sign Up Button
                 Button(
                     onClick = {
-                        loginViewModel.executeUserLogin()
+                        handleLogin()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -285,7 +304,10 @@ fun SigningInScreen(navController: NavHostController) {
             }
         }
     }
+
+    
 }
+
 
 @Preview(showBackground = true)
 @Composable

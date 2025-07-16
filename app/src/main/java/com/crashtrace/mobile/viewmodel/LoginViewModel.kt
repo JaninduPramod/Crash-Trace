@@ -1,5 +1,6 @@
 package com.crashtrace.mobile.viewmodel
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,16 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> get() = _password
 
+    private val _success = MutableStateFlow(false)
+    val success: StateFlow<Boolean> get() = _success
+
+    private val _message = MutableStateFlow("")
+    val message: StateFlow<String> get() = _message
+
+
+
+
+
     fun setEmail(newEmail: String) {
         _email.value = newEmail
     }
@@ -29,19 +40,19 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
 
             val response = repository.userLogin(_email.value, _password.value)
 
-            if(response?.success == true)
-            {
+            if (response?.success == true) {
                 val jwtToken = response.data?.token ?: ""
                 val role = response.data?.role ?: ""
                 println("Role : "+role)
                 println("JWT : "+jwtToken)
 
-
                 dataStoreManager.saveUserData(jwtToken, role)
 
-            }
-            else{
+                _success.value = true
+            } else {
                 println(response?.message)
+
+                _success.value = false
             }
         }
     }
@@ -64,3 +75,4 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
     }
 
 }
+
