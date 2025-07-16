@@ -5,6 +5,7 @@ import {
   sendOtpService,
   verifyOtpService,
   changePasswordService,
+  getUserProfileService
 } from "../services/AuthServices.js";
 
 export const testing = async (req, res, next) => {
@@ -74,6 +75,17 @@ export const changePassword = async (req, res, next) => {
       password,
       confirmPassword,
     });
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserProfile = async (req, res, next) => {
+  try {
+    const _id = req.user.id; // Extract user ID from AuthMiddleware
+    console.log("id:", _id);
+    const response = await getUserProfileService(_id);
     res.status(200).json(response);
   } catch (error) {
     next(error);

@@ -1,11 +1,18 @@
 package com.crashtrace.mobile.viewmodel
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.crashtrace.mobile.data.repository.LoginRepository
 import com.crashtrace.mobile.data.Utils.DataStoreManager
+import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.LoginResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 class LoginViewModel (private val repository: LoginRepository,private val dataStoreManager: DataStoreManager) : ViewModel(){
 
@@ -14,6 +21,20 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
 
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> get() = _password
+
+    private val _success = MutableStateFlow(false)
+    val success: StateFlow<Boolean> get() = _success
+
+    private val _message = MutableStateFlow("")
+    val message: StateFlow<String> get() = _message
+
+
+
+    // function to reset success state
+    fun resetSuccessState() {
+        _success.value = false
+    }
+
 
     fun setEmail(newEmail: String) {
         _email.value = newEmail
@@ -24,26 +45,18 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
     }
 
 
-    fun executeUserLogin() {
-        viewModelScope.launch {
-
+    fun executeUserLogin(): Flow<ApiResponse<LoginResponse>?> {
+        return flow {
             val response = repository.userLogin(_email.value, _password.value)
-
-            if(response?.success == true)
-            {
+            if (response?.success == true) {
                 val jwtToken = response.data?.token ?: ""
                 val role = response.data?.role ?: ""
-                println("Role : "+role)
-                println("JWT : "+jwtToken)
-
-
                 dataStoreManager.saveUserData(jwtToken, role)
-
+                _email.value = ""
+                _password.value = ""
             }
-            else{
-                println(response?.message)
-            }
-        }
+            emit(response)
+        }.flowOn(Dispatchers.IO)
     }
 
 
@@ -62,5 +75,5 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
             dataStoreManager.removeJwtToken()
         }
     }
-
 }
+

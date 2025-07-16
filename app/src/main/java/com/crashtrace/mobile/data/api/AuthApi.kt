@@ -9,8 +9,11 @@ import com.crashtrace.mobile.data.entity.ApiResponse
 import com.crashtrace.mobile.data.entity.EmailVerificationResponse
 import com.crashtrace.mobile.data.entity.OtpVerificationRequest
 import com.crashtrace.mobile.data.entity.ResetPasswordRequest
+import com.crashtrace.mobile.data.entity.UserProfile
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthApi {
@@ -28,5 +31,8 @@ interface AuthApi {
 
     @POST("/api/auth/newPassword")
     suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<ApiResponse<EmailVerificationResponse>>
+
+    @GET("/api/auth/userProfile")
+    suspend fun getUserProfile(@Header("Authorization") token: String): Response<ApiResponse<UserProfile>>
 
 }

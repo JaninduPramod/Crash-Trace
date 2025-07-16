@@ -42,3 +42,10 @@ data class ResetPasswordRequest(
     val password: String,
     val confirmPassword: String
 )
+
+data class UserProfile(
+    val name: String,
+    val nic: String,
+    val email: String,
+    val role: String
+)

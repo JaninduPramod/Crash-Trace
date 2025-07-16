@@ -13,9 +13,9 @@ export const verifyToken = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("Decoded token:", decoded.id);
+      
 
-      req.user = await User.findById(decoded.id).select("-password");
+      req.user = decoded;
 
       if (!req.user) {
         throw new CustomError("User not found", 404);
@@ -25,9 +25,7 @@ export const verifyToken = async (req, res, next) => {
     } catch (error) {
       throw new CustomError("Not authorized, token failed", 401);
     }
-  }
-
-  if (!token) {
+  } else {
     throw new CustomError("Not authorized, no token", 401);
   }
 };

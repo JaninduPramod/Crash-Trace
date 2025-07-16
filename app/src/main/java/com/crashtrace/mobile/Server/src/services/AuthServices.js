@@ -176,3 +176,18 @@ export const changePasswordService = async (data) => {
     throw new CustomError("Failed to change password !!!", 500);
   }
 };
+
+export const getUserProfileService = async (_id) => {
+  try {
+    const user = await User.findById(_id).select("-password -createdAt -__v -_id"); 
+    if (!user) {
+      throw new CustomError("User not found", 200);
+    }
+    return new ApiResponse(user, "User profile fetched successfully", true);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      throw error;
+    }
+    throw new CustomError("Failed to fetch user profile", 500);
+  }
+};
