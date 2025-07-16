@@ -75,6 +75,5 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
             dataStoreManager.removeJwtToken()
         }
     }
-
 }
 
