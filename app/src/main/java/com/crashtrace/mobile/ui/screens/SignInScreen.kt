@@ -1,6 +1,7 @@
 package com.crashtrace.mobile.ui.screens
 
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +31,7 @@ import androidx.navigation.NavHostController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarSub
 import com.crashtrace.mobile.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -37,25 +40,29 @@ fun SigningInScreen(navController: NavHostController) {
 
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
-    val success by loginViewModel.success.collectAsState()
-    val message by loginViewModel.message.collectAsState()
+
 
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
 
     fun handleLogin() {
-        loginViewModel.executeUserLogin()
-    }
-
-
-    LaunchedEffect(success) {
-        if (success) {
-
-            navController.navigate("profile")
+        coroutineScope.launch {
+            loginViewModel.executeUserLogin().collect { response ->
+                if (response?.success == true) {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    navController.navigate("profile") {
+                        popUpTo("signin") { inclusive = true }
+                    }
+                } else {
+                    Toast.makeText(context, response?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
-
     }
+
 
     Column(
         modifier = Modifier

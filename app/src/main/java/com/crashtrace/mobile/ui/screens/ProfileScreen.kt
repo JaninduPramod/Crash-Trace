@@ -22,7 +22,7 @@ import com.crashtrace.mobile.R
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 
-// ✅ AppBarSub Composable with working back button
+
 @Composable
 fun AppBarSub(
     title: String,
@@ -142,6 +142,8 @@ fun getMockUserProfile(): UserProfile {
 fun ProfileScreen(navController: NavHostController) {
     val user = getMockUserProfile()
     var showLogoutDialog by remember { mutableStateOf(false) }
+
+
 
     Box(
         modifier = Modifier
@@ -289,15 +291,7 @@ fun ProfileScreen(navController: NavHostController) {
 
                 if (showLogoutDialog) {
                     com.crashtrace.mobile.ui.components.LogoutAlertBox(
-                        onDelete = {
-
-
-                            navController.navigate("signin") {
-                                popUpTo(0) { inclusive = true }
-                            }
-
-                            showLogoutDialog = false
-                        },
+                        navController = navController,
                         onDismiss = { showLogoutDialog = false }
                     )
                 }

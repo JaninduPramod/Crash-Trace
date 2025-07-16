@@ -1,39 +1,60 @@
 package com.crashtrace.mobile.ui.components
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
 import com.crashtrace.mobile.R
-import com.crashtrace.mobile.ui.screens.ResetScreen
+import com.crashtrace.mobile.viewmodel.LoginViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LogoutAlertBox(
-    onDelete: () -> Unit,
+    navController: NavHostController,
     onDismiss: () -> Unit
 ) {
-    // Cover the whole page, including AppBarSub, with dark overlay
+    val context = LocalContext.current
+    val loginViewModel: LoginViewModel = koinViewModel()
+
+    fun clearJwtToken(context: Context) {
+        // Example with Toast for visual feedback
+        Toast.makeText(context, "JWT token cleared", Toast.LENGTH_SHORT).show()
+
+        loginViewModel.removeJwtToken()
+    }
+
+
+    fun handleLogout() {
+        // 🧹 Replace with your JWT/token clearing logic
+        clearJwtToken(context)
+
+        // ✅ Navigate to signin screen
+        navController.navigate("signin") {
+            popUpTo(0) { inclusive = true }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0x99000000)), // semi-transparent background
+            .background(Color(0x99000000)),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -43,7 +64,6 @@ fun LogoutAlertBox(
                 .background(Color.White, shape = RoundedCornerShape(24.dp))
                 .padding(15.dp)
         ) {
-            // Close button (top right)
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -59,10 +79,10 @@ fun LogoutAlertBox(
                     modifier = Modifier.size(35.dp)
                 )
             }
+
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 0.dp, bottom = 0.dp),
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -82,7 +102,7 @@ fun LogoutAlertBox(
                     modifier = Modifier.padding(bottom = 15.dp)
                 )
                 Button(
-                    onClick = onDelete,
+                    onClick = { handleLogout() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -101,19 +121,5 @@ fun LogoutAlertBox(
     }
 }
 
-@Composable
-fun LogoutAlertBoxPreview() {
-    LogoutAlertBox(
-        onDelete = {},
-        onDismiss = {}
-    )
-}
+// ✅ Replace this with your real implementation (e.g. SharedPreferences or DataStore)
 
-@Preview(showBackground = true)
-@Composable
-fun LogoutAlertBoxPreview2() {
-    LogoutAlertBox(
-        onDelete = {},
-        onDismiss = {}
-    )
-}

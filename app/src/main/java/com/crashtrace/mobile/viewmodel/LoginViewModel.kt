@@ -7,6 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.crashtrace.mobile.data.repository.LoginRepository
 import com.crashtrace.mobile.data.Utils.DataStoreManager
+import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.LoginResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 class LoginViewModel (private val repository: LoginRepository,private val dataStoreManager: DataStoreManager) : ViewModel(){
 
@@ -24,6 +30,10 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
 
 
 
+    // function to reset success state
+    fun resetSuccessState() {
+        _success.value = false
+    }
 
 
     fun setEmail(newEmail: String) {
@@ -35,26 +45,18 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
     }
 
 
-    fun executeUserLogin() {
-        viewModelScope.launch {
-
+    fun executeUserLogin(): Flow<ApiResponse<LoginResponse>?> {
+        return flow {
             val response = repository.userLogin(_email.value, _password.value)
-
             if (response?.success == true) {
                 val jwtToken = response.data?.token ?: ""
                 val role = response.data?.role ?: ""
-                println("Role : "+role)
-                println("JWT : "+jwtToken)
-
                 dataStoreManager.saveUserData(jwtToken, role)
-
-                _success.value = true
-            } else {
-                println(response?.message)
-
-                _success.value = false
+                _email.value = ""
+                _password.value = ""
             }
-        }
+            emit(response)
+        }.flowOn(Dispatchers.IO)
     }
 
 
