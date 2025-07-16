@@ -30,12 +30,14 @@ import androidx.navigation.NavHostController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarSub
 import com.crashtrace.mobile.viewmodel.LoginViewModel
+import com.crashtrace.mobile.viewmodel.ProfileViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SigningInScreen(navController: NavHostController) {
     val loginViewModel: LoginViewModel = koinViewModel()
+    val profileViewModel: ProfileViewModel = koinViewModel()
 
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
@@ -52,6 +54,7 @@ fun SigningInScreen(navController: NavHostController) {
             loginViewModel.executeUserLogin().collect { response ->
                 if (response?.success == true) {
                     Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    profileViewModel.executeUserProfile()
                     navController.navigate("profile") {
                         popUpTo("signin") { inclusive = true }
                     }

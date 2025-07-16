@@ -21,6 +21,9 @@ import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
+import com.crashtrace.mobile.viewmodel.ProfileViewModel
+import com.crashtrace.mobile.viewmodel.SignUpViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -117,6 +120,7 @@ fun AppBarSub(
     }
 }
 
+
 // ✅ Mock data
 data class UserProfile(
     val userName: String,
@@ -140,10 +144,15 @@ fun getMockUserProfile(): UserProfile {
 
 @Composable
 fun ProfileScreen(navController: NavHostController) {
+
     val user = getMockUserProfile()
     var showLogoutDialog by remember { mutableStateOf(false) }
 
-
+    val profileViewModel: ProfileViewModel = koinViewModel()
+    val name by profileViewModel.name.collectAsState()
+    val nic by profileViewModel.nic.collectAsState()
+    val email by profileViewModel.email.collectAsState()
+    val role by profileViewModel.role.collectAsState()
 
     Box(
         modifier = Modifier
@@ -201,13 +210,13 @@ fun ProfileScreen(navController: NavHostController) {
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Column {
                                     Text(
-                                        text = user.userNick,
+                                        text = name,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 18.sp,
                                         color = Color(0xFF222222)
                                     )
                                     Text(
-                                        text = user.userEmail,
+                                        text = email,
                                         color = Color(0xFF888888),
                                         fontSize = 14.sp
                                     )
@@ -217,21 +226,21 @@ fun ProfileScreen(navController: NavHostController) {
                             ProfileInfoItem(
                                 icon = R.drawable.user_icon,
                                 label = "Name:",
-                                value = user.userName,
+                                value = name,
                                 onClick = null,
                                 backgroundColor = Color(0xFFEAEAEA)
                             )
                             ProfileInfoItem(
                                 icon = R.drawable.email_icon,
                                 label = "Email:",
-                                value = user.userEmail,
+                                value = email,
                                 onClick = null,
                                 backgroundColor = Color(0xFFEAEAEA)
                             )
                             ProfileInfoItem(
                                 icon = R.drawable.nic_nub_icon,
                                 label = "NIC no:",
-                                value = user.userNIC,
+                                value = nic,
                                 onClick = null,
                                 backgroundColor = Color(0xFFEAEAEA)
                             )
@@ -251,6 +260,13 @@ fun ProfileScreen(navController: NavHostController) {
                             )
 
                             Spacer(modifier = Modifier.height(75.dp))
+
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            thickness = 1.dp,
+                            color = Color.Gray
+                        )
                             HorizontalDivider(
                                 modifier = Modifier.fillMaxWidth(),
                                 thickness = 1.dp,
