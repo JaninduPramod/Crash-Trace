@@ -46,9 +46,7 @@ fun LogoutAlertBox(
         clearJwtToken(context)
 
         // ✅ Navigate to signin screen
-        navController.navigate("signin") {
-            popUpTo(0) { inclusive = true }
-        }
+        navController.navigate("signin")
     }
 
     Box(

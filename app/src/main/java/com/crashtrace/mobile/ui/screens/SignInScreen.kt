@@ -55,9 +55,7 @@ fun SigningInScreen(navController: NavHostController) {
                 if (response?.success == true) {
                     Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
                     profileViewModel.executeUserProfile()
-                    navController.navigate("profile") {
-                        popUpTo("signin") { inclusive = true }
-                    }
+                    navController.navigate("home")
                 } else {
                     Toast.makeText(context, response?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
                 }
