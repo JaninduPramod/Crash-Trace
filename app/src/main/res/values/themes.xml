@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<!--    <style name="Theme.Crash_Trace" parent="android:Theme.Material.Light.NoActionBar" />-->
+    <style name="Theme.MySplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/red2</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_gif2</item>
+        <item name="postSplashScreenTheme">@style/Theme.Crash_Trace</item>
+    </style>
+
     <style name="Theme.Crash_Trace" parent="android:Theme.Material.Light.NoActionBar">
 
         <item name="android:colorControlActivated">#FF1500</item>
@@ -11,3 +16,5 @@
     
 
 </resources>
+
+<!--    0B0101-->

@@ -3,6 +3,7 @@ package com.crashtrace.mobile.ui.screens
 import android.location.Geocoder
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -194,6 +195,7 @@ suspend fun safeGeocodeLocation(context: android.content.Context, query: String)
 @Composable
 fun NewsDraftScreen(navController: NavHostController) {
     var vehicleNumber by remember { mutableStateOf("") }
+    var location_code by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -260,37 +262,47 @@ fun NewsDraftScreen(navController: NavHostController) {
                         }
 
                         Text("Confirm News information", fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 16.dp))
-                        CustomInputField("Vehicle Number", vehicleNumber) { vehicleNumber = it }
+                        CustomInputField("Vehicle Number", vehicleNumber, height = 60.dp) { vehicleNumber = it }
 
-                        Text("Location", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 4.dp))
+
+
+                        CustomInputField("Description", description, height = 90.dp) { description = it }
+
+
+                        CustomInputField("Location", location, height = 60.dp) { location = it }
+
+                        Text("Pick Location", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 4.dp))
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp)
+                                .height(46.dp)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(Color(0xFFF8F8F8))
+                                .border(
+                                    width = 1.dp,
+                                    color = Color.LightGray,
+                                    shape = RoundedCornerShape(15.dp) // match the clip shape
+                                )
                                 .clickable { showLocationDialog = true }
                                 .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.CenterStart
                         ) {
                             Text(
-                                text = if (location.isNotEmpty()) location else "Tap to pick location",
-                                color = if (location.isNotEmpty()) Color.Black else Color.Gray,
+                                text = if (location_code.isNotEmpty()) location_code else "Tap to pick location",
+                                color = if (location_code.isNotEmpty()) Color.Black else Color.Gray,
                                 fontSize = 14.sp
                             )
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
-                        CustomInputField("Description", description, height = 90.dp) { description = it }
 
                         DateInputField(
                             date = date,
                             onClick = { showDatePicker = true },
-                            modifier = Modifier.height(10.dp)
+                            modifier = Modifier
+
+
                         )
-                        CustomInputField("Description", description, height = 90.dp) { description = it }
-
-
 
                     }
                 }
@@ -300,7 +312,7 @@ fun NewsDraftScreen(navController: NavHostController) {
                     onClick = { },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp)
+                        .padding(top = 8.dp)
                         .height(52.dp),
                     shape = RoundedCornerShape(15.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF0000))
@@ -354,33 +366,56 @@ fun CustomInputField(label: String, value: String, height: Dp = 60.dp, onValueCh
 }
 
 @Composable
-fun DateInputField(date: String, onClick: () -> Unit, modifier: Modifier) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
-            .height(60.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(Color(0xFFF8F8F8))
-            .clickable { onClick() },
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Row(
+fun DateInputField(
+    date: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = "Date",
+            fontSize = 12.sp,
+            color = Color.Gray,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(start = 4.dp, bottom = 4.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(44.dp)
+                .clip(RoundedCornerShape(15.dp))
+                .border(
+                    width = 1.dp,
+                    color = Color.LightGray,
+                    shape = RoundedCornerShape(15.dp)
+                )
+                .background(Color(0xFFF8F8F8))
+                .clickable { onClick() },
+            contentAlignment = Alignment.CenterStart
         ) {
-            Text(
-                text = if (date.isNotEmpty()) date else "Select Date",
-                color = if (date.isNotEmpty()) Color.Black else Color.Gray,
-                fontSize = 14.sp
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(Icons.Default.ArrowDropDown, contentDescription = "Select Date", tint = Color.Gray)
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (date.isNotEmpty()) date else "Select Date",
+                    color = if (date.isNotEmpty()) Color.Black else Color.Gray,
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Select Date",
+                    tint = Color.Gray
+                )
+            }
         }
     }
 }
+
 
 @Composable
 fun DatePickerBottomSheet(

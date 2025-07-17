@@ -41,7 +41,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.compose.material:material-icons-extended:<version>")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -58,10 +58,16 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.google.maps.android:maps-compose:2.11.4")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.android.libraries.places:places:3.3.0")
     implementation("com.google.maps.android:maps-compose:4.1.0")
+
+    implementation("androidx.compose.material:material-icons-extended:<version>")
+
+
+
     implementation("io.insert-koin:koin-android:3.4.0")
     implementation("io.insert-koin:koin-core:3.4.0")
     implementation("io.insert-koin:koin-androidx-compose:3.4.0")
@@ -69,6 +75,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
 
 }
 
