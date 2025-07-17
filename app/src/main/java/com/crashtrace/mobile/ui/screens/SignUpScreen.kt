@@ -27,13 +27,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.crashtrace.mobile.ui.components.AppBarSub
+import com.crashtrace.mobile.viewmodel.SignUpViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
-    var name by remember { mutableStateOf("") }
-    var nic by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    // Use Koin's koinViewModel function for dependency injection
+    val signUpViewModel: SignUpViewModel = koinViewModel()
+
+    val name by signUpViewModel.name.collectAsState()
+    val nic by signUpViewModel.nic.collectAsState()
+    val email by signUpViewModel.email.collectAsState()
+    val password by signUpViewModel.password.collectAsState()
+
+
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
 
@@ -79,14 +86,14 @@ fun SignUpScreen(navController: NavHostController) {
                         color = Color(0xFFFF2D2D),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                        modifier = Modifier.clickable {  navController.navigate("signin") }
+                        modifier = Modifier.clickable { navController.navigate("signin") }
                     )
                 }
                 Spacer(modifier = Modifier.height(50.dp))
                 // Name Field
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { signUpViewModel.setName(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.user_icon),
@@ -123,7 +130,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // NIC Field
                 OutlinedTextField(
                     value = nic,
-                    onValueChange = { nic = it },
+                    onValueChange = { signUpViewModel.setNIC(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.nic_nub_icon),
@@ -158,7 +165,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Email Field
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { signUpViewModel.setEmail(it) },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.email_icon),
@@ -200,7 +207,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Password Field
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { signUpViewModel.setPassword(it) },
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = com.crashtrace.mobile.R.drawable.lock),
@@ -248,7 +255,7 @@ fun SignUpScreen(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(5.dp,5.dp,0.dp, 30.dp) // Move 10dp from left
+                        .padding(5.dp, 5.dp, 0.dp, 30.dp) // Move 10dp from left
                 ) {
                     Surface(
                         shape = RoundedCornerShape(10.dp), // 10dp border radius
@@ -279,7 +286,9 @@ fun SignUpScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(12.dp))
                 // Sign Up Button
                 Button(
-                    onClick = { /* TODO: Sign up logic */ },
+                    onClick = {
+                        signUpViewModel.submitSignUpData()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -357,8 +366,6 @@ fun SignUpScreen(navController: NavHostController) {
         }
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
