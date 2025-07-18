@@ -1,24 +1,17 @@
 package com.crashtrace.mobile.ui.screens
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
+import com.crashtrace.mobile.viewmodel.PasswordResetViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,14 +19,36 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.ui.components.AppBarSub
 import androidx.compose.ui.tooling.preview.Preview
-import com.crashtrace.mobile.R
+import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun OtpCodeScreen(navController: NavHostController) {
+    val passwordResetViewModel: PasswordResetViewModel = koinViewModel()
     var otp1 by remember { mutableStateOf("") }
     var otp2 by remember { mutableStateOf("") }
     var otp3 by remember { mutableStateOf("") }
     var otp4 by remember { mutableStateOf("") }
+
+    val otpSuccess by passwordResetViewModel.otpSuccess.collectAsState()
+
+    
+    // function to handle submission of OTP code
+    fun onChangeEmailClick() {
+        passwordResetViewModel.resetState()
+        navController.navigate("reset")
+    }
+
+    fun handleOtpSubmission() {
+        val otp = otp1 + otp2 + otp3 + otp4 // Combine the OTP inputs
+        passwordResetViewModel.submitOtpCode(otp) // Call ViewModel function
+    }
+
+    LaunchedEffect(otpSuccess) {
+        if (otpSuccess) {
+            navController.navigate("newPassword")
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -73,7 +88,7 @@ fun OtpCodeScreen(navController: NavHostController) {
                         text = "Change EMAIL",
                         color = Color(0xFFFF2D2D),
                         fontSize = 15.sp,
-                        modifier = Modifier.clickable  { navController.navigate("reset") }
+                        modifier = Modifier.clickable  { onChangeEmailClick()}
                     )
                 }
 
@@ -179,7 +194,9 @@ fun OtpCodeScreen(navController: NavHostController) {
 
                 // Submit Button
                 Button(
-                    onClick = { navController.navigate("newPassword")  },
+                    onClick = {
+                        handleOtpSubmission();
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -198,7 +215,7 @@ fun OtpCodeScreen(navController: NavHostController) {
 
                 // Resend OTP Button
                 OutlinedButton(
-                    onClick = { /* TODO: Resend OTP logic */ },
+                    onClick = { passwordResetViewModel.executeResetSendOtp() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

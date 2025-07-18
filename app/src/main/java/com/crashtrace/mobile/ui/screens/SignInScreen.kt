@@ -1,6 +1,7 @@
 package com.crashtrace.mobile.ui.screens
 
-import android.content.pm.SigningInfo
+
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,28 +17,54 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarSub
+import com.crashtrace.mobile.viewmodel.LoginViewModel
+import com.crashtrace.mobile.viewmodel.ProfileViewModel
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SigningInScreen(navController: NavHostController) {
+    val loginViewModel: LoginViewModel = koinViewModel()
+    val profileViewModel: ProfileViewModel = koinViewModel()
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val email by loginViewModel.email.collectAsState()
+    val password by loginViewModel.password.collectAsState()
+
+
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+
+    fun handleLogin() {
+        coroutineScope.launch {
+            loginViewModel.executeUserLogin().collect { response ->
+                if (response?.success == true) {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    profileViewModel.executeUserProfile()
+                    navController.navigate("profile") {
+                        popUpTo("signin") { inclusive = true }
+                    }
+                } else {
+                    Toast.makeText(context, response?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -57,7 +84,6 @@ fun SigningInScreen(navController: NavHostController) {
                     .padding(horizontal = 16.dp, vertical = 0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-//                Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     text = "Sign in to\nyour account",
                     fontWeight = FontWeight.Bold,
@@ -87,10 +113,15 @@ fun SigningInScreen(navController: NavHostController) {
                 }
                 Spacer(modifier = Modifier.height(50.dp))
 
+                // Debugging
+                println("Email: $email, Password: $password")
+
                 // Email Field
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = {
+                        loginViewModel.setEmail(it)
+                    },
                     leadingIcon = {
                         Image(
                             painter = painterResource(id = R.drawable.email_icon),
@@ -116,8 +147,8 @@ fun SigningInScreen(navController: NavHostController) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(28.dp), // Slightly larger placeholder area
-                            contentAlignment = Alignment.BottomStart // Place text at the bottom
+                                .height(28.dp),
+                            contentAlignment = Alignment.BottomStart
                         ) {
                             Text(
                                 text = "Enter your email",
@@ -132,7 +163,9 @@ fun SigningInScreen(navController: NavHostController) {
                 // Password Field
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = {
+                        loginViewModel.setPassword(it)
+                    },
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.lock),
@@ -161,7 +194,7 @@ fun SigningInScreen(navController: NavHostController) {
                             Icon(
                                 imageVector = icon,
                                 contentDescription = "Toggle Password Visibility",
-                                tint = Color(0xFFCACACA) // Changed eye icon color
+                                tint = Color(0xFFCACACA)
                             )
                         }
                     },
@@ -213,14 +246,16 @@ fun SigningInScreen(navController: NavHostController) {
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier
-                            .clickable {  navController.navigate("reset")  }
+                            .clickable { navController.navigate("reset") }
                             .padding(end = 4.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(230.dp))
                 // Sign Up Button
                 Button(
-                    onClick = { navController.navigate("home") },
+                    onClick = {
+                        handleLogin()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -240,25 +275,25 @@ fun SigningInScreen(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Divider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
+                    HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
                     Text(
                         text = "  or sign up with  ",
                         color = Color(0xFF888888),
                         fontSize = 14.sp
                     )
-                    Divider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
+                    HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 // Google Sign Up Button
                 OutlinedButton(
-                    onClick = { /* TODO: Google sign up */ },
+                    onClick = { loginViewModel.getJwtToken() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
                     shape = RoundedCornerShape(15.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color.White, // CORRECTED: Use containerColor for M3
-                        contentColor = Color(0xFF222222) // Optional: If you want to ensure text/icon color contrasts
+                        containerColor = Color.White,
+                        contentColor = Color(0xFF222222)
                     ),
                     border = BorderStroke(1.dp, Color(0xFFCACACA))
                 ) {
@@ -275,15 +310,16 @@ fun SigningInScreen(navController: NavHostController) {
                     )
                 }
                 Spacer(modifier = Modifier.height(40.dp))
-
             }
         }
     }
+
+    
 }
+
 
 @Preview(showBackground = true)
 @Composable
 fun SigningInfoPreview() {
-    // Use rememberNavController() directly, no need for remember { ... }
     SigningInScreen(navController = androidx.navigation.compose.rememberNavController())
 }
