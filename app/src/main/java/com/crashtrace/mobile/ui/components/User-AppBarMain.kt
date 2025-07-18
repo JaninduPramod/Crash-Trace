@@ -44,7 +44,7 @@ fun AppBarMain(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFF2D2D))
+                .background(Color(0xFFEB0404))
         ){
             // Transparent background image over red
             Image(
