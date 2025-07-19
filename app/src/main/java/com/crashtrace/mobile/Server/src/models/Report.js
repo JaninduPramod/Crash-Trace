@@ -9,6 +9,7 @@ const reportSchema = new mongoose.Schema(
       lat: { type: Number, required: true },
       lng: { type: Number, required: true },
     },
+    address: { type: String },
     reporterId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     date: { type: Date, required: true },
     isApproved: { type: Boolean, default: false },
