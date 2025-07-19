@@ -1,6 +1,7 @@
 package com.crashtrace.mobile.ui.screens
 
 import android.location.Geocoder
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,13 +34,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
+import com.crashtrace.mobile.viewmodel.ReportViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.koinViewModel
 import java.util.*
 
 @Composable
@@ -159,7 +163,10 @@ fun LocationPickerDialog(
 
                     Button(
                         onClick = {
-                            selectedLatLng?.let { onLocationSelected(it) }
+                            selectedLatLng?.let {
+                                onLocationSelected(it)
+                                onDismissRequest() // Close the map dialog
+                            }
                         },
                         enabled = selectedLatLng != null,
                         modifier = Modifier
@@ -194,11 +201,38 @@ suspend fun safeGeocodeLocation(context: android.content.Context, query: String)
 
 @Composable
 fun NewsDraftScreen(navController: NavHostController) {
-    var vehicleNumber by remember { mutableStateOf("") }
+
+    val reportViewModel: ReportViewModel = koinViewModel()
+    val vehicleNumber by reportViewModel.vehicleNumber.collectAsState()
+    val description by reportViewModel.description.collectAsState()
+    val date by reportViewModel.date.collectAsState()
+    val address by reportViewModel.address.collectAsState()
+
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     var location_code by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
+
+    fun handleSubmit(){
+        coroutineScope.launch {
+            reportViewModel.submitReport().collect { response ->
+                if (response?.success == true) {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+
+                    navController.navigate("home")
+                } else {
+                    Toast.makeText(context, response?.message ?: "Submit Report Failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+
+    // Update the ViewModel's location state whenever location_code changes
+    LaunchedEffect(location_code) {
+        reportViewModel.setLocation(location_code)
+    }
+
     var loadProfile by remember { mutableStateOf(false) }
     var showLocationDialog by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -262,14 +296,14 @@ fun NewsDraftScreen(navController: NavHostController) {
                         }
 
                         Text("Confirm News information", fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 16.dp))
-                        CustomInputField("Vehicle Number", vehicleNumber, height = 60.dp) { vehicleNumber = it }
+                        CustomInputField("Vehicle Number", vehicleNumber, height = 60.dp) { reportViewModel.setVehicleNumber(it) }
 
 
 
-                        CustomInputField("Description", description, height = 90.dp) { description = it }
+                        CustomInputField("Description", description, height = 90.dp) { reportViewModel.setDescription(it) }
 
 
-                        CustomInputField("Location", location, height = 60.dp) { location = it }
+                        CustomInputField("Address", address, height = 60.dp) { reportViewModel.setAddress(it) }
 
                         Text("Pick Location", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 4.dp))
                         Box(
@@ -309,7 +343,7 @@ fun NewsDraftScreen(navController: NavHostController) {
 
 
                 Button(
-                    onClick = { },
+                    onClick = {handleSubmit()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
@@ -326,9 +360,8 @@ fun NewsDraftScreen(navController: NavHostController) {
     if (showLocationDialog) {
         LocationPickerDialog(
             onDismissRequest = { showLocationDialog = false },
-            onLocationSelected = {
-                location = "${it.latitude}, ${it.longitude}"
-                showLocationDialog = false
+            onLocationSelected = { latLng ->
+                location_code = "${latLng.latitude},${latLng.longitude}"
             }
         )
     }
@@ -337,7 +370,7 @@ fun NewsDraftScreen(navController: NavHostController) {
         DatePickerBottomSheet(
             onDismissRequest = { showDatePicker = false },
             onDateSelected = {
-                date = it
+                reportViewModel.setDate(it)
                 showDatePicker = false
             }
         )
