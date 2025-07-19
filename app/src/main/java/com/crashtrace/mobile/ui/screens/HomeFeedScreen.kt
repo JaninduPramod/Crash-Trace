@@ -38,6 +38,8 @@ fun HomeFeedScreen(navController: NavHostController) {
     if (loadProfile) {
         navController.navigate("profile")
         loadProfile = false
+
+
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -50,7 +52,9 @@ fun HomeFeedScreen(navController: NavHostController) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // ✅ Main content
+
+
+
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -70,83 +74,80 @@ fun HomeFeedScreen(navController: NavHostController) {
 
             {
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(280.dp)
-                        .background(Color(0xFFEB0404))
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.red_back),
-                        contentDescription = "Background Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 24.dp)
-                            .offset(y = (-65).dp),
-                        verticalArrangement = Arrangement.Center
-                    )
-                    {
-                        Text(
-                            text = "Bringing the World to Your Screen",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
+                            .fillMaxWidth()
+                            .height(280.dp)
+                            .background(Color(0xFFEB0404))
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.red_back),
+                            contentDescription = "Background Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
                         )
-                        Text(
-                            text = "DAILY NEWS",
-                            color = Color.White,
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Button(
-                            onClick = { },
+                        Column(
                             modifier = Modifier
-                                .width(200.dp)
-                                .height(48.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White,
-                                contentColor = Color(0xFFED0000)
-                            ),
-                            shape = RoundedCornerShape(14.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
+                                .fillMaxSize()
+                                .padding(horizontal = 24.dp)
+                                .offset(y = (-65).dp),
+                            verticalArrangement = Arrangement.Center
+                        )
+                        {
+                            Text(
+                                text = "Bringing the World to Your Screen",
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = "DAILY NEWS",
+                                color = Color.White,
+                                fontSize = 32.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Button(
+                                onClick = { navController.navigate("mainScreen/1") },
+                                modifier = Modifier
+                                    .width(200.dp)
+                                    .height(48.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.White,
+                                    contentColor = Color(0xFFED0000)
+                                ),
+                                shape = RoundedCornerShape(14.dp)
                             ) {
-                                Text(
-                                    text = "NEWS",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Image(
-                                    painter = painterResource(id = R.drawable.arrow_right),
-                                    contentDescription = "Arrow",
-                                    modifier = Modifier.size(20.dp),
-                                    colorFilter = ColorFilter.tint(Color.Red)
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "NEWS",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Image(
+                                        painter = painterResource(id = R.drawable.arrow_right),
+                                        contentDescription = "Arrow",
+                                        modifier = Modifier.size(20.dp),
+                                        colorFilter = ColorFilter.tint(Color.Red)
+                                    )
+                                }
                             }
                         }
                     }
-                }
-
-
-                Spacer(modifier = Modifier.height(36.dp))
-
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .offset(y = (-120).dp),
+                        .offset(y = (-90).dp),
                 ) {
                     AnalysisCard()
                     Spacer(modifier = Modifier.height(24.dp))
                     CrashTraceOptionsCard()
-                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Spacer(modifier = Modifier.height(0.dp))
                 }
             }
         }
@@ -167,8 +168,9 @@ fun AnalysisCard() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(12.dp)
+
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "ANALYSIS",
                 fontSize = 24.sp,
@@ -177,7 +179,7 @@ fun AnalysisCard() {
                 modifier = Modifier.padding(start = 8.dp)
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Main News Card
             Card(
@@ -366,7 +368,7 @@ fun CrashTraceOptionsCard() {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(350.dp)
+            .height(365.dp)
             .shadow(15.dp, RoundedCornerShape(18.dp), ambientColor = Color.Black.copy(alpha = 0.2f)),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -375,6 +377,7 @@ fun CrashTraceOptionsCard() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp)
+
         ) {
             Text(
                 text = "Crash Trace Options",

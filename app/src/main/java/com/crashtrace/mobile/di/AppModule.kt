@@ -13,6 +13,9 @@ import com.crashtrace.mobile.viewmodel.ProfileViewModel
 import com.crashtrace.mobile.viewmodel.ReportViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
 
 val appModule = module {
     // Provide DataStoreManager
@@ -30,5 +33,9 @@ val appModule = module {
     single { SignUpViewModel(get()) } // Inject repository
     single { PasswordResetViewModel(get()) } // Inject repository
     single { ProfileViewModel(get(), get()) } // Inject repository and DataStoreManager
+
+    viewModel { NewsGalleryViewModel() }
+
     single { ReportViewModel(get(),get()) } // Uncomment if you have a ReportViewModel
+
 }

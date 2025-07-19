@@ -6,11 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -20,13 +16,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
 import com.crashtrace.mobile.ui.components.CardItem
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NewsGalleryScreen(
@@ -34,23 +32,27 @@ fun NewsGalleryScreen(
     selectedIndex: Int = 1
 ) {
 
+    val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
+
+
+    val newsList by newsGalleryViewModel.newsList.collectAsState()
+
+
     var loadProfile by remember { mutableStateOf(false) }
+    var backToFeed by remember { mutableStateOf(false) }
+
 
     if (loadProfile) {
         navController.navigate("profile")
         loadProfile = false
     }
-    var backToFeed by remember { mutableStateOf(false) }
 
     if (backToFeed) {
         MainNavScreen(navController = navController, selectedIndex = selectedIndex)
         return
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
+    Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.background_image),
             contentDescription = null,
@@ -58,7 +60,7 @@ fun NewsGalleryScreen(
             contentScale = ContentScale.Crop
         )
 
-        // Gradient shadow box at top
+        // Top gradient overlay
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -74,72 +76,44 @@ fun NewsGalleryScreen(
                 )
         )
 
-        // Main content
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Static AppBar
+        Column(modifier = Modifier.fillMaxSize()) {
             AppBarMain(
                 title = "NEWS GALLERY",
                 BackButton = true,
                 onBackClick = { backToFeed = true },
-                onProfileClick = { isProfile ->
-                    if (isProfile) loadProfile = true
-                }
+                onProfileClick = { isProfile -> if (isProfile) loadProfile = true }
             )
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // Section Title (STATIC)
             Text(
                 text = "NEWS Gallery",
                 color = Color(0xFF343434),
                 fontWeight = FontWeight.Bold,
                 fontSize = 28.sp,
-                modifier = Modifier.padding(start = 16.dp, bottom = 0.dp)
+                modifier = Modifier.padding(start = 16.dp)
             )
+
             Spacer(modifier = Modifier.height(16.dp))
-            // Scrollable content (only cards)
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
+                    .padding(0.dp, 8.dp, 8.dp, 8.dp)
             ) {
-                // News items
-                val newsList = listOf(
-                    CardItem(
-                        cardId = "1",
-                        title = "Preview Card Title",
-                        description = "this is a sample description for the preview. it shows how text will appear and",
-                        imagePlaceholderColor = Color.Gray,
-                        accentColor = Color(0xFFFFA500),
-                        imagePainter = painterResource(id = R.drawable.accident)
-                    ),
-
-                    CardItem("2", "Card Title 2", "Latest head lines show that sed do eius mod tempor  headlines show that sed do eiusmod tempor headlines show that sed do eiusmod tempor incididunt ut labore.", Color.Gray, Color(0xFFFF2D2D)),
-                    CardItem("3", "Card Title 3", "Aliquam erat volu tpat. Ut enim ad minim veniam, quis nostrud exerc itation.", Color.Gray, Color(0xFF2196F3)),
-                     CardItem("5", "Card Title 5", "Quick update: Excepteur sint occaecat cupidatat non proident, sunt in culpa.", Color.Gray, Color(0xFFFFA500)),
-                    CardItem("6", "Card Title 6", "Flash report: Nemo enim ips am volupt atem quia voluptas sit aspernatur.", Color.Gray, Color(0xFFFF2D2D)),
-                    CardItem("7", "Card Title 7", "In-depth analysis: Neque porro qu isquam est qui dolorem ipsum quia dolor sit amet.", Color.Gray, Color(0xFFFF2D2D)),
-                    CardItem("8", "Card Title 8", "Special feature: Lorem ipsum dolor sit headlines  show that sed do eiusmod tempor headlines show that sed do eiusmod tempor amet, consectetur adipiscing elit.", Color.Gray, Color(0xFFFF9800)),
-                    CardItem("4", "Card Title 4", "New developments revealed: Duis headlines show that sed do  eiusmod tempor aute irure dolor in reprehenderit.", Color.Gray, Color(0xFF52B3FF)),
-                    CardItem("9", "Card Title 9", "Update just in: Sed ut  pers piciatis unde omnis iste natus error sit volu ptatem.", Color.Gray, Color(0xFF52B3FF)),
-                    CardItem("10", "Card Title 10", "Insight: But I must explain to you how all this mistaken idea of denou ncing pleasure.", Color.Gray, Color(0xFF52B3FF)),
-                    CardItem("11", "Card Title 11", "Field report: At vero eos et acc usamus et iusto odio headlines show that sed do eiusmod tempor dignissimos ducimus.", Color.Gray, Color(0xFFFF2D2D)),
-                    CardItem("12", "Card Title 12", "News highlight: On the other hand, we denounce with righteous indignation.", Color.Gray, Color(0xFFFFA500)),
-                    CardItem("13", "Card Title 13", "Detailed review: These cases are perfectly headlines show that sed do eiusmod tempor simple and easy to distinguish.", Color.Gray, Color(0xFFFF2D2D)),
-                    CardItem("14", "Card Title 14", "Trending: Nor again is there anyone who loves or pursues or desires pain.", Color.Gray, Color(0xFF52B3FF)),
-                    CardItem("15", "Card Title 15", "Editorial: Because it is pain, but because occas ionally headlines show that sed do eiusmod tempor circumstances occur.", Color.Gray, Color(0xFF52B3FF))
+                newsList.forEach { item ->
+                    MyCustomCard(
+                        cardItem = item,
+                        onClick = {
+                            navController.navigate("card/${item.cardId}")
+                        }
                     )
-
-
-                Column(
-                    modifier = Modifier.padding(0.dp, 8.dp, 8.dp, 8.dp)
-                ) {
-                    newsList.forEach { item ->
-                        MyCustomCard(cardItem = item)
-                    }
                 }
+                LaunchedEffect(newsList) {
+                    println(">>> News list size: ${newsList.size}")
+                }
+
 
                 Spacer(modifier = Modifier.height(16.dp))
             }

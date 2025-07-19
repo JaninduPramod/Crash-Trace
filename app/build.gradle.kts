@@ -66,7 +66,8 @@ dependencies {
 
     implementation("androidx.compose.material:material-icons-extended:<version>")
 
-
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-gif:2.4.0")
 
     implementation("io.insert-koin:koin-android:3.4.0")
     implementation("io.insert-koin:koin-core:3.4.0")

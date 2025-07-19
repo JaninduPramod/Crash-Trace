@@ -1,16 +1,24 @@
 package com.crashtrace.mobile.ui.screens
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,23 +26,34 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
-import com.crashtrace.mobile.ui.components.CardItem
-import androidx.compose.ui.tooling.preview.Preview
+import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun NewsFeedScreen(navController: NavController) {
+fun NewsFeedScreen(
+    navController: NavController
+) {
+    val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
+    val newsList by newsGalleryViewModel.newsList.collectAsState()
+    val lastItem = newsList.lastOrNull()
     var loadProfile by remember { mutableStateOf(false) }
+
 
     if (loadProfile) {
         navController.navigate("profile")
@@ -72,15 +91,13 @@ fun NewsFeedScreen(navController: NavController) {
             AppBarMain(
                 title = "HOT NEWS",
                 BackButton = false,
-                onProfileClick = { isProfile ->
-                    if (isProfile) loadProfile = true
-                }
+                onProfileClick = { isProfile -> if (isProfile) loadProfile = true }
             )
 
             // Scrollable content
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
                     .verticalScroll(rememberScrollState())
             ) {
 
@@ -94,21 +111,36 @@ fun NewsFeedScreen(navController: NavController) {
                             clip = false
                         )
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.accident),
-                        contentDescription = "Main News",
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(250.dp)
-                            .padding(horizontal = 0.dp)
-                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(0.dp)),
-                        contentScale = ContentScale.Crop
-                    )
+                            .clip(RoundedCornerShape(0.dp))
+                    ) {
 
+                        if (lastItem?.imageUrl != null) {
+                            AsyncImage(
+                                model = lastItem.imageUrl,
+                                contentDescription = "Main News",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .matchParentSize()
+                                  .background(Color(0xFFF0F0F0)),
+
+                            )
+
+
+                        } else {
+                            GoogleBarsPulsePlaceholder(modifier = Modifier.matchParentSize())
+                        }
+
+
+
+                    }
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp)
+                            .padding(horizontal = 10.dp)
                             .offset(y = 200.dp)
                             .shadow(
                                 elevation = 8.dp,
@@ -121,34 +153,47 @@ fun NewsFeedScreen(navController: NavController) {
                         Column(
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            Text(
-                                text = "HOT NEWS",
-                                color = Color(0xFFFF2D2D),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
-                                fontStyle = FontStyle.Italic
-                            )
-                            Text(
-                                text = "2025/04/28",
-                                color = Color(0xFFFF2D2D),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal,
-                                modifier = Modifier.padding(bottom = 4.dp)
-                            )
-                            Text(
-                                text = "Preview Card Title",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp,
-                                color = Color.Black
-                            )
-                            Text(
-                                text = "Another common cause of auto damage: having a parked vehicle hit by another car. Whether you're leaving your car in a parking lot or on the road, take steps to help avoid parked car collisions and claims. Here are some suggestions:",
-                                color = Color.Black.copy(alpha = 0.5f),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
+                            if (lastItem != null) {
+                                Text(
+                                    text = "HOT NEWS",
+                                    color = Color(0xFFFF2D2D),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 24.sp,
+                                    fontStyle = FontStyle.Italic
+                                )
+                                Text(
+                                    text = lastItem.date, // or formatDate(lastItem.date) if needed
+                                    color = Color(0xFFFF2D2D),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    modifier = Modifier.padding(bottom = 4.dp)
+                                )
+                                Text(
+                                    text = lastItem.title,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    text = lastItem.description,
+                                    color = Color.Black.copy(alpha = 0.5f),
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+                            } else {
+                                Text(
+                                    text = "No hot news available.",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    color = Color.Gray
+                                )
+                            }
                             Button(
-                                onClick = { navController.navigate("card") },
+                                onClick = {
+                                    lastItem?.let {
+                                        navController.navigate("card/${it.cardId}")
+                                    }
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(52.dp)
@@ -190,62 +235,28 @@ fun NewsFeedScreen(navController: NavController) {
                     modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
                 )
 
-                // News list
-                val newsList = listOf(
-                    CardItem(
-                        cardId = "1",
-                        title = "Preview Card Title",
-                        description = "this is a sample description for the preview. it shows how text will appear and",
-                        imagePlaceholderColor = Color.Gray,
-                        accentColor = Color(0xFFFFA500),
-                        imagePainter = painterResource(id = R.drawable.accident)
-                    ),
-                    CardItem(
-                        cardId = "2",
-                        title = "Preview Card Title",
-                        description = "this is a sample description for the preview. it shows how text will appear and",
-                        imagePlaceholderColor = Color.Gray,
-                        accentColor = Color(0xFFFF2D2D)
-                    ),
-                    CardItem(
-                        cardId = "3",
-                        title = "Preview Card Title",
-                        description = "this is a sample description for the preview. it shows how text will appear and",
-                        imagePlaceholderColor = Color.Gray,
-                        accentColor = Color(0xFF2196F3)
-                    ),
-                    CardItem(
-                        cardId = "4",
-                        title = "Preview Card Title",
-                        description = "this is a sample description for the preview.",
-                        imagePlaceholderColor = Color.Gray,
-                        accentColor = Color(0xFF000000)
-                    ),
-                    CardItem(
-                        cardId = "5",
-                        title = "Preview Card Title",
-                        description = "this is a sample description for the preview. it shows how text will appear and might wrap",
-                        imagePlaceholderColor = Color.Gray,
-                        accentColor = Color(0xFF2196F3)
-                    )
-                )
                 Column(
-                    modifier = Modifier.padding(0.dp, 8.dp, 8.dp, 8.dp)
+                    modifier = Modifier.padding(start = 0.dp, end = 8.dp, bottom = 8.dp)
                 ) {
-                    newsList.forEach { item ->
-                        MyCustomCard(cardItem = item)
+                    newsList.takeLast(5).forEach { item ->
+                        MyCustomCard(
+                            cardItem = item,
+                            onClick = {
+                                navController.navigate("card/${item.cardId}")
+                            }
+                        )
+
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                // Bottom Show More button
-                Button(
 
+                Button(
                     onClick = { navController.navigate("gallery") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
-                        .padding(horizontal = 16.dp, vertical = 0.dp),
+                        .padding(horizontal = 16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF2D2D)),
                     shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
                 ) {
@@ -274,8 +285,55 @@ fun NewsFeedScreen(navController: NavController) {
     }
 }
 
+@Composable
+fun GoogleBarsPulsePlaceholder(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition()
+
+    val delays = listOf(0, 100, 200, 300)
+    val alphas = delays.map { delay ->
+        infiniteTransition.animateFloat(
+            initialValue = 0.3f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = 600,
+                    delayMillis = delay,
+                    easing = LinearEasing
+                ),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+    }
+
+    val colors = listOf(Color.Blue, Color.Red, Color(0xFFFFC107), Color.Green)
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFFF0F0F0)),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            alphas.forEachIndexed { index, alpha ->
+                Box(
+                    modifier = Modifier
+                        .size(width = 8.dp, height = 24.dp)
+                        .graphicsLayer { this.alpha = alpha.value }
+                        .background(colors[index], shape = RoundedCornerShape(4.dp))
+                )
+            }
+        }
+    }
+}
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun NewsFeedScreenPreview() {
     NewsFeedScreen(navController = rememberNavController())
 }
+
