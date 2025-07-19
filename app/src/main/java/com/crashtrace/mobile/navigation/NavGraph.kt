@@ -2,8 +2,10 @@ package com.crashtrace.mobile.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.crashtrace.mobile.ui.screens.OnBoardScreen1
 import com.crashtrace.mobile.ui.screens.OnBoardScreen2
 import com.crashtrace.mobile.ui.screens.OnBoardScreen3
@@ -14,6 +16,7 @@ import com.crashtrace.mobile.ui.screens.SignUpScreen
 import com.crashtrace.mobile.ui.screens.SigningInScreen
 import com.crashtrace.mobile.ui.screens.VerificationScreen
 import com.crashtrace.mobile.ui.screens.MainNavScreen
+import com.crashtrace.mobile.ui.screens.NewsFeedScreen
 import com.crashtrace.mobile.ui.screens.NewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.NewsInfoScreen
 
@@ -32,7 +35,17 @@ fun AppNavGraph(navController: NavHostController) {
         composable("profile") { ProfileScreen(navController) }
         composable("home") { MainNavScreen(navController) }
         composable("card") { NewsInfoScreen(navController) }
+        composable("newsFeed") { NewsFeedScreen(navController) }
         composable("gallery") { NewsGalleryScreen(navController) }
+
+        composable(
+            route = "mainScreen/{selectedIndex}",
+            arguments = listOf(navArgument("selectedIndex") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val selectedIndex = backStackEntry.arguments?.getInt("selectedIndex") ?: 0
+            MainNavScreen(navController = navController, selectedIndex = selectedIndex)
+        }
+
 
 
         composable("first") {
