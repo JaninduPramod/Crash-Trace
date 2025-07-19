@@ -30,5 +30,5 @@ val appModule = module {
     single { SignUpViewModel(get()) } // Inject repository
     single { PasswordResetViewModel(get()) } // Inject repository
     single { ProfileViewModel(get(), get()) } // Inject repository and DataStoreManager
-    single { ReportViewModel(get()) } // Uncomment if you have a ReportViewModel
+    single { ReportViewModel(get(),get()) } // Uncomment if you have a ReportViewModel
 }

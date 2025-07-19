@@ -2,12 +2,14 @@ package com.crashtrace.mobile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crashtrace.mobile.data.Utils.DataStoreManager
 import com.crashtrace.mobile.data.repository.ReportRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class ReportViewModel(private val repository: ReportRepository): ViewModel() {
+class ReportViewModel(private val repository: ReportRepository,private val dataStoreManager: DataStoreManager): ViewModel() {
 
     private val _vehicleNumber = MutableStateFlow("")
     val vehicleNumber: StateFlow<String> get() = _vehicleNumber
@@ -41,14 +43,20 @@ class ReportViewModel(private val repository: ReportRepository): ViewModel() {
     }
     fun submitReport() {
         viewModelScope.launch {
+            // Retrieve the token from DataStoreManager
+            val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
+
             try {
-                repository.submitReport(
+
+               val response =  repository.submitReport(
                     _vehicleNumber.value,
                     _description.value,
                     _location.value,
                     _address.value,
-                    _date.value
+                    _date.value,
+                   jwtToken
                 )
+                println(response)
             } catch (e: Exception) {
                 // Handle the exception, e.g., log it or show a message to the user
                 println("Error submitting report: ${e.message}")

@@ -3,15 +3,20 @@ import { CustomError } from "../middlewares/ErrorMiddleware.js";
 import { ApiResponse } from "../response/ApiResponse.js";
 
 export const createReportService = async (data, reporterId) => {
+
+
   try {
     const report = new Report({
-      ...data,
-      reporterId,
-      date: data.date || new Date(),
+      vehicleNo: data.vehicleNo,
+      description: data.description,
+      location: data.location.split(","),
+      address: data.address,
+      reporterId: reporterId,
+      date: data.date,
     });
-    const savedReport = await report.save();
-    return new ApiResponse(savedReport, "Report created successfully", true);
+    await report.save();
+    return new ApiResponse(null, "Report created successfully", true);
   } catch (error) {
-    throw new CustomError("Failed to create report", 500);
+    throw new CustomError("Failed to create report", 200);
   }
 };

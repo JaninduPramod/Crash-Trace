@@ -20,14 +20,14 @@ export const verifyToken = async (req, res, next) => {
       req.user = decoded;
 
       if (!req.user) {
-        throw new CustomError("User not found", 404);
+        throw new CustomError("User not found", 200);
       }
 
       next();
     } catch (error) {
-      throw new CustomError("Not authorized, token failed", 401);
+      throw new CustomError("Not authorized, token failed", 200);
     }
   } else {
-    throw new CustomError("Not authorized, no token", 401);
+    throw new CustomError("Not authorized, no token", 200);
   }
 };

@@ -3,19 +3,14 @@ import mongoose from "mongoose";
 const reportSchema = new mongoose.Schema(
   {
     vehicleNo: { type: String, required: true },
-    imageUrl: { type: String },
+    imageUrl: { type: String ,required: false},
     description: { type: String, required: true },
-    location: {
-      lat: { type: Number, required: true },
-      lng: { type: Number, required: true },
-    },
+    location: { type: [String], required: true }, 
     address: { type: String },
-    reporterId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    date: { type: Date, required: true },
+    reporterId: { type:String, required: true },
+    date: { type: String, required: true },
     isApproved: { type: Boolean, default: false },
-    trustRate: { type: Number, default: 0 },
-    upVotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    downVotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    trustRate: { type: Number, default: 0 }
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
