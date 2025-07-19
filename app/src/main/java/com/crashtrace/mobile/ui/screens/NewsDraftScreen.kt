@@ -1,6 +1,7 @@
 package com.crashtrace.mobile.ui.screens
 
 import android.location.Geocoder
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,6 +41,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import java.util.*
@@ -206,7 +208,25 @@ fun NewsDraftScreen(navController: NavHostController) {
     val date by reportViewModel.date.collectAsState()
     val address by reportViewModel.address.collectAsState()
 
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     var location_code by remember { mutableStateOf("") }
+
+    fun handleSubmit(){
+        coroutineScope.launch {
+            reportViewModel.submitReport().collect { response ->
+                if (response?.success == true) {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+
+                    navController.navigate("home")
+                } else {
+                    Toast.makeText(context, response?.message ?: "Submit Report Failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
 
     // Update the ViewModel's location state whenever location_code changes
     LaunchedEffect(location_code) {
@@ -323,7 +343,7 @@ fun NewsDraftScreen(navController: NavHostController) {
 
 
                 Button(
-                    onClick = { reportViewModel.submitReport()},
+                    onClick = {handleSubmit()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)

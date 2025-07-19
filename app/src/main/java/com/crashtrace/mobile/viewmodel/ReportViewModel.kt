@@ -3,10 +3,16 @@ package com.crashtrace.mobile.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crashtrace.mobile.data.Utils.DataStoreManager
+import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.repository.ReportRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class ReportViewModel(private val repository: ReportRepository,private val dataStoreManager: DataStoreManager): ViewModel() {
@@ -41,13 +47,10 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
     fun setDate(newDate: String) {
         _date.value = newDate
     }
-    fun submitReport() {
-        viewModelScope.launch {
+    fun submitReport(): Flow<ApiResponse<ReportResponse>?> {
+        return flow {
             // Retrieve the token from DataStoreManager
             val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
-
-            try {
-
                val response =  repository.submitReport(
                     _vehicleNumber.value,
                     _description.value,
@@ -56,12 +59,16 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
                     _date.value,
                    jwtToken
                 )
-                println(response)
-            } catch (e: Exception) {
-                // Handle the exception, e.g., log it or show a message to the user
-                println("Error submitting report: ${e.message}")
+            if(response?.success == true) {
+                _vehicleNumber.value = ""
+                _description.value = ""
+                _location.value = ""
+                _address.value = ""
+                _date.value = ""
             }
-        }
+            emit(response)
+
+        }.flowOn(Dispatchers.IO)
 
 
     }
