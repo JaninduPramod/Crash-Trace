@@ -5,8 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LocalTextStyle
@@ -16,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -25,8 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
-import coil.decode.GifDecoder
-import coil.imageLoader
 import coil.request.ImageRequest
 import com.crashtrace.mobile.R
 
@@ -36,6 +31,18 @@ fun MyCustomCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    // Load image from URL
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(context)
+            .data(cardItem.imageUrl)
+            .crossfade(true)
+            .placeholder(R.drawable.loading) // Optional loading GIF
+            .error(R.drawable.loading) // Optional error image
+            .build()
+    )
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -51,42 +58,20 @@ fun MyCustomCard(
                     .fillMaxSize()
                     .height(IntrinsicSize.Max)
             ) {
-                val context = LocalContext.current
-
                 Box(
                     modifier = Modifier
                         .weight(0.4f)
                         .fillMaxHeight()
                         .padding(start = 0.dp, top = 5.dp, end = 15.dp, bottom = 5.dp)
                         .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp))
-                        .background(if (cardItem.imagePainter == null) cardItem.imagePlaceholderColor else Color.DarkGray)
+                        .background(Color.Gray)
                 ) {
-                    if (cardItem.imagePainter != null) {
-                        Image(
-                            painter = cardItem.imagePainter,
-                            contentDescription = cardItem.title,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        val gifPainter = rememberAsyncImagePainter(
-                            model = ImageRequest.Builder(context)
-                                .data(R.drawable.loding) // loading gif in drawable
-                                .build(),
-                            imageLoader = context.imageLoader.newBuilder()
-                                .components {
-                                    add(GifDecoder.Factory())
-                                }
-                                .build()
-                        )
-
-                        Image(
-                            painter = gifPainter,
-                            contentDescription = cardItem.title,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                    Image(
+                        painter = painter,
+                        contentDescription = cardItem.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
                 }
 
                 Spacer(
@@ -124,7 +109,6 @@ fun MyCustomCard(
                 }
             }
 
-            // Full-size transparent clickable overlay instead of Button (better)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -140,7 +124,11 @@ data class CardItem(
     val description: String,
     val accentColor: Color,
     val imagePlaceholderColor: Color,
-    val imagePainter: Painter? = null
+    val imageUrl: String,
+    val date :String,
+    val location :String,
+    val locationUrl :String,
+    val vehiclenub:String,
 )
 
 @Preview(showBackground = true)
@@ -150,10 +138,15 @@ fun MyCustomCardPreview() {
         cardItem = CardItem(
             cardId = "1",
             title = "Sample Title",
-            description = "This is a sample description for the card. It can be a bit longer to show ellipsis.",
-            imagePlaceholderColor = Color.Gray,
-            accentColor = Color.Red,
+            description = "This is a sample description that could be a bit long to trigger ellipsis.",
+            imageUrl = "https://example.com/image1.jpg",
+            accentColor = Color.Green,
+            imagePlaceholderColor = Color.DarkGray,
+            date = "2023-10-01",
+            location = "Colombo, Sri Lanka",
+            locationUrl = "https://www.google.com/maps/place/Colombo,+Sri+Lanka/@6.9271,79.8612,12z/data=!3m1!4b1!4m6!3m5!1s0x3ae259a7f8c8c9b5:0x7d8e2f8c8c8c8c8c!8m2!3d6.9271!4d79.8612!16zL20vMDNnYjQ",
+            vehiclenub = "azy-1234",
         ),
-        onClick = {} // empty lambda for preview
+        onClick = {}
     )
 }
