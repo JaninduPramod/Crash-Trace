@@ -188,7 +188,7 @@ fun ProfileScreen(navController: NavHostController) {
                         ) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Hi ${user.userName}\nWelcome !",
+                                text = "Hi ${name}\nWelcome !",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
                                 color = Color(0xFF222222),

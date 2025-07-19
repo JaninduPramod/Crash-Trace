@@ -12,10 +12,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -31,30 +33,57 @@ import com.crashtrace.mobile.ui.components.AppBarMain
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.maps.android.compose.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-
+import org.koin.androidx.compose.koinViewModel
 @Composable
-fun NewsInfoScreen(navController: NavHostController,
-                   selectedIndex: Int = 1
+fun NewsInfoScreen(
+    navController: NavHostController,
+    cardId: String
+
 ) {
+
     var loadProfile by remember { mutableStateOf(false) }
+    var backToFeed by remember { mutableStateOf(false) }
+
 
     if (loadProfile) {
         navController.navigate("profile")
         loadProfile = false
     }
 
-    var backToFeed by remember { mutableStateOf(false) }
-
     if (backToFeed) {
-        MainNavScreen(navController = navController, selectedIndex = selectedIndex)
+        MainNavScreen(navController = navController, selectedIndex = 1)
         return
     }
+    val viewModel: NewsGalleryViewModel = koinViewModel()
+    val newsList by viewModel.newsList.collectAsState()
+
+    val selectedItem = newsList.find { it.cardId == cardId }
+
+    if (selectedItem == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Loading or item not found...")
+        }
+        return
+    }
+
+    val cameraLatLng = remember(selectedItem.locationUrl) {
+        extractLatLngFromUrl(selectedItem.locationUrl) ?: LatLng(6.9271, 79.8612)
+    }
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(cameraLatLng, 15f)
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        // Background image
         Image(
             painter = painterResource(id = R.drawable.background_image),
             contentDescription = null,
@@ -62,87 +91,62 @@ fun NewsInfoScreen(navController: NavHostController,
             contentScale = ContentScale.Crop
         )
 
-        // White top gradient
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.White.copy(alpha = 0.5f),
-                            Color.White.copy(alpha = 0f)
-                        )
-                    )
-                )
-        )
-
         Column(modifier = Modifier.fillMaxSize()) {
             AppBarMain(
                 title = "",
                 BackButton = true,
-                onBackClick = { backToFeed = true }, // <-- Change here
-                onProfileClick = { isProfile ->
-                    if (isProfile) loadProfile = true
-                })
+                onBackClick = { navController.popBackStack() },
+                onProfileClick = { /* no-op */ }
+            )
 
-            // Scrollable content
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                // Box to allow image + overlaid card
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    // Image
-                    Image(
-                        painter = painterResource(id = R.drawable.accident),
-                        contentDescription = "Main News",
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    AsyncImage(
+                        model = selectedItem.imageUrl,
+                        contentDescription = "News Image",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(250.dp),
+                            .height(250.dp)
+                            .background(Color.LightGray),
                         contentScale = ContentScale.Crop
                     )
 
-                    // Overlaid card
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp)
-                            .padding(top = 200.dp) // overlap effect
-                            .shadow(
-                                elevation = 8.dp,
-                                shape = RoundedCornerShape(16.dp),
-                                clip = false
-                            ),
+                            .padding(top = 200.dp)
+                            .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = false),
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
-                        ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "2025/04/28",
+                                text = selectedItem.date,
                                 fontWeight = FontWeight.Medium,
                                 color = Color(0xFFFF2D2D),
                                 fontSize = 12.sp,
                                 modifier = Modifier.padding(bottom = 4.dp)
                             )
+
                             Text(
-                                text = "Preview Card Title",
+                                text = selectedItem.title,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 24.sp,
                                 color = Color.Black
                             )
+
                             Text(
-                                text = "Another common cause of auto damage: having a parked vehicle hit by another car. Whether you're leaving your car in a parking lot or on the road, take steps to help avoid parked car collisions and claims. Here are some suggestions:\n\nhaving a parked vehicle hit by another car.  hit by another car to help avoid parked car",
+                                text = selectedItem.description,
                                 color = Color.Black.copy(alpha = 0.5f),
                                 fontSize = 12.sp,
                                 modifier = Modifier.padding(vertical = 8.dp)
                             )
+
                             Spacer(modifier = Modifier.height(20.dp))
 
                             Text(
@@ -152,18 +156,16 @@ fun NewsInfoScreen(navController: NavHostController,
                                 color = Color.Black,
                                 modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
                             )
+
                             Text(
-                                text = "Mirihana",
+                                text = selectedItem.location,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.Red.copy(alpha = 0.6f)
                             )
 
-                            val mirihana = LatLng(6.8750, 79.9020)
-                            val cameraPositionState = rememberCameraPositionState {
-                                position = CameraPosition.fromLatLngZoom(mirihana, 15f)
-                            }
                             Spacer(modifier = Modifier.height(10.dp))
+
                             GoogleMap(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -173,8 +175,8 @@ fun NewsInfoScreen(navController: NavHostController,
                                 cameraPositionState = cameraPositionState
                             ) {
                                 Marker(
-                                    state = MarkerState(position = mirihana),
-                                    title = "Mirihana",
+                                    state = MarkerState(position = cameraLatLng),
+                                    title = selectedItem.location,
                                     snippet = "Accident Location",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
                                 )
@@ -182,14 +184,21 @@ fun NewsInfoScreen(navController: NavHostController,
                         }
                     }
                 }
+
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun NewsInfoScreenPreview() {
-    NewsInfoScreen(navController = rememberNavController())
+fun extractLatLngFromUrl(locationUrl: String): LatLng? {
+    val parts = locationUrl.split(",")
+    if (parts.size == 2) {
+        val lat = parts[0].trim().toDoubleOrNull()
+        val lng = parts[1].trim().toDoubleOrNull()
+        if (lat != null && lng != null) {
+            return LatLng(lat, lng)
+        }
+    }
+    return null
 }

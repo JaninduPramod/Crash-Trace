@@ -10,6 +10,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.crashtrace.mobile.R
+import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MyCustomCard(
@@ -33,6 +37,10 @@ fun MyCustomCard(
 ) {
     val context = LocalContext.current
 
+
+    val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
+    val newsList by newsGalleryViewModel.newsList.collectAsState()
+    val lastItem = newsList.lastOrNull()
     // Load image from URL
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(context)
@@ -114,6 +122,8 @@ fun MyCustomCard(
                     .fillMaxSize()
                     .clickable { onClick() }
             )
+
+
         }
     }
 }

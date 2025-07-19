@@ -34,15 +34,21 @@ fun AppNavGraph(navController: NavHostController) {
         composable("newPassword") { ResetScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
         composable("home") { MainNavScreen(navController) }
-        composable("card") { NewsInfoScreen(navController) }
+//        composable("card") { NewsInfoScreen(navController) }
         composable("newsFeed") { NewsFeedScreen(navController) }
         composable("gallery") { NewsGalleryScreen(navController) }
+
+        composable("card/{cardId}") { backStackEntry ->
+            val cardId = backStackEntry.arguments?.getString("cardId") ?: ""
+            NewsInfoScreen(navController = navController, cardId = cardId)
+        }
+
 
         composable(
             route = "mainScreen/{selectedIndex}",
             arguments = listOf(navArgument("selectedIndex") { type = NavType.IntType })
         ) { backStackEntry ->
-            val selectedIndex = backStackEntry.arguments?.getInt("selectedIndex") ?: 0
+            val selectedIndex = backStackEntry.arguments?.getInt("selectedIndex") ?: 1
             MainNavScreen(navController = navController, selectedIndex = selectedIndex)
         }
 

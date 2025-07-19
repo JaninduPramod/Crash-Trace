@@ -103,7 +103,12 @@ fun NewsGalleryScreen(
                     .padding(0.dp, 8.dp, 8.dp, 8.dp)
             ) {
                 newsList.forEach { item ->
-                    MyCustomCard(cardItem = item)
+                    MyCustomCard(
+                        cardItem = item,
+                        onClick = {
+                            navController.navigate("card/${item.cardId}")
+                        }
+                    )
                 }
                 LaunchedEffect(newsList) {
                     println(">>> News list size: ${newsList.size}")

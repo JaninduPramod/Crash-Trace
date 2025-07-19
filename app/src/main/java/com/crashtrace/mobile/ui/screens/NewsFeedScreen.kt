@@ -1,9 +1,18 @@
 package com.crashtrace.mobile.ui.screens
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -17,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -108,14 +118,21 @@ fun NewsFeedScreen(
                             .clip(RoundedCornerShape(0.dp))
                     ) {
 
+                        if (lastItem?.imageUrl != null) {
                             AsyncImage(
-                                model = lastItem?.imageUrl,
+                                model = lastItem.imageUrl,
                                 contentDescription = "Main News",
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier.matchParentSize(),
-                                placeholder = rememberAsyncImagePainter(model = R.drawable.loading),
-                                error = rememberAsyncImagePainter(model = R.drawable.loading)
+                                modifier = Modifier
+                                    .matchParentSize()
+                                  .background(Color(0xFFF0F0F0)),
+
                             )
+
+
+                        } else {
+                            GoogleBarsPulsePlaceholder(modifier = Modifier.matchParentSize())
+                        }
 
 
 
@@ -222,7 +239,13 @@ fun NewsFeedScreen(
                     modifier = Modifier.padding(start = 0.dp, end = 8.dp, bottom = 8.dp)
                 ) {
                     newsList.takeLast(5).forEach { item ->
-                        MyCustomCard(cardItem = item)
+                        MyCustomCard(
+                            cardItem = item,
+                            onClick = {
+                                navController.navigate("card/${item.cardId}")
+                            }
+                        )
+
                     }
                 }
 
@@ -261,6 +284,52 @@ fun NewsFeedScreen(
         }
     }
 }
+
+@Composable
+fun GoogleBarsPulsePlaceholder(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition()
+
+    val delays = listOf(0, 100, 200, 300)
+    val alphas = delays.map { delay ->
+        infiniteTransition.animateFloat(
+            initialValue = 0.3f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = 600,
+                    delayMillis = delay,
+                    easing = LinearEasing
+                ),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+    }
+
+    val colors = listOf(Color.Blue, Color.Red, Color(0xFFFFC107), Color.Green)
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFFF0F0F0)),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            alphas.forEachIndexed { index, alpha ->
+                Box(
+                    modifier = Modifier
+                        .size(width = 8.dp, height = 24.dp)
+                        .graphicsLayer { this.alpha = alpha.value }
+                        .background(colors[index], shape = RoundedCornerShape(4.dp))
+                )
+            }
+        }
+    }
+}
+
+
 
 @Preview(showBackground = true)
 @Composable
