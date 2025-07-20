@@ -20,3 +20,16 @@ export const createReportService = async (data, reporterId) => {
     throw new CustomError("Failed to create report", 200);
   }
 };
+
+// function to get all approved reports
+export const getApprovedReportsService = async () => {
+    try {
+        const reports = await Report.find({ status: "approved" });
+        if (!reports || reports.length === 0) {
+        throw new CustomError("No reports found", 200);
+        }
+        return new ApiResponse(reports, "Approved reports retrieved successfully", true);
+    } catch (error) {
+        throw new CustomError("Failed to retrieve approved reports", 200);
+    }
+}
