@@ -106,7 +106,7 @@ fun NewsGalleryScreen(
                     MyCustomCard(
                         cardItem = item,
                         onClick = {
-                            navController.navigate("card/${item.cardId}")
+                            navController.navigate("cardu/${item.cardId}")
                         }
                     )
                 }
