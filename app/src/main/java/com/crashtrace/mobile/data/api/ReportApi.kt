@@ -4,6 +4,8 @@ import com.crashtrace.mobile.data.entity.ApiResponse
 import com.crashtrace.mobile.data.entity.Report
 import com.crashtrace.mobile.data.entity.ReportRequest
 import com.crashtrace.mobile.data.entity.ReportResponse
+import com.crashtrace.mobile.data.entity.SearchReportRequest
+import com.crashtrace.mobile.data.entity.SearchReportResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -17,5 +19,7 @@ interface ReportApi {
     @GET("/api/reports/approvedReports")
     suspend fun getApprovedReports(@Header("Authorization") token: String): Response<ApiResponse<List<Report>>>
 
+    @POST("/api/reports/searchReport")
+    suspend fun searchReport(@Header("Authorization") token: String,@Body request: SearchReportRequest): Response<ApiResponse<SearchReportResponse>>
 
 }

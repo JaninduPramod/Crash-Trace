@@ -38,7 +38,7 @@ export const getApprovedReportsService = async () => {
 export const searchReportService = async (vehicleNo) => {
 
   try {
-    const report = await Report.findOne({ vehicleNo: vehicleNo });
+    const report = await Report.findOne({ vehicleNo: vehicleNo }).populate("reporterId", "-_id name");
     if (!report) {
       throw new CustomError("No reports found for this vehicle number", 200);
     }

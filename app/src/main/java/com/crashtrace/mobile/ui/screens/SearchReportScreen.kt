@@ -36,9 +36,21 @@ fun SearchReportScreen(navController: NavHostController) {
 
     val reportViewModel: ReportViewModel = koinViewModel()
     val vehicleNumber by reportViewModel.vehicleNumber.collectAsState()
+    val date by reportViewModel.date.collectAsState()
+    val description by reportViewModel.description.collectAsState()
+    val address by reportViewModel.address.collectAsState()
+    val reporter by reportViewModel.reporter.collectAsState()
+    val location by reportViewModel.location.collectAsState()
+    val lat by reportViewModel.lat.collectAsState()
+    val lng by reportViewModel.lng.collectAsState()
+
 
 
     var loadProfile by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        reportViewModel.resetFields()
+    }
 
 
     if (loadProfile) {
@@ -177,7 +189,7 @@ fun SearchReportScreen(navController: NavHostController) {
                         Spacer(modifier = Modifier.height(30.dp))
 
                         Text(
-                            text = "2025/04/28",
+                            text = date,
                             fontWeight = FontWeight.Medium,
                             color = Color(0xFFFF4D4D),
                             fontSize = 12.sp,
@@ -193,7 +205,7 @@ fun SearchReportScreen(navController: NavHostController) {
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Preview Card Title",
+                                    text = address,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 24.sp,
                                     color = Color.Black
@@ -230,9 +242,10 @@ fun SearchReportScreen(navController: NavHostController) {
                                                 .clip(RoundedCornerShape(4.dp))
                                                 .background(Color(0xFFFFCDD2)) // Light red
                                         ) {
+
                                             Box(
                                                 modifier = Modifier
-                                                    .fillMaxWidth(0.38f) // 38%
+                                                    .fillMaxWidth(0.8f) // 38%
                                                     .fillMaxHeight()
                                                     .clip(RoundedCornerShape(4.dp))
                                                     .background(Color(0xFFFF4155)) // Light red
@@ -244,7 +257,7 @@ fun SearchReportScreen(navController: NavHostController) {
                         }
 
                         Text(
-                            text = "Another common cause of auto damage: having a parked vehicle hit by another car. Whether you're leaving your car in a parking lot or on the road, take steps to help avoid parked car collisions and claims. Here are some suggestions:\n\nhaving a parked vehicle hit by another car.  hit by another car to help avoid parked car",
+                            text = description,
                             color = Color.Black.copy(alpha = 0.5f),
                             fontSize = 12.sp,
                             modifier = Modifier.padding(vertical = 8.dp)
@@ -260,7 +273,7 @@ fun SearchReportScreen(navController: NavHostController) {
                             modifier = Modifier.padding(top = 0.dp, bottom = 2.dp)
                         )
                         Text(
-                            text = "Sia Kroven",
+                            text = reporter,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black.copy(alpha = 0.4f)
@@ -288,7 +301,7 @@ fun SearchReportScreen(navController: NavHostController) {
                             modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
                         )
                         Text(
-                            text = "Mirihana",
+                            text = "More details",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black.copy(alpha = 0.4f)
@@ -302,7 +315,7 @@ fun SearchReportScreen(navController: NavHostController) {
                             modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
                         )
                         Text(
-                            text = "Mirihana",
+                            text = address,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Red
@@ -310,9 +323,9 @@ fun SearchReportScreen(navController: NavHostController) {
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        val mirihana = LatLng(6.8750, 79.9020)
+                        val accidentPosition = LatLng(lat, lng)
                         val cameraPositionState = rememberCameraPositionState {
-                            position = CameraPosition.fromLatLngZoom(mirihana, 15f)
+                            position = CameraPosition.fromLatLngZoom(accidentPosition, 15f)
                         }
 
                         GoogleMap(
@@ -323,8 +336,8 @@ fun SearchReportScreen(navController: NavHostController) {
                             cameraPositionState = cameraPositionState
                         ) {
                             Marker(
-                                state = MarkerState(position = mirihana),
-                                title = "Mirihana",
+                                state = MarkerState(position = accidentPosition),
+                                title = address,
 
                                 snippet = "Accident Location",
                                 icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)

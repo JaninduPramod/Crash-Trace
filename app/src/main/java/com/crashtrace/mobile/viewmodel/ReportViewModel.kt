@@ -1,8 +1,10 @@
 package com.crashtrace.mobile.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.crashtrace.mobile.data.Utils.DataStoreManager
 import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.Report
 import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.repository.ReportRepository
 import kotlinx.coroutines.Dispatchers
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 class ReportViewModel(private val repository: ReportRepository,private val dataStoreManager: DataStoreManager): ViewModel() {
 
@@ -29,6 +32,15 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
 
     private val _date = MutableStateFlow("")
     val date: StateFlow<String> get() = _date
+
+    private val _reporter = MutableStateFlow("")
+    val reporter: StateFlow<String> get() = _reporter
+
+    private val _lat = MutableStateFlow(0.0)
+    val lat: StateFlow<Double> get() = _lat
+
+    private val _lng = MutableStateFlow(0.0)
+    val lng: StateFlow<Double> get() = _lng
 
     fun setVehicleNumber(newVehicleNumber: String) {
         _vehicleNumber.value = newVehicleNumber
@@ -53,6 +65,7 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
         _location.value = ""
         _address.value = ""
         _date.value = ""
+        _reporter.value = ""
     }
 
 
@@ -75,15 +88,35 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
 
         }.flowOn(Dispatchers.IO)
 
-
     }
 
     fun searchReport() {
-//        val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
-//
-//        println("Searching report with token: $jwtToken")
-        println("Vehicle Number: ${_vehicleNumber.value}")
+        viewModelScope.launch {
+            val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
+            val response = repository.searchReport(jwtToken, _vehicleNumber.value)
 
+            println("here is the response:"+response?.data?.location?.get(1))
+
+            if (response?.success == true) {
+                _date.value = response.data?.date ?: ""
+                _location.value = response.data?.location.toString()
+                _address.value = response.data?.address ?: ""
+                _description.value = response.data?.description ?: ""
+                _reporter.value = response.data?.reporterId?.name ?: ""
+
+                _lat.value = response.data?.location?.get(0)?.toDoubleOrNull() ?: 0.0
+                _lng.value = response.data?.location?.get(1)?.toDoubleOrNull() ?: 0.0
+
+                _vehicleNumber.value = ""
+
+            } else {
+                resetFields()
+
+
+            }
+
+        }
     }
+
 
 }
