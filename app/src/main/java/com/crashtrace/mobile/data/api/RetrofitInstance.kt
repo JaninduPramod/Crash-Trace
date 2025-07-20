@@ -13,10 +13,18 @@ object RetrofitInstance {
 
     val api: AuthApi by lazy {
         Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/") // emulator localhost
+            .baseUrl("http://10.0.2.2:3000/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
             .create(AuthApi::class.java)
+    }
+    val reportApi: ReportApi by lazy {
+        Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:3000/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(ReportApi::class.java)
     }
 }
