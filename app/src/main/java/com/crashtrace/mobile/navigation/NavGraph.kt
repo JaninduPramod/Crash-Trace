@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+
 import com.crashtrace.mobile.ui.screens.AdminNewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.AdminNewsViewScreen
 import com.crashtrace.mobile.ui.screens.OnBoardScreen1
@@ -50,7 +51,6 @@ fun AppNavGraph(navController: NavHostController) {
             val cardId = backStackEntry.arguments?.getString("cardId") ?: ""
             AdminNewsViewScreen(navController = navController, cardId = cardId)
         }
-
 
 
         composable(

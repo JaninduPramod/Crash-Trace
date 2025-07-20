@@ -14,6 +14,7 @@ class AdminGalleryViewModel : ViewModel() {
     private val _adminNewsList = MutableStateFlow<List<CardItemAdmin>>(emptyList())
     val adminNewsList: StateFlow<List<CardItemAdmin>> = _adminNewsList.asStateFlow()
 
+
     init {
         loadMockAdminData()
     }
@@ -59,7 +60,7 @@ class AdminGalleryViewModel : ViewModel() {
                 ),
                 CardItemAdmin(
                     cardId = "0026",
-                    title = "Mock Crash Report",
+                    title = "sqq",
                     description = "A severe accident occurred unexpectedly at a busy intersection during morning traffic. Eyewitnesses reported multiple vehicles involved, causing significant delays. Emergency services responded promptly. Fortunately, no fatalities were confirmed. Investigation is ongoing to determine the cause. Authorities urge caution in the area and request any witnesses to come forward..",
                     date = "2023-11-18",
                     location = "Negombo, Sri Lanka",
@@ -79,4 +80,38 @@ class AdminGalleryViewModel : ViewModel() {
             _adminNewsList.value = mockData
         }
     }
+
+    fun updateItem(
+        cardId: String,
+        title: String,
+        description: String,
+        damageRate: Int,
+        reporterId: String,
+        vehicleNo: String,
+        location: String
+    ) {
+        val list = adminNewsList.value.toMutableList()
+        val index = list.indexOfFirst { it.cardId == cardId }
+        if (index != -1) {
+            val updatedItem = list[index].copy(
+                title = title,
+                description = description,
+                damageRate = damageRate,
+                reporterId = reporterId,
+                vehicleNo = vehicleNo,
+                location = location
+            )
+            list[index] = updatedItem
+            _adminNewsList.value = list
+        }
+    }
+
+    fun deleteItem(cardId: String) {
+        val list = adminNewsList.value.toMutableList()
+        val filteredList = list.filter { it.cardId != cardId }
+        _adminNewsList.value = filteredList
+    }
+
+
 }
+
