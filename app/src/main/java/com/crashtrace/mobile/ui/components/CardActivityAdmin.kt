@@ -205,6 +205,7 @@ data class CardItemAdmin(
     val address: String,
     val reporterId: String,
     val trustRate: Int,
+    val damageRate: Int,
     val status: String = "pending",
     val accentColor: Color,
     val imagePlaceholderColor: Color
@@ -226,6 +227,7 @@ fun PreviewCardActivityAdminCard() {
             address = "123 Main Street",
             reporterId = "user001",
             trustRate = 4,
+            damageRate = 78 ,
             status = "ok",
             accentColor = Color.Blue,
             imagePlaceholderColor = Color.LightGray

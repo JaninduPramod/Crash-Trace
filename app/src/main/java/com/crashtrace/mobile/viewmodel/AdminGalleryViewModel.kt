@@ -24,7 +24,7 @@ class AdminGalleryViewModel : ViewModel() {
                 CardItemAdmin(
                     cardId = "0024",
                     title = "Reported Accident at Main Street",
-                    description = "A vehicle collision occurred around 8:30 AM. No injuries reported.",
+                    description = "A vehicle collision occurred around 8:30 AM. No A severe accident occurred unexpectedly at a busy intersection during morning traffic. Eyewitnesses reported multiple vehicles involved, causing significant delays. Emergency services responded promptly. Fortunately, no fatalities were confirmed. Investigation is ongoing to determine the cause. Authorities urge caution in the area and request any witnesses to come forward. injuries reported.",
                     date = "2023-11-15",
                     location = "Colombo, Sri Lanka",
                     locationUrl = "20.9271, 89.8612",
@@ -33,7 +33,8 @@ class AdminGalleryViewModel : ViewModel() {
                     address = "Main Street, Colombo",
                     reporterId = "user_123",
                     status = "ok",
-                    trustRate = 3,
+                    trustRate = 83,
+                    damageRate = 38 ,
                     accentColor = Color.Red,
                     imagePlaceholderColor = Color.LightGray
 
@@ -41,7 +42,7 @@ class AdminGalleryViewModel : ViewModel() {
                 CardItemAdmin(
                     cardId = "0025",
                     title = "Hit and Run Report",
-                    description = "A black van hit a motorcycle and fled the scene.",
+                    description = "A black van hit a motorcycle and fled the Emergency services responded promptly. Fortunately, no fatalities were confirmed. Investigation is ongoing scene.",
                     date = "2023-11-10",
                     location = "Kandy, Sri Lanka",
                     locationUrl = "7.2906, 80.6337",
@@ -50,7 +51,8 @@ class AdminGalleryViewModel : ViewModel() {
                     address = "Peradeniya Rd, Kandy",
                     reporterId = "user_789",
                     status = "pending",
-                    trustRate = 5,
+                    trustRate = 55,
+                    damageRate = 78 ,
                     accentColor = Color.DarkGray,
                     imagePlaceholderColor = Color.LightGray
 
@@ -58,7 +60,7 @@ class AdminGalleryViewModel : ViewModel() {
                 CardItemAdmin(
                     cardId = "0026",
                     title = "Mock Crash Report",
-                    description = "Reported crash involving two sedans at high speed.",
+                    description = "A severe accident occurred unexpectedly at a busy intersection during morning traffic. Eyewitnesses reported multiple vehicles involved, causing significant delays. Emergency services responded promptly. Fortunately, no fatalities were confirmed. Investigation is ongoing to determine the cause. Authorities urge caution in the area and request any witnesses to come forward..",
                     date = "2023-11-18",
                     location = "Negombo, Sri Lanka",
                     locationUrl = "7.2083, 79.8358",
@@ -67,7 +69,8 @@ class AdminGalleryViewModel : ViewModel() {
                     address = "Beach Rd, Negombo",
                     reporterId = "user_456",
                     status = "bad",
-                    trustRate = 2,
+                    trustRate = 24,
+                    damageRate = 58 ,
                     accentColor = Color.Blue,
                     imagePlaceholderColor = Color.LightGray
 

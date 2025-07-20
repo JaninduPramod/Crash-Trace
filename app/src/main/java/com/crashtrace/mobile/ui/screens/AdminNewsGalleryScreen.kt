@@ -73,7 +73,7 @@ fun AdminNewsGalleryScreen(
                     modifier = Modifier.padding(start = 16.dp)
                 )
 
-                Column(modifier = Modifier.padding(8.dp)) {
+                Column(modifier = Modifier.padding(0.dp,8.dp,8.dp,8.dp)) {
                     newsList.forEach { item ->
                         CardActivityAdminCard(
                             cardItem = item,
