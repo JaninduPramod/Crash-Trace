@@ -7,11 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,21 +24,28 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
-
+import com.crashtrace.mobile.viewmodel.ReportViewModel
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SearchReportScreen(navController: NavHostController) {
+
+    val reportViewModel: ReportViewModel = koinViewModel()
+    val vehicleNumber by reportViewModel.vehicleNumber.collectAsState()
+
+
     var loadProfile by remember { mutableStateOf(false) }
+
 
     if (loadProfile) {
         navController.navigate("profile")
         loadProfile = false
     }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -104,29 +107,36 @@ fun SearchReportScreen(navController: NavHostController) {
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.End,
+                        OutlinedTextField(
+                            value = vehicleNumber,
+                            onValueChange = { reportViewModel.setVehicleNumber(it)},
+                            placeholder = {
+                                Text(
+                                    text = "Enter Vehicle Number",
+                                    color = Color.Gray,
+                                    fontSize = 14.sp
+                                )
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(
                                     color = Color(0xFFF0F0F0),
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.loupe),
-                                contentDescription = "Search",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(20.dp)
+                                .padding(horizontal = 12.dp, vertical = 2.dp),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedContainerColor = Color(0xFFF0F0F0),
+                                unfocusedContainerColor = Color(0xFFF0F0F0)
                             )
-                        }
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(
-                            onClick = { /* TODO: Implement search action */ },
+                            onClick = { reportViewModel.searchReport() },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),

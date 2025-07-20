@@ -1,7 +1,6 @@
 package com.crashtrace.mobile.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.crashtrace.mobile.data.Utils.DataStoreManager
 import com.crashtrace.mobile.data.entity.ApiResponse
 import com.crashtrace.mobile.data.entity.ReportResponse
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 
 class ReportViewModel(private val repository: ReportRepository,private val dataStoreManager: DataStoreManager): ViewModel() {
 
@@ -47,6 +45,17 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
     fun setDate(newDate: String) {
         _date.value = newDate
     }
+
+    // function to reset all fields
+    fun resetFields() {
+        _vehicleNumber.value = ""
+        _description.value = ""
+        _location.value = ""
+        _address.value = ""
+        _date.value = ""
+    }
+
+
     fun submitReport(): Flow<ApiResponse<ReportResponse>?> {
         return flow {
             // Retrieve the token from DataStoreManager
@@ -60,16 +69,20 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
                    jwtToken
                 )
             if(response?.success == true) {
-                _vehicleNumber.value = ""
-                _description.value = ""
-                _location.value = ""
-                _address.value = ""
-                _date.value = ""
+                resetFields()
             }
             emit(response)
 
         }.flowOn(Dispatchers.IO)
 
+
+    }
+
+    fun searchReport() {
+//        val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
+//
+//        println("Searching report with token: $jwtToken")
+        println("Vehicle Number: ${_vehicleNumber.value}")
 
     }
 
