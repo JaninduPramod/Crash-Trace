@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,18 +29,37 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
+import com.crashtrace.mobile.viewmodel.AdminGalleryViewModel
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AdminNewsViewScreen(navController: NavHostController) {
+fun AdminNewsViewScreen(navController: NavHostController,cardId: String) {
 
     var loadProfile by remember { mutableStateOf(false) }
 
     if (loadProfile) {
         navController.navigate("profile")
         loadProfile = false
+    }
+
+    val viewModel: AdminGalleryViewModel = koinViewModel()
+    val item = viewModel.adminNewsList.collectAsState().value.find { it.cardId == cardId }
+
+    if (item != null) {
+        // Display details using item
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Text(text = "Title: ${item.title}")
+            Text(text = "Description: ${item.description}")
+            Text(text = "Date: ${item.date}")
+            Text(text = "Location: ${item.location}")
+            // ... Add other fields as needed
+        }
+    } else {
+        Text(text = "News not found!", modifier = Modifier.padding(16.dp))
     }
 
 
@@ -79,7 +99,7 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-
+                Spacer(modifier = Modifier.height(16.dp))
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -103,7 +123,7 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                         Spacer(modifier = Modifier.height(30.dp))
 
                         Text(
-                            text = "2025/04/28",
+                            text = item?.date.toString(),
                             fontWeight = FontWeight.Medium,
                             color = Color(0xFFFF4D4D),
                             fontSize = 12.sp,
@@ -118,7 +138,7 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Preview Card Title",
+                                    text = item?.title.toString(),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 24.sp,
                                     color = Color.Black
@@ -130,13 +150,19 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                                         .fillMaxWidth()
                                         .padding(vertical = 8.dp)
                                 ) {
+                                    val (iconRes, iconColor) = when {
+                                        item?.damageRate!! <= 50 -> R.drawable.tick_circle to Color(0xFF4CAF50)
+                                        item?.damageRate in 51..74 -> R.drawable.minus_cirlce to Color(0xFFFF9800)
+                                        else -> R.drawable.close_circle to Color.Red
+                                    }
+
                                     Icon(
-                                        painter = painterResource(id = R.drawable.close_circle),
-                                        contentDescription = "status",
-                                        tint = Color.Red,
+                                        painter = painterResource(id = iconRes),
+                                        contentDescription = "Status",
+                                        tint = iconColor,
                                         modifier = Modifier
-                                            .padding(end = 12.dp)
-                                            .size(28.dp)
+                                            .padding(end = 10.dp)
+                                            .size(36.dp)
                                     )
 
                                     Column(modifier = Modifier.weight(1f)) {
@@ -146,19 +172,31 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                                             fontSize = 14.sp,
                                             color = Color.Gray
                                         )
+                                        val backgroundColor = when {
+                                            item.damageRate <= 50 -> Color(0xFFD2FCD3) // So-light green
+                                            item.damageRate in 51..74 -> Color(0xFFFFE0B2) // So-light orange
+                                            else -> Color(0xFFFFCDD2) // So-light red
+                                        }
+
                                         Box(
                                             modifier = Modifier
                                                 .fillMaxWidth(0.5f)
                                                 .height(10.dp)
                                                 .clip(RoundedCornerShape(4.dp))
-                                                .background(Color(0xFFFFCDD2))
+                                                .background(backgroundColor)
                                         ) {
+                                            val backgroundColor = when {
+                                                item.damageRate <= 50 -> Color(0xFF00F508) // Light Green
+                                                item.damageRate in 51..74 -> Color(0xFFFF9800) // Orange
+                                                else -> Color(0xFFFF4155) // Red
+                                            }
+
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth(0.38f)
                                                     .fillMaxHeight()
-                                                    .clip(RoundedCornerShape(4.dp))
-                                                    .background(Color(0xFFFF4155))
+                                                    .clip(RoundedCornerShape(6.dp))
+                                                    .background(backgroundColor)
                                             )
                                         }
                                     }
@@ -167,7 +205,7 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                         }
 
                         Text(
-                            text = "Another common cause of auto damage: having a parked vehicle hit by another car. Whether you're leaving your car in a parking lot or on the road, take steps to help avoid parked car collisions and claims. Here are some suggestions:\n\nhaving a parked vehicle hit by another car.  hit by another car to help avoid parked car",
+                            text = item?.description.toString(),
                             color = Color.Black.copy(alpha = 0.5f),
                             fontSize = 12.sp,
                             modifier = Modifier.padding(vertical = 8.dp)
@@ -183,7 +221,7 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                             modifier = Modifier.padding(top = 0.dp, bottom = 2.dp)
                         )
                         Text(
-                            text = "Sia Kroven",
+                            text = item?.reporterId.toString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black.copy(alpha = 0.4f)
@@ -197,21 +235,21 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                             modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
                         )
                         Text(
-                            text = "80%",
+                            text = item?.damageRate.toString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black.copy(alpha = 0.4f)
                         )
 
                         Text(
-                            text = "Other Details",
+                            text = "Vehicle Details",
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
                             color = Color.Black,
                             modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
                         )
                         Text(
-                            text = "Mirihana",
+                            text = item?.vehicleNo.toString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black.copy(alpha = 0.4f)
@@ -225,31 +263,36 @@ fun AdminNewsViewScreen(navController: NavHostController) {
                             modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
                         )
                         Text(
-                            text = "Mirihana",
+                            text = item?.location.toString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Red
                         )
                         Spacer(modifier = Modifier.height(20.dp))
-                        val mirihana = LatLng(6.8750, 79.9020)
+
+                        val cameraLatLng = remember(item?.locationUrl) {
+                            extractLatLngFromUrl(item?.locationUrl.toString()) ?: LatLng(6.9271, 79.8612)
+                        }
+
                         val cameraPositionState = rememberCameraPositionState {
-                            position = CameraPosition.fromLatLngZoom(mirihana, 15f)
+                            position = CameraPosition.fromLatLngZoom(cameraLatLng, 15f)
                         }
 
                         GoogleMap(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(330.dp)
+                                .padding(top = 8.dp)
                                 .clip(RoundedCornerShape(8.dp)),
                             cameraPositionState = cameraPositionState
                         ) {
                             Marker(
-                                state = MarkerState(position = mirihana),
-                                title = "Mirihana",
-                                snippet = "Accident Location"
+                                state = MarkerState(position = cameraLatLng),
+                                title = item?.location,
+                                snippet = "Reported Location",
+                                icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident) // use your custom icon
                             )
                         }
-
 
 
                         Text(
@@ -342,8 +385,12 @@ fun AdminNewsViewScreen(navController: NavHostController) {
     }
 }
 
-@Preview(showBackground = true)
+
+
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AdminNewsViewScreenPreview() {
-    AdminNewsViewScreen(navController = rememberNavController())
+    val navController = rememberNavController()
+
+    AdminNewsViewScreen(navController = navController, cardId = "1234")
 }

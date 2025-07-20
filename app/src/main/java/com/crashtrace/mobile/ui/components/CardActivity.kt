@@ -82,12 +82,18 @@ fun MyCustomCard(
                     )
                 }
 
+                val accentColor = when {
+                    cardItem.damageRate <= 50 -> Color(0xFF00BAFF)
+                    cardItem.damageRate < 75 -> Color(0xFFFF5900)
+                    else -> Color.Red
+                }
+
                 Spacer(
                     modifier = Modifier
                         .width(4.dp)
                         .height(70.dp)
                         .align(Alignment.CenterVertically)
-                        .background(cardItem.accentColor)
+                        .background(accentColor)
                 )
 
                 Column(
@@ -135,10 +141,11 @@ data class CardItem(
     val accentColor: Color,
     val imagePlaceholderColor: Color,
     val imageUrl: String,
-    val date :String,
-    val location :String,
-    val locationUrl :String,
-    val vehiclenub:String,
+    val date: String,
+    val location: String,
+    val damageRate: Int,
+    val locationUrl: String,
+    val vehiclenub: String,
 )
 
 @Preview(showBackground = true)
@@ -153,6 +160,7 @@ fun MyCustomCardPreview() {
             accentColor = Color.Green,
             imagePlaceholderColor = Color.DarkGray,
             date = "2023-10-01",
+            damageRate = 78,
             location = "Colombo, Sri Lanka",
             locationUrl = "https://www.google.com/maps/place/Colombo,+Sri+Lanka/@6.9271,79.8612,12z/data=!3m1!4b1!4m6!3m5!1s0x3ae259a7f8c8c9b5:0x7d8e2f8c8c8c8c8c!8m2!3d6.9271!4d79.8612!16zL20vMDNnYjQ",
             vehiclenub = "azy-1234",

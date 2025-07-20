@@ -198,7 +198,7 @@ fun NewsFeedScreen(
                             Button(
                                 onClick = {
                                     lastItem?.let {
-                                        navController.navigate("card/${it.cardId}")
+                                        navController.navigate("cardU/${it.cardId}")
                                     }
                                 },
                                 modifier = Modifier
@@ -249,7 +249,7 @@ fun NewsFeedScreen(
                         MyCustomCard(
                             cardItem = item,
                             onClick = {
-                                navController.navigate("card/${item.cardId}")
+                                navController.navigate("cardU/${item.cardId}")
                             }
                         )
 

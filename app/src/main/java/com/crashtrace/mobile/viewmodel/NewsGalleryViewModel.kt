@@ -63,7 +63,6 @@ class NewsGalleryViewModel(private val repository: ReportRepository,private val 
         }
     }
 
-
     init {
         getNewsList()
     }
