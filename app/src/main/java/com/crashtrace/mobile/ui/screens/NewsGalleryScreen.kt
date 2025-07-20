@@ -34,7 +34,6 @@ fun NewsGalleryScreen(
 
     val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
 
-
     val newsList by newsGalleryViewModel.newsList.collectAsState()
 
 
@@ -107,6 +106,7 @@ fun NewsGalleryScreen(
                         cardItem = item,
                         onClick = {
                             navController.navigate("card/${item.cardId}")
+
                         }
                     )
                 }

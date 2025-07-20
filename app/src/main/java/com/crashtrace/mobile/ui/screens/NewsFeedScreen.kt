@@ -54,6 +54,13 @@ fun NewsFeedScreen(
     val lastItem = newsList.lastOrNull()
     var loadProfile by remember { mutableStateOf(false) }
 
+    // function to handle onShowMore click
+    fun handleOnShowMore() {
+        newsGalleryViewModel.getNewsList()
+        navController.navigate("gallery")
+
+    }
+
 
     if (loadProfile) {
         navController.navigate("profile")
@@ -252,7 +259,7 @@ fun NewsFeedScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { navController.navigate("gallery") },
+                    onClick = { handleOnShowMore() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
