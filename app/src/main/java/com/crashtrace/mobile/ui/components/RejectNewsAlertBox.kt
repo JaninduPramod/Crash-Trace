@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.crashtrace.mobile.R
 
 @Composable
-fun DeletNewsAlertBox(
+fun RejectNewsAlertBox(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -65,7 +65,7 @@ fun DeletNewsAlertBox(
             ) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "DELETE",
+                    text = "REJECT",
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     color = Color(0xFF222222),
@@ -73,7 +73,7 @@ fun DeletNewsAlertBox(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Want you DELETE thiis News ?",
+                    text = "Want you Reject ?",
                     color = Color(0xFFFF2D2D),
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
@@ -88,7 +88,7 @@ fun DeletNewsAlertBox(
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Text(
-                        text = "DELETE",
+                        text = "REJECT",
                         color = Color.White,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp
@@ -103,8 +103,8 @@ fun DeletNewsAlertBox(
 
 @Preview(showBackground = true)
 @Composable
-fun DeletNewsAlertPreview() {
-    DeletNewsAlertBox(
+fun RejectNewsAlertBoxPreview() {
+    PublicNewsAlertBox(
         onConfirm = {},
         onDismiss = {}
     )

@@ -24,14 +24,13 @@ import com.crashtrace.mobile.R
 
 @Composable
 fun SaveNewsAlertBox(
-    onDelete: () -> Unit,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    // Cover the whole page, including AppBarSub, with dark overlay
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0x99000000)), // semi-transparent background
+            .background(Color(0x99000000)),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -41,7 +40,7 @@ fun SaveNewsAlertBox(
                 .background(Color.White, shape = RoundedCornerShape(24.dp))
                 .padding(15.dp)
         ) {
-            // Close button (top right)
+            // Close button
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -57,6 +56,7 @@ fun SaveNewsAlertBox(
                     modifier = Modifier.size(35.dp)
                 )
             }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -73,14 +73,14 @@ fun SaveNewsAlertBox(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "if you have all the changes ?",
+                    text = "Are you sure you want to save the changes?",
                     color = Color(0xFFFF2D2D),
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(bottom = 15.dp)
                 )
                 Button(
-                    onClick = onDelete,
+                    onClick = onConfirm,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -100,12 +100,11 @@ fun SaveNewsAlertBox(
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun SaveNewsAlertBoxPreview() {
     SaveNewsAlertBox(
-        onDelete = {},
+        onConfirm = {},
         onDismiss = {}
     )
 }

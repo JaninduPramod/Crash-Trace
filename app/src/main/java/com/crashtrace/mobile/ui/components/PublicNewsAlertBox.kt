@@ -24,7 +24,7 @@ import com.crashtrace.mobile.R
 
 @Composable
 fun PublicNewsAlertBox(
-    onDelete: () -> Unit,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     // Cover the whole page, including AppBarSub, with dark overlay
@@ -80,7 +80,7 @@ fun PublicNewsAlertBox(
                     modifier = Modifier.padding(bottom = 15.dp)
                 )
                 Button(
-                    onClick = onDelete,
+                    onClick = onConfirm,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -105,7 +105,7 @@ fun PublicNewsAlertBox(
 @Composable
 fun PublicNewsAlertBoxPreview() {
     PublicNewsAlertBox(
-        onDelete = {},
+        onConfirm = {},
         onDismiss = {}
     )
 }

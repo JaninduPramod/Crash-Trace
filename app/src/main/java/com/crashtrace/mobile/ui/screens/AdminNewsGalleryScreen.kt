@@ -10,6 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -31,9 +34,23 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AdminNewsGalleryScreen(
     navController: NavController,
+    selectedIndex: Int = 1,
     viewModel: AdminGalleryViewModel = koinViewModel()
 ) {
     val newsList by viewModel.adminNewsList.collectAsState()
+    var loadProfile by remember { mutableStateOf(false) }
+    var backToFeed by remember { mutableStateOf(false) }
+
+
+    if (loadProfile) {
+        navController.navigate("profile")
+        loadProfile = false
+    }
+
+    if (backToFeed) {
+        MainNavScreen(navController = navController, selectedIndex = selectedIndex)
+        return
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -56,7 +73,7 @@ fun AdminNewsGalleryScreen(
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            AppBarMain(title = "", BackButton = false)
+            AppBarMain(title = "", BackButton = false,onProfileClick = { isProfile -> if (isProfile) loadProfile = true })
 
             Column(
                 modifier = Modifier
