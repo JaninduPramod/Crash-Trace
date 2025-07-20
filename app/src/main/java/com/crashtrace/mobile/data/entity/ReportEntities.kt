@@ -1,5 +1,6 @@
 package com.crashtrace.mobile.data.entity
 
+import com.google.gson.annotations.SerializedName
 import okhttp3.Address
 
 data class Report(
@@ -14,7 +15,6 @@ data class Report(
     val trustRate: Int,
 )
 
-
 data class ReportRequest(
     val vehicleNo: String,
     val description: String,
@@ -25,4 +25,21 @@ data class ReportRequest(
 
 data class ReportResponse(
     val message: String
+)
+
+data class SearchReportRequest(
+    val vehicleNo: String
+)
+
+data class SearchReportResponse(
+    val description: String,
+    val location: List<String>,
+    val address: String,
+    val reporterId: Reporter?, // This will now map correctly
+    val date: String,
+    val trustRate: Int,
+)
+
+data class Reporter(
+    val name: String
 )
