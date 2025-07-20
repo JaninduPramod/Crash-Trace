@@ -42,7 +42,7 @@ fun AppNavGraph(navController: NavHostController) {
         composable("adminGallery") { AdminNewsGalleryScreen(navController) }
 
 
-        composable("card/{cardId}") { backStackEntry ->
+        composable("cardU/{cardId}") { backStackEntry ->
             val cardId = backStackEntry.arguments?.getString("cardId") ?: ""
             NewsInfoScreen(navController = navController, cardId = cardId)
         }
