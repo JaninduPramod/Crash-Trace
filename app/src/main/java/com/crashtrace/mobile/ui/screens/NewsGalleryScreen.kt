@@ -107,6 +107,7 @@ fun NewsGalleryScreen(
                         cardItem = item,
                         onClick = {
                             navController.navigate("card/${item.cardId}")
+
                         }
                     )
                 }
