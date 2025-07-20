@@ -34,7 +34,6 @@ fun NewsGalleryScreen(
 
     val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
 
-
     val newsList by newsGalleryViewModel.newsList.collectAsState()
 
 

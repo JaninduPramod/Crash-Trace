@@ -28,117 +28,44 @@ class NewsGalleryViewModel(private val repository: ReportRepository,private val 
         println("Fetching news list...")
         viewModelScope.launch {
             val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
-            val response = repository.approvedReports(jwtToken);
-            if(response?.success == true)
-            {
-                _approvedReports.value = response.data ?: emptyList()
-                println(_approvedReports.value)
-            }
-            else{
+            val response = repository.approvedReports(jwtToken)
+            if (response?.success == true) {
+                val reports = response.data ?: emptyList()
+                _approvedReports.value = reports
+
+                val mappedNews = reports.mapIndexed { index, report ->
+                    CardItem(
+                        cardId = report._id ?: "report_$index",
+                        title = "Accident - ${report.vehicleNo ?: "Unknown"}",
+                        date = report.date ?: "Unknown Date",
+                        location = report.address ?: "Unknown Location",
+                        locationUrl = report.location?.joinToString(",") ?: "",
+                        vehiclenub = report.vehicleNo ?: "N/A",
+                        description = report.description ?: "No description",
+                        imageUrl = getDefaultImageForReport(index),
+                        accentColor = if (index % 2 == 0) Color.Green else Color.Blue,
+                        imagePlaceholderColor = Color.LightGray
+                    )
+                }
+
+                _newsList.value = mappedNews
+                println(">>> News list size: ${mappedNews.size}")
+            } else {
                 println("Failed to fetch news: ${response?.message ?: "Unknown error"}")
             }
         }
-
+    }
+    private fun getDefaultImageForReport(index: Int): String {
+        return when (index % 3) {
+            0 -> "https://cdn.pixabay.com/photo/2016/03/27/22/16/accident-1282330_1280.jpg"
+            1 -> "https://images.unsplash.com/photo-1494526585095-c41746248156"
+            else -> "https://cdn.pixabay.com/photo/2017/04/06/09/00/car-2209439_1280.jpg"
+        }
     }
 
 
     init {
-        loadMockNews() // Load mock data when ViewModel is created
+        getNewsList()
     }
 
-    private fun loadMockNews() {
-        viewModelScope.launch {
-
-            val mockData = listOf(
-                CardItem(
-                    cardId = "mock0",
-                    title = "Second Mock Article0",
-                    date = "2023-10-01",
-                    location = "Colombo, Sri Lanka",
-                    locationUrl = " 20.9271, 89.8612",
-                    vehiclenub = "azy-1234",
-                    description = "Another piece of mock news to display in the gallery for testing purposes.",
-                    imageUrl = "https://images.unsplash.com/photo-1494526585095-c41746248156",
-                    accentColor = Color.Blue,
-                    imagePlaceholderColor = Color.LightGray,
-                ),
-
-                CardItem(
-                    cardId = "mock1",
-                    date = "2023-10-01",
-                    location = "Colombo, Sri Lanka",
-                    locationUrl = "20.9271, 89.8612",
-                    vehiclenub = "azy-1234",
-                    title = "Mock News Title 1",
-                    description = "This is the description for the first mock news item. It's quite interesting 111.",
-                    imageUrl = "https://images.unsplash.com/photo-1494526585095-c41746248156",
-                    accentColor = Color.Green,
-                    imagePlaceholderColor = Color.DarkGray,
-                ),
-                CardItem(
-                    cardId = "mock2",
-                    title = "Second Mock Article 2",
-                    date = "2023-10-01",
-                    location = "Colombo, Sri Lanka",
-                    locationUrl = "",
-                    vehiclenub = "azy-1234",
-                    description = "Another piece of mock news to display in the gallery for testing purposes.",
-                    imageUrl = "https://images.unsplash.com/photo-1494526585095-c41746248156",
-                    accentColor = Color.Blue,
-                    imagePlaceholderColor = Color.LightGray,
-                ),
-                CardItem(
-                    cardId = "mock3",
-                    title = "Mock Data Showcase 3",
-                    date = "2023-10-01",
-                    location = "Colombo, Sri Lanka",
-                    locationUrl = "20.9271, 89.8612",
-                    vehiclenub = "azy-1234",
-                    description = "The final mock item demonstrating the list.",
-                    imageUrl = "https://cdn.pixabay.com/photo/2016/03/27/22/16/accident-1282330_1280.jpg",
-                    accentColor = Color.Green,
-                    imagePlaceholderColor = Color.DarkGray,
-                ) ,
-                CardItem(
-                        cardId = "mock4",
-                    title = "Mock News Title 4",
-                    date = "2023-10-01",
-                    location = "Colombo, Sri Lanka",
-                    locationUrl =  "20.9271, 89.8612",
-                    vehiclenub = "azy-1234",
-                    description = "This is the description for the first mock news item. It's quite interesting 111.",
-                    imageUrl = "https://cdn.pixabay.com/photo/2017/04/06/09/00/car-2209439_1280.jpg",
-                    accentColor = Color.Green,
-                    imagePlaceholderColor = Color.DarkGray,
-            ),
-            CardItem(
-                    cardId = "mock5",
-                    title = "Second Mock Article5",
-                    date = "2023-10-01",
-                    location = "Colombo, Sri Lanka",
-                    locationUrl = "20.9271, 89.8612",
-                    vehiclenub = "azy-1234",
-                    description = "Another piece of mock news to display in the gallery for testing purposes.",
-                    imageUrl = "https://images.unsplash.com/photo-1494526585095-c41746248156",
-                    accentColor = Color.Blue,
-                    imagePlaceholderColor = Color.LightGray,
-            ),
-            CardItem(
-                    cardId = "mock6",
-                    title = "Mock Data Showcase6",
-                    date = "2023-10-01",
-                    location = "Colombo, Sri Lanka",
-                    locationUrl = "22.9271, 89.8612",
-                    vehiclenub = "azy-1234",
-                    description = "The final mock item demonstrating the list.",
-                    imageUrl = "https://images.unsplash.com/photo-1494526585095-c41746248156",
-                    accentColor = Color.Green,
-                    imagePlaceholderColor = Color.DarkGray,
-            )
-
-
-            )
-            _newsList.value = mockData
-        }
-    }
 }
