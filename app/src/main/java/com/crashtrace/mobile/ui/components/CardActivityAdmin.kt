@@ -3,6 +3,7 @@ package com.crashtrace.mobile.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -21,34 +22,39 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.rememberAsyncImagePainter
 import com.crashtrace.mobile.R
-import kotlin.String
 
 @Composable
-fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier) {
-    Box(modifier = modifier) {
+fun CardActivityAdminCard(
+    cardItem: CardItemAdmin,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val imagePainter = rememberAsyncImagePainter(model = cardItem.imageUrl)
+
+    Box(
+        modifier = modifier
+            .clickable { onClick() }
+    ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
-                .padding(start = 0.dp, top = 5.dp, end = 5.dp, bottom = 5.dp),
-
+                .padding(0.dp,5.dp,5.dp,5.dp),
             shape = RoundedCornerShape(
                 topStart = 0.dp,
                 topEnd = 20.dp,
                 bottomEnd = 20.dp,
                 bottomStart = 0.dp
             ),
-
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            Row(modifier = Modifier.fillMaxSize()) {
 
                 Column(
                     modifier = Modifier
@@ -56,7 +62,6 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                         .padding(horizontal = 10.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // First Box (NEWS ID)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -66,18 +71,14 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                             .background(Color(0xFFEAEAEA)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "NEWS ID:",
-                                fontSize = 20.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.Medium,
-                            )
-
-                        }
+                        Text(
+                            text = "NEWS ID:",
+                            fontSize = 20.sp,
+                            color = (Color(0xFFFFFFFF)),
+                            fontWeight = FontWeight.Medium,
+                        )
                     }
 
-                    // Second Box (Image)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -87,26 +88,14 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                             .background(Color(0xFFEAEAEA)),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (cardItem.imagePainter != null) {
-                            Image(
-                                painter = cardItem.imagePainter,
-                                contentDescription = cardItem.title,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            // Show placeholder text when no image is available
-                            Text(
-                                text = cardItem.cardId,
-                                fontSize = 36.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = (Color(0xFF757575))
-                            )
-                        }
+                        Text(
+                            text = cardItem.cardId.take(4),
+                            fontSize = 36.sp,
+                            color = Color(0xFF9D9D9D),
+                            fontWeight = FontWeight.Medium,
+                        )
                     }
                 }
-
-                // Dotted Line Separator
 
                 DottedLine(
                     modifier = Modifier
@@ -120,14 +109,11 @@ fun CardActivityAdminCard(cardItem: CardItemAdmin, modifier: Modifier = Modifier
                     isVertical = true
                 )
 
-
-                // Content Column
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .padding(start = 10.dp, end = 10.dp),
-
+                        .padding(horizontal = 10.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
@@ -179,7 +165,7 @@ fun DottedLine(
 
         if (isVertical) {
             drawLine(
-                color = color,
+                color = (Color(0xFFD2D2D2)),
                 start = Offset(size.width / 2, 0f),
                 end = Offset(size.width / 2, size.height),
                 strokeWidth = strokeWidth,
@@ -187,7 +173,7 @@ fun DottedLine(
             )
         } else {
             drawLine(
-                color = color,
+                color = (Color(0xFFD2D2D2)),
                 start = Offset(0f, size.height / 2),
                 end = Offset(size.width, size.height / 2),
                 strokeWidth = strokeWidth,
@@ -196,32 +182,54 @@ fun DottedLine(
         }
     }
 }
+
 @Composable
 fun getStatusIconPainter(status: String): Painter {
     return when (status.lowercase()) {
         "pending" -> painterResource(id = R.drawable.minus_cirlce)
         "ok" -> painterResource(id = R.drawable.tick_circle)
         "bad" -> painterResource(id = R.drawable.close_circle)
-        else -> painterResource(id = R.drawable.minus_cirlce) // fallback
+        else -> painterResource(id = R.drawable.minus_cirlce)
     }
 }
 
-
-
+data class CardItemAdmin(
+    val cardId: String,
+    val title: String,
+    val description: String,
+    val date: String,
+    val location: String,
+    val locationUrl: String,
+    val imageUrl: String,
+    val vehicleNo: String,
+    val address: String,
+    val reporterId: String,
+    val trustRate: Int,
+    val status: String = "pending",
+    val accentColor: Color,
+    val imagePlaceholderColor: Color
+)
 
 @Preview(showBackground = true)
 @Composable
-fun CardActivityAdminCardView() {
+fun PreviewCardActivityAdminCard() {
     CardActivityAdminCard(
         cardItem = CardItemAdmin(
-
-            cardId = "231",
-            title = "Sample Title",
-            description = "This is a sample description for the card. It can be a bit longer to show ellipsis.",
-            imagePlaceholderColor = Color(0xFFDEDEDE),
-
-            accentColor = Color.Gray,
-            status = "ok" // Try: "pending", "bad", "ok"
-        )
+            cardId = "0023",
+            title = "Test Accident",
+            description = "Minor accident occurred at junction.",
+            date = "2023-12-01",
+            location = "Colombo, Sri Lanka",
+            locationUrl = "6.9271, 79.8612",
+            imageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+            vehicleNo = "WP-1234",
+            address = "123 Main Street",
+            reporterId = "user001",
+            trustRate = 4,
+            status = "ok",
+            accentColor = Color.Blue,
+            imagePlaceholderColor = Color.LightGray
+        ),
+        onClick = {}
     )
 }

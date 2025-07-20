@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,18 +29,36 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
+import com.crashtrace.mobile.viewmodel.AdminGalleryViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AdminNewsViewScreen(navController: NavHostController) {
+fun AdminNewsViewScreen(navController: NavHostController,cardId: String) {
 
     var loadProfile by remember { mutableStateOf(false) }
 
     if (loadProfile) {
         navController.navigate("profile")
         loadProfile = false
+    }
+
+    val viewModel: AdminGalleryViewModel = koinViewModel()
+    val item = viewModel.adminNewsList.collectAsState().value.find { it.cardId == cardId }
+
+    if (item != null) {
+        // Display details using item
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Text(text = "Title: ${item.title}")
+            Text(text = "Description: ${item.description}")
+            Text(text = "Date: ${item.date}")
+            Text(text = "Location: ${item.location}")
+            // ... Add other fields as needed
+        }
+    } else {
+        Text(text = "News not found!", modifier = Modifier.padding(16.dp))
     }
 
 
@@ -342,8 +361,8 @@ fun AdminNewsViewScreen(navController: NavHostController) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AdminNewsViewScreenPreview() {
-    AdminNewsViewScreen(navController = rememberNavController())
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun AdminNewsViewScreenPreview() {
+//    AdminNewsViewScreen(navController = rememberNavController())
+//}
