@@ -53,9 +53,20 @@ fun SigningInScreen(navController: NavHostController) {
         coroutineScope.launch {
             loginViewModel.executeUserLogin().collect { response ->
                 if (response?.success == true) {
+                    if(response.data?.role == "admin")
+                    {
+                        println("Navigate to admin")
+                        navController.navigate("adminGallery")
+                    }
+
+                    else
+                    {
+                        println("Navigate to home")
+                        navController.navigate("home")
+                    }
                     Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
                     profileViewModel.executeUserProfile()
-                    navController.navigate("adminGallery")
+
                 } else {
                     Toast.makeText(context, response?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
                 }

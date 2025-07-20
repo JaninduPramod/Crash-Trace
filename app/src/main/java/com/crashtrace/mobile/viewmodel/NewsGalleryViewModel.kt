@@ -44,7 +44,8 @@ class NewsGalleryViewModel(private val repository: ReportRepository,private val 
                         description = report.description ?: "No description",
                         imageUrl = getDefaultImageForReport(index),
                         accentColor = if (index % 2 == 0) Color.Green else Color.Blue,
-                        imagePlaceholderColor = Color.LightGray
+                        imagePlaceholderColor = Color.LightGray,
+                        damageRate = 10 // Assuming trustRate is out of 100
                     )
                 }
 
