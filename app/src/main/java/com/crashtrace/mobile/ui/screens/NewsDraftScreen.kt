@@ -1,7 +1,13 @@
 package com.crashtrace.mobile.ui.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.net.Uri
+import android.os.Environment
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,8 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,9 +38,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.crashtrace.mobile.R
+import com.crashtrace.mobile.launchCamera
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.viewmodel.ReportViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -44,6 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
 import java.util.*
 
 @Composable
@@ -106,39 +120,27 @@ fun LocationPickerDialog(
                                 .background(Color.LightGray, RoundedCornerShape(2.dp))
                         )
                     }
-
-//                    Text(
-//                        "Pick Location",
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 16.sp,
-//                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-//                    )
-
-
-
-
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 12.dp)
                     ) {
-
                         OutlinedTextField(
                             value = searchText,
                             onValueChange = { searchText = it },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 0.dp)
-                                .offset(y = 20.dp)  // Move the field 20 dp down
-                                .zIndex(2f),  // Set the z-index to 2 (higher value brings it to the front)
+                                .padding(horizontal = 16.dp)
+                                .offset(y = 20.dp)
+                                .zIndex(2f),
                             placeholder = { Text("Search location...") },
                             singleLine = true,
                             shape = RoundedCornerShape(15.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Color.LightGray,
                                 unfocusedBorderColor = Color.LightGray,
-                                focusedContainerColor = Color.White.copy(alpha = 0.8f),  // White background when focused
-                                unfocusedContainerColor = Color.White.copy(alpha = 0.8f)  // White background when unfocused
+                                focusedContainerColor = Color.White.copy(alpha = 0.8f),
+                                unfocusedContainerColor = Color.White.copy(alpha = 0.8f)
                             )
                         )
 
@@ -146,8 +148,7 @@ fun LocationPickerDialog(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(5.dp)
-                                .clip(RoundedCornerShape(15.dp))
-                                ,
+                                .clip(RoundedCornerShape(15.dp)),
                             cameraPositionState = cameraPositionState,
                             onMapClick = { latLng -> selectedLatLng = latLng }
                         ) {
@@ -165,7 +166,7 @@ fun LocationPickerDialog(
                         onClick = {
                             selectedLatLng?.let {
                                 onLocationSelected(it)
-                                onDismissRequest() // Close the map dialog
+                                onDismissRequest()
                             }
                         },
                         enabled = selectedLatLng != null,
@@ -201,7 +202,6 @@ suspend fun safeGeocodeLocation(context: android.content.Context, query: String)
 
 @Composable
 fun NewsDraftScreen(navController: NavHostController) {
-
     val reportViewModel: ReportViewModel = koinViewModel()
     val vehicleNumber by reportViewModel.vehicleNumber.collectAsState()
     val description by reportViewModel.description.collectAsState()
@@ -211,13 +211,24 @@ fun NewsDraftScreen(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var location_code by remember { mutableStateOf("") }
+    var loadProfile by remember { mutableStateOf(false) }
+    var showLocationDialog by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
 
-    fun handleSubmit(){
+    LaunchedEffect(location_code) {
+        reportViewModel.setLocation(location_code)
+    }
+
+
+    if (loadProfile) {
+        navController.navigate("profile")
+        loadProfile = false
+    }
+    fun handleSubmit() {
         coroutineScope.launch {
             reportViewModel.submitReport().collect { response ->
                 if (response?.success == true) {
                     Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
-
                     navController.navigate("home")
                 } else {
                     Toast.makeText(context, response?.message ?: "Submit Report Failed", Toast.LENGTH_SHORT).show()
@@ -226,21 +237,37 @@ fun NewsDraftScreen(navController: NavHostController) {
         }
     }
 
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
+    val photoFile = remember {
+        File(
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            "IMG_${System.currentTimeMillis()}.jpg"
+        )
+    }
+    val photoUri = FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.provider",
+        photoFile
+    )
 
-    // Update the ViewModel's location state whenever location_code changes
-    LaunchedEffect(location_code) {
-        reportViewModel.setLocation(location_code)
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            imageUri = photoUri
+        }
     }
 
-    var loadProfile by remember { mutableStateOf(false) }
-    var showLocationDialog by remember { mutableStateOf(false) }
-    var showDatePicker by remember { mutableStateOf(false) }
 
-    if (loadProfile) {
-        navController.navigate("profile")
-        loadProfile = false
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            cameraLauncher.launch(photoUri)
+        } else {
+            Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -281,27 +308,50 @@ fun NewsDraftScreen(navController: NavHostController) {
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("add images", fontSize = 14.sp, color = Color.Gray)
+                        Spacer(modifier = Modifier.height(10.dp))
                         Box(
                             Modifier
                                 .fillMaxWidth()
                                 .height(130.dp)
                                 .clip(RoundedCornerShape(15.dp))
-                                .background(Color.Gray.copy(alpha = 0.1f)),
-                            contentAlignment = Alignment.Center
+                                .background(Color.Gray.copy(alpha = 0.1f))
+                                .clickable {
+                                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                                        == PackageManager.PERMISSION_GRANTED
+                                    ) {
+                                        cameraLauncher.launch(photoUri)
+                                    } else {
+                                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                                    }
+                                }
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("+", color = Color.Gray, fontSize = 24.sp)
-                                Text("add images", color = Color.Gray, fontSize = 12.sp)
-                            }
-                        }
+                            if (imageUri != null) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(model = imageUri),
+                                    contentDescription = "Captured Image",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.CameraAlt,
+                                    contentDescription = "Camera Icon",
+                                    tint = Color.Gray,
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .align(Alignment.Center)
+                                )}}
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            "Confirm News information",
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
 
-                        Text("Confirm News information", fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 16.dp))
                         CustomInputField("Vehicle Number", vehicleNumber, height = 60.dp) { reportViewModel.setVehicleNumber(it) }
 
-
-
                         CustomInputField("Description", description, height = 90.dp) { reportViewModel.setDescription(it) }
-
 
                         CustomInputField("Address", address, height = 60.dp) { reportViewModel.setAddress(it) }
 
@@ -315,7 +365,7 @@ fun NewsDraftScreen(navController: NavHostController) {
                                 .border(
                                     width = 1.dp,
                                     color = Color.LightGray,
-                                    shape = RoundedCornerShape(15.dp) // match the clip shape
+                                    shape = RoundedCornerShape(15.dp)
                                 )
                                 .clickable { showLocationDialog = true }
                                 .padding(horizontal = 16.dp),
@@ -332,18 +382,13 @@ fun NewsDraftScreen(navController: NavHostController) {
 
                         DateInputField(
                             date = date,
-                            onClick = { showDatePicker = true },
-                            modifier = Modifier
-
-
+                            onClick = { showDatePicker = true }
                         )
-
                     }
                 }
 
-
                 Button(
-                    onClick = {handleSubmit()},
+                    onClick = { handleSubmit() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
@@ -409,8 +454,7 @@ fun DateInputField(
             text = "Date",
             fontSize = 12.sp,
             color = Color.Gray,
-            modifier = Modifier
-                .padding(start = 4.dp, bottom = 4.dp)
+            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
         )
 
         Box(
@@ -449,7 +493,6 @@ fun DateInputField(
     }
 }
 
-
 @Composable
 fun DatePickerBottomSheet(
     initialDate: Calendar = Calendar.getInstance(),
@@ -479,13 +522,11 @@ fun DatePickerBottomSheet(
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
-
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                 color = Color.White,
                 tonalElevation = 8.dp
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    // Drag indicator
                     Box(
                         Modifier
                             .fillMaxWidth()
@@ -502,23 +543,21 @@ fun DatePickerBottomSheet(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp)  // No padding around the card
-                            .scale(1f)  // Reducing the scale to 80% of original size
-                            .offset(y = (20).dp),  // Moves the Card 40px up
-                        shape = RoundedCornerShape(15.dp),  // Rounded corners with 15.dp radius
-                        colors = CardDefaults.cardColors(containerColor = Color.Transparent),  // Transparent background
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)  // No shadow (zero elevation)
+                            .padding(0.dp)
+                            .scale(1f)
+                            .offset(y = (20).dp),
+                        shape = RoundedCornerShape(15.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     )  {
-                        // Content inside the Card
                         AndroidView(
                             modifier = Modifier
-                                .fillMaxWidth()  // Ensures the AndroidView fills the card width
+                                .fillMaxWidth()
                                 .padding(horizontal = 30.dp)
                                 .weight(1f)
-                                .offset(y = (-75).dp),  // Moves the DatePicker 40px up
+                                .offset(y = (-75).dp),
                             factory = { context ->
                                 android.widget.DatePicker(android.view.ContextThemeWrapper(context, R.style.Theme_Crash_Trace)).apply {
-                                    // Set the scale (1.2x width, 1.4x height)
                                     scaleX = 1.2f
                                     scaleY = 1.2f
 
@@ -540,7 +579,7 @@ fun DatePickerBottomSheet(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                               .padding(16.dp,0.dp,16.dp,0.dp)
+                                .padding(16.dp,0.dp,16.dp,0.dp)
                                 .height(52.dp)
                                 .offset(y = (-50).dp),
                             shape = RoundedCornerShape(15.dp),
@@ -548,16 +587,92 @@ fun DatePickerBottomSheet(
                         ) {
                             Text("Confirm Date", color = Color.White)
                         }
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
-
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DraftNewsPreview() {
-    NewsDraftScreen(navController = rememberNavController())
-}
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DraftNewsPreview() {
+//    NewsDraftScreen(navController = rememberNavController())
+//}
+//
+//@Composable
+//fun NewsDraftScreen(navController: NavController) {
+//    val context = LocalContext.current
+//    var imageUri by remember { mutableStateOf<Uri?>(null) }
+//
+//    // Generate unique file & URI
+//    val photoFile = remember {
+//        File(
+//            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+//            "IMG_${System.currentTimeMillis()}.jpg"
+//        )
+//    }
+//    val photoUri = FileProvider.getUriForFile(
+//        context,
+//        "${context.packageName}.provider",
+//        photoFile
+//    )
+//
+//    // Launcher to take picture
+//    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+//        if (success) {
+//            imageUri = photoUri
+//        }
+//    }
+//
+//    // Launcher to request permission
+//    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) { isGranted ->
+//        if (isGranted) {
+//            cameraLauncher.launch(photoUri)
+//        } else {
+//            Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+//        }
+//    }
+//
+//    Box(
+//        Modifier
+//            .fillMaxWidth()
+//            .height(130.dp)
+//            .clip(RoundedCornerShape(15.dp))
+//            .background(Color.Gray.copy(alpha = 0.1f))
+//            .clickable {
+//                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+//                    == PackageManager.PERMISSION_GRANTED
+//                ) {
+//                    cameraLauncher.launch(photoUri)
+//                } else {
+//                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+//                }
+//            }
+//    ) {
+//        if (imageUri != null) {
+//            Image(
+//                painter = rememberAsyncImagePainter(model = imageUri),
+//                contentDescription = "Captured Image",
+//                modifier = Modifier.fillMaxSize(),
+//                contentScale = ContentScale.Crop
+//            )
+//        } else {
+//            Icon(
+//                imageVector = Icons.Default.CameraAlt,
+//                contentDescription = "Camera Icon",
+//                tint = Color.Gray,
+//                modifier = Modifier
+//                    .size(40.dp)
+//                    .align(Alignment.Center)
+//            )
+//        }
+//    }
+//}
+
+
+
