@@ -62,3 +62,17 @@ export const searchReportService = async (vehicleNo) => {
   }
 
 }
+
+// service function to update a report by cardID
+export const editReportService = async (cardID, updateData) => {
+  try {
+    const report = await Report.findOneAndUpdate({ cardID }, updateData, { new: true });
+    if (!report) {
+      throw new CustomError("Report not found", 200);
+    }
+    return new ApiResponse(report, "Report updated successfully", true);
+  } catch (error) {
+    throw new CustomError("Failed to update report", 200);
+  }
+};
+

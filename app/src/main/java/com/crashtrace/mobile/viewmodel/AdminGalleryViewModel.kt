@@ -68,11 +68,57 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
         _location.value = newLocation
     }
 
+    // function to reset all fields
+    fun resetFields() {
+        _cardId.value = ""
+        _title.value = ""
+        _description.value = ""
+        _damageRate.value = 0
+        _reporterId.value = ""
+        _vehicleNo.value = ""
+        _location.value = ""
+    }
 
 
     fun saveReport() {
+        viewModelScope.launch {
+            val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
 
-        println("CardID : "+_cardId.value)
+            val response = repository.editReport(
+                jwtToken,
+                _cardId.value,
+                _title.value,
+                _description.value,
+                _damageRate.value,
+                _vehicleNo.value,
+                _location.value
+            )
+
+            if (response?.success == true) {
+                println(response.message)
+
+                // Update the adminNewsList with the edited report
+                val updatedList = _adminNewsList.value.map { report ->
+                    if (report.cardId == _cardId.value) {
+                        report.copy(
+                            title = _title.value,
+                            description = _description.value,
+                            damageRate = _damageRate.value,
+                            vehicleNo = _vehicleNo.value,
+                            location = _location.value
+                        )
+                    } else {
+                        report
+                    }
+                }
+                _adminNewsList.value = updatedList
+
+                // Optionally reset fields if needed
+                resetFields()
+            } else {
+                println("Failed to update report: ${response?.message ?: "Unknown error"}")
+            }
+        }
     }
 
 

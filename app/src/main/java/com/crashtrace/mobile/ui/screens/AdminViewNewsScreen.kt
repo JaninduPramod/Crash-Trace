@@ -181,6 +181,7 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                             value = reporterId,
                             onValueChange = { reporterId = it },
                             label = { Text("Reporter ID") },
+                            enabled = false,
                             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
                                 .padding(horizontal = 10.dp),
                             shape = RoundedCornerShape(12.dp),
