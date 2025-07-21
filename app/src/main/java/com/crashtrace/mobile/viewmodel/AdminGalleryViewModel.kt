@@ -3,17 +3,32 @@ package com.crashtrace.mobile.viewmodel
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crashtrace.mobile.data.Utils.DataStoreManager
+import com.crashtrace.mobile.data.repository.ReportRepository
+import com.crashtrace.mobile.ui.components.CardItem
 import com.crashtrace.mobile.ui.components.CardItemAdmin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class AdminGalleryViewModel : ViewModel() {
+class AdminGalleryViewModel(private val repository: ReportRepository, private val dataStoreManager: DataStoreManager) : ViewModel() {
 
     private val _adminNewsList = MutableStateFlow<List<CardItemAdmin>>(emptyList())
     val adminNewsList: StateFlow<List<CardItemAdmin>> = _adminNewsList.asStateFlow()
 
+
+
+    fun getAllReports() {
+
+        viewModelScope.launch {
+            val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
+            val response = repository.getAllReports(jwtToken)
+            println("Fetching all reports..."+response)
+
+        }
+    }
 
     init {
         loadMockAdminData()

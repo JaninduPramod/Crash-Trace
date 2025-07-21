@@ -1,4 +1,4 @@
-import { createReportService,getApprovedReportsService,searchReportService } from "../services/ReportServices.js";
+import { createReportService,getApprovedReportsService,searchReportService,getAllReportsService } from "../services/ReportServices.js";
 
 export const createReport = async (req, res, next) => {
   try {
@@ -10,6 +10,16 @@ export const createReport = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getAllReports = async (req, res, next) => {
+  try {
+    const response = await getAllReportsService();
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+
+}
 
 export const getApprovedReports = async (req, res, next) => {
   try {

@@ -43,3 +43,17 @@ data class SearchReportResponse(
 data class Reporter(
     val name: String
 )
+
+data class AllReports(
+    val cardID: String,
+    val vehicleNo: String,
+    val title: String,
+    val description: String,
+    val location: List<String>,
+    val address: String,
+    val reporterId: Reporter?,
+    val date: String,
+    val status: String,
+    val trustRate: Int,
+    val damageRate: Int,
+)

@@ -1,5 +1,6 @@
 package com.crashtrace.mobile.data.api
 
+import com.crashtrace.mobile.data.entity.AllReports
 import com.crashtrace.mobile.data.entity.ApiResponse
 import com.crashtrace.mobile.data.entity.Report
 import com.crashtrace.mobile.data.entity.ReportRequest
@@ -21,5 +22,8 @@ interface ReportApi {
 
     @POST("/api/reports/searchReport")
     suspend fun searchReport(@Header("Authorization") token: String,@Body request: SearchReportRequest): Response<ApiResponse<SearchReportResponse>>
+
+    @GET("/api/reports/allReports")
+    suspend fun getAllReports(@Header("Authorization") token: String): Response<ApiResponse<List<AllReports>>>
 
 }

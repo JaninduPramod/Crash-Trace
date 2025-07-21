@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.ui.components.CardActivityAdminCard
 import com.crashtrace.mobile.viewmodel.AdminGalleryViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.KoinApplication.Companion.init
 
 @Composable
 fun AdminNewsGalleryScreen(
@@ -40,6 +41,11 @@ fun AdminNewsGalleryScreen(
     val newsList by viewModel.adminNewsList.collectAsState()
     var loadProfile by remember { mutableStateOf(false) }
     var backToFeed by remember { mutableStateOf(false) }
+
+
+    LaunchedEffect(Unit) {
+        viewModel.getAllReports()
+    }
 
 
     if (loadProfile) {

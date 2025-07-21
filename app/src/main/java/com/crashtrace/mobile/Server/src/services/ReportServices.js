@@ -21,10 +21,24 @@ export const createReportService = async (data, reporterId) => {
   }
 };
 
+// function to get all reports
+export const getAllReportsService = async () => {
+  try {
+    const reports = await Report.find().populate("reporterId", "-_id name");
+    if (!reports || reports.length === 0) {
+      throw new CustomError("No reports found", 200);
+    }
+    return new ApiResponse(reports, "Reports retrieved successfully", true);
+  } catch (error) {
+    throw new CustomError("Failed to retrieve reports", 200);
+  }
+};
+
+
 // function to get all approved reports
 export const getApprovedReportsService = async () => {
     try {
-        const reports = await Report.find({ status: "approved" });
+        const reports = await Report.find({ status: "ok" });
         if (!reports || reports.length === 0) {
         throw new CustomError("No reports found", 200);
         }
