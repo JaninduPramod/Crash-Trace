@@ -66,3 +66,8 @@ data class UpdateReportRequest(
     val vehicleNo: String,
     val address: String,
 )
+
+data class ReportOptionRequest(
+    val cardID: String,
+    val option: String,
+)

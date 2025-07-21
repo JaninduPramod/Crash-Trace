@@ -3,6 +3,7 @@ package com.crashtrace.mobile.data.api
 import com.crashtrace.mobile.data.entity.AllReports
 import com.crashtrace.mobile.data.entity.ApiResponse
 import com.crashtrace.mobile.data.entity.Report
+import com.crashtrace.mobile.data.entity.ReportOptionRequest
 import com.crashtrace.mobile.data.entity.ReportRequest
 import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.entity.SearchReportRequest
@@ -30,5 +31,8 @@ interface ReportApi {
 
     @PUT("/api/reports/editReport")
     suspend fun editReport(@Header("Authorization") token: String,@Body request: UpdateReportRequest): Response<ApiResponse<ReportResponse>>
+
+    @POST("/api/reports/processReport")
+    suspend fun reportOption(@Header("Authorization")token:String, @Body request: ReportOptionRequest): Response<ApiResponse<ReportResponse>>
 
 }

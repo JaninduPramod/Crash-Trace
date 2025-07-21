@@ -76,3 +76,37 @@ export const editReportService = async (cardID, updateData) => {
   }
 };
 
+export const processReportService = async (cardID, option) => {
+  try {
+    let report;
+
+    if (option === "delete") {
+      report = await Report.findOneAndDelete({ cardID });
+      if (!report) {
+        throw new CustomError("Report not found", 200);
+      }
+      return new ApiResponse(null, "Report deleted successfully", true);
+    }
+
+    if (option === "publish") {
+      report = await Report.findOneAndUpdate({ cardID }, { status: "ok" }, { new: true });
+      if (!report) {
+        throw new CustomError("Report not found", 200);
+      }
+      return new ApiResponse(report, "Report published successfully", true);
+    }
+
+    if (option === "reject") {
+      report = await Report.findOneAndUpdate({ cardID }, { status: "bad" }, { new: true });
+      if (!report) {
+        throw new CustomError("Report not found", 200);
+      }
+      return new ApiResponse(report, "Report rejected successfully", true);
+    }
+
+    throw new CustomError("Invalid option provided", 200);
+  } catch (error) {
+    throw new CustomError(error.message || "Failed to process report", 200);
+  }
+};
+
