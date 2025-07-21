@@ -19,6 +19,7 @@ import com.crashtrace.mobile.ui.screens.SignUpScreen
 import com.crashtrace.mobile.ui.screens.SigningInScreen
 import com.crashtrace.mobile.ui.screens.VerificationScreen
 import com.crashtrace.mobile.ui.screens.MainNavScreen
+import com.crashtrace.mobile.ui.screens.NewsDraftScreen
 import com.crashtrace.mobile.ui.screens.NewsFeedScreen
 import com.crashtrace.mobile.ui.screens.NewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.NewsInfoScreen
@@ -27,7 +28,7 @@ import com.crashtrace.mobile.ui.screens.NewsInfoScreen
 @Composable
 fun AppNavGraph(navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = "signin") {
+    NavHost(navController = navController, startDestination = "nd") {
 //        composable("splash") {SplashScreen(navController) }
 
         composable("signup") { SignUpScreen(navController) }
@@ -41,6 +42,8 @@ fun AppNavGraph(navController: NavHostController) {
         composable("newsFeed") { NewsFeedScreen(navController) }
         composable("gallery") { NewsGalleryScreen(navController) }
         composable("adminGallery") { AdminNewsGalleryScreen(navController) }
+        composable("nd") { NewsDraftScreen(navController) }
+
 
 
         composable("cardU/{cardId}") { backStackEntry ->

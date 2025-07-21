@@ -121,7 +121,6 @@ fun AppBarSub(
 }
 
 
-// ✅ Mock data
 data class UserProfile(
     val userName: String,
     val userNick: String,
@@ -263,15 +262,11 @@ fun ProfileScreen(navController: NavHostController) {
 
 
                         HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(15.dp, 0.dp, 5.dp, 0.dp),
                             thickness = 1.dp,
-                            color = Color.Gray
+                            color = Color.LightGray
                         )
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                                color = Color.Gray
-                            )
+
                             Spacer(modifier = Modifier.height(16.dp))
                             Row(
                                 modifier = Modifier
