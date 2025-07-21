@@ -5,6 +5,7 @@ import okhttp3.Address
 
 data class Report(
     val _id: String,
+    val title: String,
     val vehicleNo: String,
     val description: String,
     val location: List<String>,

@@ -36,7 +36,7 @@ class NewsGalleryViewModel(private val repository: ReportRepository,private val 
                 val mappedNews = reports.mapIndexed { index, report ->
                     CardItem(
                         cardId = report._id ?: "report_$index",
-                        title = "Accident - ${report.vehicleNo ?: "Unknown"}",
+                        title = report.title ?: "No Title",
                         date = report.date ?: "Unknown Date",
                         location = report.address ?: "Unknown Location",
                         locationUrl = report.location?.joinToString(",") ?: "",

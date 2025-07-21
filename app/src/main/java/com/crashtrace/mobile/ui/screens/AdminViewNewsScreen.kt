@@ -351,7 +351,7 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
 
                                                 Box(
                                                     modifier = Modifier
-                                                        .fillMaxWidth(0.38f)
+                                                        .fillMaxWidth(item.damageRate / 100f)
                                                         .fillMaxHeight()
                                                         .clip(RoundedCornerShape(6.dp))
                                                         .background(foregroundColor)
