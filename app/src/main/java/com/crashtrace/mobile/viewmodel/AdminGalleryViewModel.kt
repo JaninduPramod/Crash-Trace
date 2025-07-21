@@ -160,6 +160,17 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
     }
 
 
+    fun chooseOptionReport(cardId: String,option:String) {
+        viewModelScope.launch {
+            val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
+            val response = repository.optionReport(jwtToken,cardId, option)
+            println(response)
+
+        }
+    }
+
+
+
 
     fun deleteItem(cardId: String) {
         val list = adminNewsList.value.toMutableList()

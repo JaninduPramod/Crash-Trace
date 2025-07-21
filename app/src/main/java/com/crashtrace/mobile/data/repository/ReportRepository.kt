@@ -4,6 +4,7 @@ import com.crashtrace.mobile.data.api.RetrofitInstance
 import com.crashtrace.mobile.data.entity.AllReports
 import com.crashtrace.mobile.data.entity.ApiResponse
 import com.crashtrace.mobile.data.entity.Report
+import com.crashtrace.mobile.data.entity.ReportOptionRequest
 import com.crashtrace.mobile.data.entity.ReportRequest
 import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.entity.SearchReportRequest
@@ -125,6 +126,29 @@ class ReportRepository() {
         }
     }
 
+
+    suspend fun optionReport(token: String, cardID: String, option:String): ApiResponse<ReportResponse>? {
+
+
+        val request = ReportOptionRequest(cardID,option)
+
+        return try {
+            val response = RetrofitInstance.reportApi.reportOption("Bearer $token", request)
+            if (response.isSuccessful) {
+                val apiResponse = response.body()
+
+                apiResponse // Return the ApiResponse object
+
+            } else {
+                val errorMessage = response.errorBody()?.string() ?: "Unknown error"
+                println("API call failed: $errorMessage")
+                null // Return null for unsuccessful responses
+            }
+        } catch (e: Exception) {
+            println("API call failed: ${e.message}")
+            null // Return null in case of an exception
+        }
+    }
 
 
 }

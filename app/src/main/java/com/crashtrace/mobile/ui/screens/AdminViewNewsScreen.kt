@@ -565,8 +565,9 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
             DeletNewsAlertBox(
                 onConfirm = {
                     showDeleteDialog = false
-                    viewModel.deleteItem(cardId)
-                    navController.popBackStack() // Navigate back after delete
+                    viewModel.chooseOptionReport(cardId,"delete")
+                    navController.navigate("adminGallery")
+
                 },
                 onDismiss = { showDeleteDialog = false }
             )
@@ -576,8 +577,9 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
             DeletNewsAlertBox(
                 onConfirm = {
                     showPublishDialog = false
-                    viewModel.deleteItem(cardId)
-                    navController.popBackStack() // Navigate back after publish
+                    viewModel.chooseOptionReport(cardId,"publish")
+                    navController.navigate("adminGallery")
+
                 },
                 onDismiss = { showPublishDialog = false }
             )
@@ -588,8 +590,9 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
             RejectNewsAlertBox(
                 onConfirm = {
                     showRejectDialog = false
-                    viewModel.deleteItem(cardId)
-                    navController.popBackStack() // Navigate back after reject
+                    viewModel.chooseOptionReport(cardId,"reject")
+                    navController.navigate("adminGallery")
+
                 },
                 onDismiss = { showRejectDialog = false }
             )

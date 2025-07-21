@@ -1,4 +1,4 @@
-import { createReportService,getApprovedReportsService,searchReportService,getAllReportsService,editReportService } from "../services/ReportServices.js";
+import { createReportService,getApprovedReportsService,searchReportService,getAllReportsService,editReportService,processReportService } from "../services/ReportServices.js";
 
 export const createReport = async (req, res, next) => {
   try {
@@ -48,6 +48,16 @@ export const editReport = async (req, res, next) => {
   try {
     const { cardID, title, description, damageRate, vehicleNo, address } = req.body;
     const response = await editReportService(cardID, { title, description, damageRate, vehicleNo, address });
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const processReport = async (req, res, next) => {
+  try {
+    const { cardID, option } = req.body;
+    const response = await processReportService(cardID, option);
     res.status(200).json(response);
   } catch (error) {
     next(error);
