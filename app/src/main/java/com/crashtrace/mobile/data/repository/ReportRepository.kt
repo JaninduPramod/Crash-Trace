@@ -5,6 +5,8 @@ import com.crashtrace.mobile.data.entity.ApiResponse
 import com.crashtrace.mobile.data.entity.Report
 import com.crashtrace.mobile.data.entity.ReportRequest
 import com.crashtrace.mobile.data.entity.ReportResponse
+import com.crashtrace.mobile.data.entity.SearchReportRequest
+import com.crashtrace.mobile.data.entity.SearchReportResponse
 
 class ReportRepository() {
     suspend fun submitReport(
@@ -40,9 +42,30 @@ class ReportRepository() {
 
     suspend fun approvedReports(token: String): ApiResponse<List<Report>>? {
 
-
         return try {
             val response = RetrofitInstance.reportApi.getApprovedReports("Bearer $token")
+            if (response.isSuccessful) {
+                val apiResponse = response.body()
+
+                apiResponse // Return the ApiResponse object
+
+            } else {
+                val errorMessage = response.errorBody()?.string() ?: "Unknown error"
+                println("API call failed: $errorMessage")
+                null // Return null for unsuccessful responses
+            }
+        } catch (e: Exception) {
+            println("API call failed: ${e.message}")
+            null // Return null in case of an exception
+        }
+    }
+
+    suspend fun searchReport(token: String,vehicleNo: String): ApiResponse<SearchReportResponse>?{
+
+        val request = SearchReportRequest(vehicleNo)
+
+        return try {
+            val response = RetrofitInstance.reportApi.searchReport("Bearer $token", request)
             if (response.isSuccessful) {
                 val apiResponse = response.body()
 

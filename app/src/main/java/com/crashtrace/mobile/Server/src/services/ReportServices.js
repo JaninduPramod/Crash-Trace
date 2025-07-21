@@ -33,3 +33,18 @@ export const getApprovedReportsService = async () => {
         throw new CustomError("Failed to retrieve approved reports", 200);
     }
 }
+
+// function to search reports by vehicle number
+export const searchReportService = async (vehicleNo) => {
+
+  try {
+    const report = await Report.findOne({ vehicleNo: vehicleNo }).populate("reporterId", "-_id name");
+    if (!report) {
+      throw new CustomError("No reports found for this vehicle number", 200);
+    }
+    return new ApiResponse(report, "Reports retrieved successfully", true);
+  } catch (error) {
+    throw new CustomError("Failed to retrieve reports", 200);
+  }
+
+}

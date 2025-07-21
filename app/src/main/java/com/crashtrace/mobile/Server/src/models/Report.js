@@ -13,7 +13,7 @@ const reportSchema = new mongoose.Schema(
     description: { type: String, required: false },
     location: { type: [String], required: false }, 
     address: { type: String },
-    reporterId: { type:String, required: true },
+    reporterId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, 
     date: { type: String, required: false },
     status: { type: String, default: "pending" },
     trustRate: { type: Number, default: 0 }
