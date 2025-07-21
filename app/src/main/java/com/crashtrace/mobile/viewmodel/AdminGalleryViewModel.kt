@@ -4,20 +4,122 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crashtrace.mobile.data.Utils.DataStoreManager
+import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.repository.ReportRepository
 import com.crashtrace.mobile.ui.components.CardItem
 import com.crashtrace.mobile.ui.components.CardItemAdmin
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import org.koin.core.KoinApplication.Companion.init
 
 class AdminGalleryViewModel(private val repository: ReportRepository, private val dataStoreManager: DataStoreManager) : ViewModel() {
 
     private val _adminNewsList = MutableStateFlow<List<CardItemAdmin>>(emptyList())
     val adminNewsList: StateFlow<List<CardItemAdmin>> = _adminNewsList.asStateFlow()
 
+    private val _cardId= MutableStateFlow("")
+    val cardId: StateFlow<String> get() = _cardId
+
+    private val _title = MutableStateFlow("")
+    val title: StateFlow<String> get() = _title
+
+    private val _description = MutableStateFlow("")
+    val description: StateFlow<String> get() = _description
+
+    private val _damageRate = MutableStateFlow(0)
+    val damageRate: StateFlow<Int> get() = _damageRate
+
+    private val _reporterId = MutableStateFlow("")
+    val reporterId: StateFlow<String> get() = _reporterId
+
+    private val _vehicleNo = MutableStateFlow("")
+    val vehicleNo: StateFlow<String> get() = _vehicleNo
+
+    private val _location = MutableStateFlow("")
+    val location: StateFlow<String> get() = _location
+
+    fun setCardId(newCardId: String) {
+        _cardId.value = newCardId
+    }
+    fun setTitle(newTitle: String) {
+        _title.value = newTitle
+    }
+    fun setDescription(newDescription: String) {
+        _description.value = newDescription
+    }
+    fun setDamageRate(newDamageRate: Int) {
+        _damageRate.value = newDamageRate
+    }
+    fun setReporterId(newReporterId: String) {
+        _reporterId.value = newReporterId
+    }
+    fun setVehicleNo(newVehicleNo: String) {
+        _vehicleNo.value = newVehicleNo
+    }
+    fun setLocation(newLocation: String) {
+        _location.value = newLocation
+    }
+
+    // function to reset all fields
+    fun resetFields() {
+        _cardId.value = ""
+        _title.value = ""
+        _description.value = ""
+        _damageRate.value = 0
+        _reporterId.value = ""
+        _vehicleNo.value = ""
+        _location.value = ""
+    }
+
+
+    fun saveReport() {
+        viewModelScope.launch {
+            val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
+
+            val response = repository.editReport(
+                jwtToken,
+                _cardId.value,
+                _title.value,
+                _description.value,
+                _damageRate.value,
+                _vehicleNo.value,
+                _location.value
+            )
+
+            if (response?.success == true) {
+                println(response.message)
+
+                // Update the adminNewsList with the edited report
+                val updatedList = _adminNewsList.value.map { report ->
+                    if (report.cardId == _cardId.value) {
+                        report.copy(
+                            title = _title.value,
+                            description = _description.value,
+                            damageRate = _damageRate.value,
+                            vehicleNo = _vehicleNo.value,
+                            location = _location.value
+                        )
+                    } else {
+                        report
+                    }
+                }
+                _adminNewsList.value = updatedList
+
+                // Optionally reset fields if needed
+                resetFields()
+            } else {
+                println("Failed to update report: ${response?.message ?: "Unknown error"}")
+            }
+        }
+    }
 
 
     fun getAllReports() {
@@ -58,30 +160,6 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
     }
 
 
-    fun updateItem(
-        cardId: String,
-        title: String,
-        description: String,
-        damageRate: Int,
-        reporterId: String,
-        vehicleNo: String,
-        location: String
-    ) {
-        val list = adminNewsList.value.toMutableList()
-        val index = list.indexOfFirst { it.cardId == cardId }
-        if (index != -1) {
-            val updatedItem = list[index].copy(
-                title = title,
-                description = description,
-                damageRate = damageRate,
-                reporterId = reporterId,
-                vehicleNo = vehicleNo,
-                location = location
-            )
-            list[index] = updatedItem
-            _adminNewsList.value = list
-        }
-    }
 
     fun deleteItem(cardId: String) {
         val list = adminNewsList.value.toMutableList()

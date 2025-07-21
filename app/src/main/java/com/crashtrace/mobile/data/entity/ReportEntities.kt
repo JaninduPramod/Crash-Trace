@@ -57,3 +57,12 @@ data class AllReports(
     val trustRate: Int,
     val damageRate: Int,
 )
+
+data class UpdateReportRequest(
+    val cardID: String,
+    val title: String,
+    val description: String,
+    val damageRate: Int,
+    val vehicleNo: String,
+    val address: String,
+)

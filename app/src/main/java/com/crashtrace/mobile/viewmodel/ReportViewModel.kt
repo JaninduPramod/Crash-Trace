@@ -111,12 +111,7 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
 
             } else {
                 resetFields()
-
-
             }
-
         }
     }
-
-
 }

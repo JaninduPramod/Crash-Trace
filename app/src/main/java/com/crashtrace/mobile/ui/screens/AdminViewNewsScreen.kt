@@ -54,6 +54,10 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
     var vehicleNo by remember { mutableStateOf(item.vehicleNo) }
     var location by remember { mutableStateOf(item.location) }
 
+
+
+
+
     var showSaveDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showPublishDialog by remember { mutableStateOf(false) }
@@ -177,6 +181,7 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                             value = reporterId,
                             onValueChange = { reporterId = it },
                             label = { Text("Reporter ID") },
+                            enabled = false,
                             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
                                 .padding(horizontal = 10.dp),
                             shape = RoundedCornerShape(12.dp),
@@ -540,17 +545,16 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
         if (showSaveDialog) {
             SaveNewsAlertBox(
                 onConfirm = {
+                    viewModel.setCardId(cardId)
+                    viewModel.setTitle(title)
+                    viewModel.setDescription(description)
+                    viewModel.setDamageRate(damageRate.toIntOrNull() ?: 0)
+                    viewModel.setReporterId(reporterId)
+                    viewModel.setVehicleNo(vehicleNo)
+                    viewModel.setLocation(location)
                     showSaveDialog = false
                     isEditing = false
-                    viewModel.updateItem(
-                        cardId = cardId,
-                        title = title,
-                        description = description,
-                        damageRate = damageRate.toIntOrNull() ?: 0,
-                        reporterId = reporterId,
-                        vehicleNo = vehicleNo,
-                        location = location
-                    )
+                    viewModel.saveReport()
                 },
                 onDismiss = { showSaveDialog = false }
             )

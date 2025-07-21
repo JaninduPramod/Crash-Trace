@@ -7,11 +7,13 @@ import com.crashtrace.mobile.data.entity.ReportRequest
 import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.entity.SearchReportRequest
 import com.crashtrace.mobile.data.entity.SearchReportResponse
+import com.crashtrace.mobile.data.entity.UpdateReportRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface ReportApi {
     @POST("/api/reports/create")
@@ -25,5 +27,8 @@ interface ReportApi {
 
     @GET("/api/reports/allReports")
     suspend fun getAllReports(@Header("Authorization") token: String): Response<ApiResponse<List<AllReports>>>
+
+    @PUT("/api/reports/editReport")
+    suspend fun editReport(@Header("Authorization") token: String,@Body request: UpdateReportRequest): Response<ApiResponse<ReportResponse>>
 
 }
