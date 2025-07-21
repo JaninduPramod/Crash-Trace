@@ -18,14 +18,14 @@ const reportSchema = new mongoose.Schema(
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-// Pre-save hook to increment cardID
+// Pre-save hook to increment cardID as a zero-padded string
 reportSchema.pre("save", async function (next) {
   if (!this.isNew) return next(); // Only generate cardID for new documents
 
   const lastReport = await mongoose.model("Report").findOne().sort({ createdAt: -1 });
-  const lastCardID = lastReport ? parseInt(lastReport.cardID.split("-")[1]) : 0;
+  const lastCardID = lastReport && !isNaN(parseInt(lastReport.cardID)) ? parseInt(lastReport.cardID) : 0;
 
-  this.cardID = `Report-${lastCardID + 1}`; // Increment and format as string
+  this.cardID = String(lastCardID + 1).padStart(4, "0"); // Increment and pad with zeros
   next();
 });
 
