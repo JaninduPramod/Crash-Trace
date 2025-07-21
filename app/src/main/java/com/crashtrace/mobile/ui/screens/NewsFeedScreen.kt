@@ -61,6 +61,10 @@ fun NewsFeedScreen(
 
     }
 
+    // fetch all the news when the page loads
+    LaunchedEffect(Unit) {
+        newsGalleryViewModel.getNewsList()
+    }
 
     if (loadProfile) {
         navController.navigate("profile")
