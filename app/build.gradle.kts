@@ -83,6 +83,21 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
 
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:1.2.0")
+    implementation("io.github.jan-tennert.supabase:storage-kt:1.2.0")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:1.2.0")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:1.2.0")
+
+
+    implementation("io.github.jan-tennert.supabase:storage-kt:1.3.2")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.0.0")
+    implementation("io.github.jan-tennert.supabase:storage-kt:2.0.0")
+
+   
+    implementation("io.ktor:ktor-client-okhttp:2.3.11")
 
 }
 

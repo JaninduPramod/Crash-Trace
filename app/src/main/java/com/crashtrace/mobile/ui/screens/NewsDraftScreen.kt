@@ -46,6 +46,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.launchCamera
+import com.crashtrace.mobile.network.SupabaseClient
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.viewmodel.ReportViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -199,57 +200,31 @@ suspend fun safeGeocodeLocation(context: android.content.Context, query: String)
         }
     }
 }
-
 @Composable
 fun NewsDraftScreen(navController: NavHostController) {
     val reportViewModel: ReportViewModel = koinViewModel()
+
     val vehicleNumber by reportViewModel.vehicleNumber.collectAsState()
     val description by reportViewModel.description.collectAsState()
     val date by reportViewModel.date.collectAsState()
     val address by reportViewModel.address.collectAsState()
+    val cardId by reportViewModel.cardId.collectAsState()
+    val imageUrl by reportViewModel.imageUrl.collectAsState()
 
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    var location_code by remember { mutableStateOf("") }
+    var isUploading by remember { mutableStateOf(false) }
     var loadProfile by remember { mutableStateOf(false) }
     var showLocationDialog by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
-
-    LaunchedEffect(location_code) {
-        reportViewModel.setLocation(location_code)
-    }
-
-
-    if (loadProfile) {
-        navController.navigate("profile")
-        loadProfile = false
-    }
-    fun handleSubmit() {
-        coroutineScope.launch {
-            reportViewModel.submitReport().collect { response ->
-                if (response?.success == true) {
-                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
-                    navController.navigate("home")
-                } else {
-                    Toast.makeText(context, response?.message ?: "Submit Report Failed", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
+    var locationCode by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     val photoFile = remember {
-        File(
-            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            "IMG_${System.currentTimeMillis()}.jpg"
-        )
+        File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_${System.currentTimeMillis()}.jpg")
     }
-    val photoUri = FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.provider",
-        photoFile
-    )
+    val photoUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", photoFile)
 
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
@@ -257,14 +232,57 @@ fun NewsDraftScreen(navController: NavHostController) {
         }
     }
 
-
-    val cameraPermissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
             cameraLauncher.launch(photoUri)
         } else {
             Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(locationCode) {
+        reportViewModel.setLocation(locationCode)
+    }
+
+    LaunchedEffect(loadProfile) {
+        if (loadProfile) {
+            navController.navigate("profile")
+            loadProfile = false
+        }
+    }
+
+    fun handleSubmit() {
+        coroutineScope.launch {
+            isUploading = true
+
+            if (imageUri != null && imageUrl == null) {
+                try {
+                    val newCardId = UUID.randomUUID().toString()
+                    val uploadedUrl = SupabaseClient.uploadImage(context, imageUri!!, newCardId)
+                    if (uploadedUrl != null) {
+                        reportViewModel.setCardId(newCardId)
+                        reportViewModel.setImageUrl(uploadedUrl)
+                    } else {
+                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                        isUploading = false
+                        return@launch
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Error uploading image: ${e.message}", Toast.LENGTH_SHORT).show()
+                    isUploading = false
+                    return@launch
+                }
+            }
+
+            reportViewModel.submitReport().collect { response ->
+                isUploading = false
+                if (response?.success == true) {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    navController.navigate("home")
+                } else {
+                    Toast.makeText(context, response?.message ?: "Submit failed", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -276,6 +294,15 @@ fun NewsDraftScreen(navController: NavHostController) {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+
+        if (isUploading) {
+            Box(
+                Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.White)
+            }
+        }
 
         Column(modifier = Modifier.fillMaxSize()) {
             AppBarMain(
@@ -307,7 +334,7 @@ fun NewsDraftScreen(navController: NavHostController) {
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("add images", fontSize = 14.sp, color = Color.Gray)
+                        Text("Add Images", fontSize = 14.sp, color = Color.Gray)
                         Spacer(modifier = Modifier.height(10.dp))
                         Box(
                             Modifier
@@ -327,7 +354,7 @@ fun NewsDraftScreen(navController: NavHostController) {
                         ) {
                             if (imageUri != null) {
                                 Image(
-                                    painter = rememberAsyncImagePainter(model = imageUri),
+                                    painter = rememberAsyncImagePainter(imageUri),
                                     contentDescription = "Captured Image",
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Crop
@@ -340,20 +367,24 @@ fun NewsDraftScreen(navController: NavHostController) {
                                     modifier = Modifier
                                         .size(40.dp)
                                         .align(Alignment.Center)
-                                )}}
+                                )
+                            }
+                        }
+
                         Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            "Confirm News information",
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
+                        Text("Confirm News Information", fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 16.dp))
 
-                        CustomInputField("Vehicle Number", vehicleNumber, height = 60.dp) { reportViewModel.setVehicleNumber(it) }
+                        CustomInputField("Vehicle Number", vehicleNumber, height = 60.dp) {
+                            reportViewModel.setVehicleNumber(it)
+                        }
 
-                        CustomInputField("Description", description, height = 90.dp) { reportViewModel.setDescription(it) }
+                        CustomInputField("Description", description, height = 90.dp) {
+                            reportViewModel.setDescription(it)
+                        }
 
-                        CustomInputField("Address", address, height = 60.dp) { reportViewModel.setAddress(it) }
+                        CustomInputField("Address", address, height = 60.dp) {
+                            reportViewModel.setAddress(it)
+                        }
 
                         Text("Pick Location", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 4.dp))
                         Box(
@@ -362,28 +393,21 @@ fun NewsDraftScreen(navController: NavHostController) {
                                 .height(46.dp)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(Color(0xFFF8F8F8))
-                                .border(
-                                    width = 1.dp,
-                                    color = Color.LightGray,
-                                    shape = RoundedCornerShape(15.dp)
-                                )
+                                .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp))
                                 .clickable { showLocationDialog = true }
                                 .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.CenterStart
                         ) {
                             Text(
-                                text = if (location_code.isNotEmpty()) location_code else "Tap to pick location",
-                                color = if (location_code.isNotEmpty()) Color.Black else Color.Gray,
+                                text = if (locationCode.isNotEmpty()) locationCode else "Tap to pick location",
+                                color = if (locationCode.isNotEmpty()) Color.Black else Color.Gray,
                                 fontSize = 14.sp
                             )
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        DateInputField(
-                            date = date,
-                            onClick = { showDatePicker = true }
-                        )
+                        DateInputField(date = date, onClick = { showDatePicker = true })
                     }
                 }
 
@@ -406,7 +430,7 @@ fun NewsDraftScreen(navController: NavHostController) {
         LocationPickerDialog(
             onDismissRequest = { showLocationDialog = false },
             onLocationSelected = { latLng ->
-                location_code = "${latLng.latitude},${latLng.longitude}"
+                locationCode = "${latLng.latitude},${latLng.longitude}"
             }
         )
     }
@@ -414,9 +438,36 @@ fun NewsDraftScreen(navController: NavHostController) {
     if (showDatePicker) {
         DatePickerBottomSheet(
             onDismissRequest = { showDatePicker = false },
-            onDateSelected = {
-                reportViewModel.setDate(it)
-                showDatePicker = false
+            onDateSelected = { selectedDate ->
+                coroutineScope.launch {
+                    isUploading = true
+                    try {
+                        imageUri?.let { uri ->
+                            val newCardId = UUID.randomUUID().toString()
+                            withContext(Dispatchers.IO) {
+                                val uploadedUrl = SupabaseClient.uploadImage(context, uri, newCardId)
+                                withContext(Dispatchers.Main) {
+                                    if (uploadedUrl != null) {
+                                        reportViewModel.setCardId(newCardId)
+                                        reportViewModel.setImageUrl(uploadedUrl)
+                                        Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
+                                    }
+                                    reportViewModel.setDate(selectedDate)
+                                }
+                            }
+                        } ?: run {
+                            reportViewModel.setDate(selectedDate)
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Error uploading image: ${e.message}", Toast.LENGTH_SHORT).show()
+                        reportViewModel.setDate(selectedDate)
+                    } finally {
+                        isUploading = false
+                        showDatePicker = false
+                    }
+                }
             }
         )
     }
@@ -594,85 +645,4 @@ fun DatePickerBottomSheet(
         }
     }
 }
-
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DraftNewsPreview() {
-//    NewsDraftScreen(navController = rememberNavController())
-//}
-//
-//@Composable
-//fun NewsDraftScreen(navController: NavController) {
-//    val context = LocalContext.current
-//    var imageUri by remember { mutableStateOf<Uri?>(null) }
-//
-//    // Generate unique file & URI
-//    val photoFile = remember {
-//        File(
-//            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-//            "IMG_${System.currentTimeMillis()}.jpg"
-//        )
-//    }
-//    val photoUri = FileProvider.getUriForFile(
-//        context,
-//        "${context.packageName}.provider",
-//        photoFile
-//    )
-//
-//    // Launcher to take picture
-//    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-//        if (success) {
-//            imageUri = photoUri
-//        }
-//    }
-//
-//    // Launcher to request permission
-//    val cameraPermissionLauncher = rememberLauncherForActivityResult(
-//        ActivityResultContracts.RequestPermission()
-//    ) { isGranted ->
-//        if (isGranted) {
-//            cameraLauncher.launch(photoUri)
-//        } else {
-//            Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-//
-//    Box(
-//        Modifier
-//            .fillMaxWidth()
-//            .height(130.dp)
-//            .clip(RoundedCornerShape(15.dp))
-//            .background(Color.Gray.copy(alpha = 0.1f))
-//            .clickable {
-//                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-//                    == PackageManager.PERMISSION_GRANTED
-//                ) {
-//                    cameraLauncher.launch(photoUri)
-//                } else {
-//                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-//                }
-//            }
-//    ) {
-//        if (imageUri != null) {
-//            Image(
-//                painter = rememberAsyncImagePainter(model = imageUri),
-//                contentDescription = "Captured Image",
-//                modifier = Modifier.fillMaxSize(),
-//                contentScale = ContentScale.Crop
-//            )
-//        } else {
-//            Icon(
-//                imageVector = Icons.Default.CameraAlt,
-//                contentDescription = "Camera Icon",
-//                tint = Color.Gray,
-//                modifier = Modifier
-//                    .size(40.dp)
-//                    .align(Alignment.Center)
-//            )
-//        }
-//    }
-//}
-
-
 
