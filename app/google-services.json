@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "679764917586",
+    "project_id": "crash-trace-bf5d2",
+    "storage_bucket": "crash-trace-bf5d2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679764917586:android:fcb591bf8cc21072d00e8b",
+        "android_client_info": {
+          "package_name": "com.crashtrace.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "679764917586-n3bl8atvcib7juf6v0n915onnbj43u5f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crashtrace.mobile",
+            "certificate_hash": "c9771177aaf7801e7955251c8ce2f21890de5de1"
+          }
+        },
+        {
+          "client_id": "679764917586-ounn6jabilj8qa3n8lup744e4qbu2pi9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNiPpqE-WOZloFm_h8b0Fh6NE8yAk-6lc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "679764917586-ounn6jabilj8qa3n8lup744e4qbu2pi9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

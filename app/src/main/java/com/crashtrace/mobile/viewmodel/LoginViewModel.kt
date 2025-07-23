@@ -30,10 +30,14 @@ class LoginViewModel (private val repository: LoginRepository,private val dataSt
 
 
 
-    // function to reset success state
-    fun resetSuccessState() {
+    // function to reset all fields
+    fun resetFields() {
+        _email.value = ""
+        _password.value = ""
         _success.value = false
+        _message.value = ""
     }
+
 
 
     fun setEmail(newEmail: String) {

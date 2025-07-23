@@ -1,5 +1,9 @@
 package com.crashtrace.mobile.ui.screens
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,12 +33,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.crashtrace.mobile.ui.components.AppBarSub
 import com.crashtrace.mobile.viewmodel.SignUpViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
     // Use Koin's koinViewModel function for dependency injection
     val signUpViewModel: SignUpViewModel = koinViewModel()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
 
     val name by signUpViewModel.name.collectAsState()
     val nic by signUpViewModel.nic.collectAsState()
@@ -43,6 +55,75 @@ fun SignUpScreen(navController: NavHostController) {
 
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) } // Loading state
+
+
+
+    val activity = context as Activity
+
+    fun handleSignUp() {
+        loading = true
+        coroutineScope.launch {
+            signUpViewModel.submitSignUpData().collect { response ->
+                loading = false
+                if (response?.success == true) {
+                    signUpViewModel.resetFields()
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    navController.navigate("signin")
+
+                } else {
+                    signUpViewModel.resetFields()
+                    Toast.makeText(context, response?.message ?: "Sign up failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+
+    val webClientId = "679764917586-ounn6jabilj8qa3n8lup744e4qbu2pi9.apps.googleusercontent.com"
+
+    // Configure Google Sign-In
+    val googleSignInClient = remember {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(webClientId)
+            .requestEmail()
+            .build()
+        GoogleSignIn.getClient(activity, gso)
+    }
+
+
+    // Google Sign-In launcher
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            // navigate to home screen or perform any action with the account
+
+            signUpViewModel.setEmail(account.email ?: "")
+            signUpViewModel.setName(account.displayName ?: "")
+            signUpViewModel.setNIC(account.id ?: "")
+            signUpViewModel.setPassword(account.idToken ?: "")
+            signUpViewModel.submitSignUpData()
+
+            signUpViewModel.resetFields()
+
+
+            Toast.makeText(context, "Google SignUp Successfull", Toast.LENGTH_SHORT).show()
+            navController.navigate("signin")
+
+
+
+        } catch (e: ApiException) {
+
+            println("GoogleSignIn"+ "Sign-in failed with status code: ${e.statusCode}"+ e)
+            if (e.statusCode == 10) {
+                println("GoogleSignIn"+"Possible misconfiguration: Check Web Client ID and SHA-1 in Firebase Console.")
+            }
+        }
+    }
+
+
 
     Column(
         modifier = Modifier
@@ -287,7 +368,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Sign Up Button
                 Button(
                     onClick = {
-                        signUpViewModel.submitSignUpData()
+                        handleSignUp()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -319,7 +400,12 @@ fun SignUpScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(20.dp))
                 // Google Sign Up Button
                 OutlinedButton(
-                    onClick = { /* TODO: Google sign up */ },
+                    onClick = {
+                        googleSignInClient.signOut().addOnCompleteListener {
+                            val signInIntent = googleSignInClient.signInIntent
+                            launcher.launch(signInIntent)
+                        }
+                    }, // Navigate to Google Sign In
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -363,9 +449,21 @@ fun SignUpScreen(navController: NavHostController) {
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+            // Show loading indicator
+            if (loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.White)
+                }
+            }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

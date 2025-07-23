@@ -1,6 +1,7 @@
 package com.crashtrace.mobile.ui.screens
 
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -22,6 +24,7 @@ import com.crashtrace.mobile.viewmodel.PasswordResetViewModel
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.ui.components.AppBarSub
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -35,18 +38,27 @@ fun ResetScreen(navController: NavHostController) {
     var confirmPasswordVisible by remember { mutableStateOf(false) } // Added for confirm password visibility
     var logoutAllDevices by remember { mutableStateOf(false) } // Changed from rememberMe
 
-    val success by passwordResetViewModel.newPasswordSuccess.collectAsState()
-    val message by passwordResetViewModel.message.collectAsState()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var loading by remember { mutableStateOf(false) } // Loading state
 
-    
-fun handleSaveButtonClick() {
-    passwordResetViewModel.resetPassword(password, confirmPassword)
-    
-}
 
-LaunchedEffect(success) {
-        if (success) {
-            navController.navigate("signin")
+
+    fun handleSaveButtonClick() {
+        loading = true
+        coroutineScope.launch {
+            passwordResetViewModel.resetPassword(password, confirmPassword).collect { response ->
+                loading = false
+                if (response?.success == true) {
+
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    navController.navigate("signin")
+
+                } else {
+
+                    Toast.makeText(context, response?.message ?: "failed to reset password", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -199,6 +211,16 @@ LaunchedEffect(success) {
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
+                }
+            }
+            if (loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.White)
                 }
             }
         }

@@ -127,6 +127,10 @@ export const sendOtpService = async (email) => {
 
 export const verifyOtpService = async (data) => {
   const { email, otp } = data;
+
+  console.log("Email:", email);
+  console.log("OTP:", otp);
+
   if ((email && otp) == "") {
     throw new CustomError("fields must not be empty !!!", 200);
   }
