@@ -1,5 +1,6 @@
 package com.crashtrace.mobile.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import com.crashtrace.mobile.viewmodel.PasswordResetViewModel
 import androidx.compose.foundation.background
@@ -11,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -19,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.ui.components.AppBarSub
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -30,8 +33,47 @@ fun OtpCodeScreen(navController: NavHostController) {
     var otp3 by remember { mutableStateOf("") }
     var otp4 by remember { mutableStateOf("") }
 
-    val otpSuccess by passwordResetViewModel.otpSuccess.collectAsState()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var loading by remember { mutableStateOf(false) } // Loading state
 
+
+
+    fun handleOtpResend() {
+        loading = true
+        coroutineScope.launch {
+            passwordResetViewModel.executeResetSendOtp().collect { response ->
+                loading = false
+                if (response?.success == true) {
+
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+
+
+                } else {
+
+                    Toast.makeText(context, response?.message ?: "failed to send otp", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+    fun handleOtpSubmission() {
+        val otp = otp1 + otp2 + otp3 + otp4 // Combine the OTP inputs
+        loading = true
+        coroutineScope.launch {
+            passwordResetViewModel.submitOtpCode(otp).collect { response ->
+                loading = false
+                if (response?.success == true) {
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    navController.navigate("newPassword")
+
+                } else {
+                    Toast.makeText(context, response?.message ?: "Verification failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
     
     // function to handle submission of OTP code
     fun onChangeEmailClick() {
@@ -39,23 +81,13 @@ fun OtpCodeScreen(navController: NavHostController) {
         navController.navigate("reset")
     }
 
-    fun handleOtpSubmission() {
-        val otp = otp1 + otp2 + otp3 + otp4 // Combine the OTP inputs
-        passwordResetViewModel.submitOtpCode(otp) // Call ViewModel function
-    }
-
-    LaunchedEffect(otpSuccess) {
-        if (otpSuccess) {
-            navController.navigate("newPassword")
-        }
-    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF3F6F8))
     ) {
-        AppBarSub(title = "Verify Me")
+        AppBarSub(title = "Verify OTP")
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -195,7 +227,7 @@ fun OtpCodeScreen(navController: NavHostController) {
                 // Submit Button
                 Button(
                     onClick = {
-                        handleOtpSubmission();
+                        handleOtpSubmission()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -215,7 +247,7 @@ fun OtpCodeScreen(navController: NavHostController) {
 
                 // Resend OTP Button
                 OutlinedButton(
-                    onClick = { passwordResetViewModel.executeResetSendOtp() },
+                    onClick = { handleOtpResend() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -231,6 +263,17 @@ fun OtpCodeScreen(navController: NavHostController) {
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
+                }
+
+            }
+            if (loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.White)
                 }
             }
         }

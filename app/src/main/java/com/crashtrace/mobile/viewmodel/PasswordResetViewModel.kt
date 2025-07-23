@@ -48,30 +48,19 @@ class PasswordResetViewModel (private val repository: PasswordResetRepository) :
     }
 
 
-
-    fun submitOtpCode(otp: String) {
-        viewModelScope.launch {
+    fun submitOtpCode(otp: String):Flow<ApiResponse<EmailVerificationResponse>?> {
+        return flow {
+            println("Email"+_email.value)
             val response = repository.verifyOtpCode(_email.value, otp)
-
-            println("Message from API: ${response?.message}")
-            println("success: ${response?.success}");
-
-            _message.value = response?.message ?: ""
-
-            _otpSuccess.value = response?.success ?: false
-        }
+            emit(response)
+        }.flowOn(Dispatchers.IO)
     }
 
-    fun resetPassword(password: String, newPassword: String) {
-        viewModelScope.launch {
+    fun resetPassword(password: String, newPassword: String):Flow<ApiResponse<EmailVerificationResponse>?> {
+        return flow {
             val response = repository.resetPassword(_email.value, password, newPassword)
-
-            println("Message from API: ${response?.message}")
-            println("success: ${response?.success}");
-
-            _message.value = response?.message ?: ""
-            _newPasswordSuccess.value = response?.success ?: false
-        }
+            emit(response)
+        }.flowOn(Dispatchers.IO)
     }
 
 

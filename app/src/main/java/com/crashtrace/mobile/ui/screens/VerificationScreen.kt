@@ -45,7 +45,7 @@ fun VerificationScreen(navController: NavHostController) {
             passwordResetViewModel.executeResetSendOtp().collect { response ->
                 loading = false
                 if (response?.success == true) {
-                    passwordResetViewModel.resetState()
+
                     Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
                     navController.navigate("otpVerify")
 
