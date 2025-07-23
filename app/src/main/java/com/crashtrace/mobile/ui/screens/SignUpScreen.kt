@@ -36,6 +36,7 @@ import com.crashtrace.mobile.viewmodel.SignUpViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -43,6 +44,8 @@ fun SignUpScreen(navController: NavHostController) {
     // Use Koin's koinViewModel function for dependency injection
     val signUpViewModel: SignUpViewModel = koinViewModel()
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
 
     val name by signUpViewModel.name.collectAsState()
     val nic by signUpViewModel.nic.collectAsState()
@@ -52,9 +55,31 @@ fun SignUpScreen(navController: NavHostController) {
 
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) } // Loading state
+
 
 
     val activity = context as Activity
+
+    fun handleSignUp() {
+        loading = true
+        coroutineScope.launch {
+            signUpViewModel.submitSignUpData().collect { response ->
+                loading = false
+                if (response?.success == true) {
+                    signUpViewModel.resetFields()
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    navController.navigate("signin")
+
+                } else {
+                    signUpViewModel.resetFields()
+                    Toast.makeText(context, response?.message ?: "Sign up failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
 
     val webClientId = "679764917586-ounn6jabilj8qa3n8lup744e4qbu2pi9.apps.googleusercontent.com"
 
@@ -343,7 +368,7 @@ fun SignUpScreen(navController: NavHostController) {
                 // Sign Up Button
                 Button(
                     onClick = {
-                        signUpViewModel.submitSignUpData()
+                        handleSignUp()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -424,9 +449,21 @@ fun SignUpScreen(navController: NavHostController) {
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+            // Show loading indicator
+            if (loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.White)
+                }
+            }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

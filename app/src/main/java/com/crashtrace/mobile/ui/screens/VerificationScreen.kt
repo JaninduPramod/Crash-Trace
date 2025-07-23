@@ -1,6 +1,7 @@
 package com.crashtrace.mobile.ui.screens
 
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -22,31 +24,49 @@ import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarSub
 import com.crashtrace.mobile.viewmodel.PasswordResetViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun VerificationScreen(navController: NavHostController) {
     val passwordResetViewModel: PasswordResetViewModel = koinViewModel()
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var loading by remember { mutableStateOf(false) } // Loading state
+
+
+
 
     val email by passwordResetViewModel.email.collectAsState()
-    val message by passwordResetViewModel.message.collectAsState()
-    val success by passwordResetViewModel.success.collectAsState()
 
-    LaunchedEffect(success) {
-        if (success) {
-            navController.navigate("otpVerify")
-        } else if (message.isNotEmpty()) {
-            // Show an error message
-            println(message)
+    fun handleSendOtp() {
+        loading = true
+        coroutineScope.launch {
+            passwordResetViewModel.executeResetSendOtp().collect { response ->
+                loading = false
+                if (response?.success == true) {
+                    passwordResetViewModel.resetState()
+                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                    navController.navigate("otpVerify")
+
+                } else {
+
+                    Toast.makeText(context, response?.message ?: "failed to send otp", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
+
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF3F6F8))
     ) {
-        AppBarSub(title = "Verification", backButton = true)
+        AppBarSub(title = "Verification", backButton = true,
+            onBackClick = {navController.navigate("signin") }
+        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -120,7 +140,7 @@ fun VerificationScreen(navController: NavHostController) {
                 )
                 Spacer(modifier = Modifier.height(440.dp))
                 Button(
-                    onClick = { passwordResetViewModel.executeResetSendOtp() },
+                    onClick = { handleSendOtp() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -137,9 +157,22 @@ fun VerificationScreen(navController: NavHostController) {
 
 
             }
+            if (loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.White)
+                }
+            }
         }
+
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
