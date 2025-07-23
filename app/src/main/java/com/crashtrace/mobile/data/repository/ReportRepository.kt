@@ -18,7 +18,9 @@ class ReportRepository() {
         location: String,
         address: String,
         date: String,
-        token:String
+        token: String,
+        value: String?,
+        value1: String?
 
     ): ApiResponse<ReportResponse>? {
         val request = ReportRequest(vehicleNo, description, location, address, date)

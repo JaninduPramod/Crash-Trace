@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crashtrace.mobile.data.Utils.DataStoreManager
 import com.crashtrace.mobile.data.entity.ApiResponse
-import com.crashtrace.mobile.data.entity.Report
 import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.repository.ReportRepository
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +41,12 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
     private val _lng = MutableStateFlow(0.0)
     val lng: StateFlow<Double> get() = _lng
 
+    private val _cardId = MutableStateFlow<String?>(null)
+    val cardId: StateFlow<String?> get() = _cardId
+
+    private val _imageUrl = MutableStateFlow<String?>(null)
+    val imageUrl: StateFlow<String?> get() = _imageUrl
+
     fun setVehicleNumber(newVehicleNumber: String) {
         _vehicleNumber.value = newVehicleNumber
     }
@@ -58,6 +63,14 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
         _date.value = newDate
     }
 
+    fun setCardId(id: String?) {
+        _cardId.value = id
+    }
+
+    fun setImageUrl(url: String?) {
+        _imageUrl.value = url
+    }
+
     // function to reset all fields
     fun resetFields() {
         _vehicleNumber.value = ""
@@ -66,12 +79,14 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
         _address.value = ""
         _date.value = ""
         _reporter.value = ""
+        _cardId.value = null
+        _imageUrl.value = null
     }
 
 
     fun submitReport(): Flow<ApiResponse<ReportResponse>?> {
         return flow {
-            // Retrieve the token from DataStoreManager
+
             val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
                val response =  repository.submitReport(
                     _vehicleNumber.value,
@@ -79,7 +94,9 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
                     _location.value,
                     _address.value,
                     _date.value,
-                   jwtToken
+                    jwtToken,
+                    _imageUrl.value,
+                    _cardId.value
                 )
             if(response?.success == true) {
                 resetFields()
@@ -114,4 +131,6 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
             }
         }
     }
+
+
 }

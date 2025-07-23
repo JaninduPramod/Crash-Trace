@@ -80,10 +80,33 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
+
+    implementation ("androidx.core:core-ktx:1.12.0")
+    implementation ("androidx.activity:activity-compose:1.8.0 ")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+
+
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:1.2.0")
+    implementation("io.github.jan-tennert.supabase:storage-kt:1.2.0")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:1.2.0")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:1.2.0")
+
+
+    implementation("io.github.jan-tennert.supabase:storage-kt:1.3.2")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.0.0")
+    implementation("io.github.jan-tennert.supabase:storage-kt:2.0.0")
+
+   
+    implementation("io.ktor:ktor-client-okhttp:2.3.11")
+
     // Add Google Sign-In & Firebase Authentication dependencies
     implementation("com.google.android.gms:play-services-auth:21.0.0")  // Google Sign-In
     implementation("com.google.firebase:firebase-auth-ktx")              // Firebase Authentication
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))  // Firebase BOM (for dependency version management)
+
 }
 
 
