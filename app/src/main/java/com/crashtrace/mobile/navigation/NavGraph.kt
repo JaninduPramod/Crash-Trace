@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-
 import com.crashtrace.mobile.ui.screens.AdminNewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.AdminNewsViewScreen
 import com.crashtrace.mobile.ui.screens.OnBoardScreen1
@@ -23,7 +22,6 @@ import com.crashtrace.mobile.ui.screens.NewsDraftScreen
 import com.crashtrace.mobile.ui.screens.NewsFeedScreen
 import com.crashtrace.mobile.ui.screens.NewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.NewsInfoScreen
-import com.crashtrace.mobile.ui.screens.GoogleSignInScreen
 
 
 @Composable
@@ -34,8 +32,6 @@ fun AppNavGraph(navController: NavHostController) {
 
         composable("signup") { SignUpScreen(navController) }
         composable("signin") { SigningInScreen(navController) }
-        composable("google") { GoogleSignInScreen() }
-
         composable("reset") { VerificationScreen(navController) }
         composable("otpVerify") { OtpCodeScreen(navController) }
         composable("newPassword") { ResetScreen(navController) }
