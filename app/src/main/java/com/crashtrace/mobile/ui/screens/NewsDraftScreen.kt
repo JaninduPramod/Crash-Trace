@@ -1,6 +1,7 @@
 package com.crashtrace.mobile.ui.screens
 
 import android.Manifest
+import android.R.attr.id
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.net.Uri
@@ -66,6 +67,7 @@ fun LocationPickerDialog(
     onDismissRequest: () -> Unit,
     onLocationSelected: (LatLng) -> Unit
 ) {
+
     val context = LocalContext.current
 
     var selectedLatLng by remember { mutableStateOf<LatLng?>(null) }
@@ -255,12 +257,24 @@ fun NewsDraftScreen(navController: NavHostController) {
         coroutineScope.launch {
             isUploading = true
 
+
+            val vehicleNumber = reportViewModel.vehicleNumber.value
+
+            // Optional but recommended: Validate that the vehicle number is not empty
+            if (vehicleNumber.isBlank()) {
+                Toast.makeText(context, "Vehicle number cannot be empty.", Toast.LENGTH_SHORT).show()
+                isUploading = false
+                return@launch
+            }
+
             if (imageUri != null && imageUrl == null) {
                 try {
-                    val newCardId = UUID.randomUUID().toString()
-                    val uploadedUrl = SupabaseClient.uploadImage(context, imageUri!!, newCardId)
+                    // 2. Use the vehicle number as the unique name for the uploaded image.
+                    val uploadedUrl = SupabaseClient.uploadImage(context, imageUri!!, vehicleNumber)
+
                     if (uploadedUrl != null) {
-                        reportViewModel.setCardId(newCardId)
+                        // 3. Set the vehicle number as the ID in the ViewModel.
+                        reportViewModel.setCardId(vehicleNumber)
                         reportViewModel.setImageUrl(uploadedUrl)
                     } else {
                         Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
@@ -274,6 +288,7 @@ fun NewsDraftScreen(navController: NavHostController) {
                 }
             }
 
+            // The rest of the function remains the same
             reportViewModel.submitReport().collect { response ->
                 isUploading = false
                 if (response?.success == true) {
@@ -285,6 +300,41 @@ fun NewsDraftScreen(navController: NavHostController) {
             }
         }
     }
+
+//    fun handleSubmit() {
+//        coroutineScope.launch {
+//            isUploading = true
+//
+//            if (imageUri != null && imageUrl == null) {
+//                try {
+//                    val newCardId = UUID.randomUUID().toString()
+//                    val uploadedUrl = SupabaseClient.uploadImage(context, imageUri!!, newCardId)
+//                    if (uploadedUrl != null) {
+//                        reportViewModel.setCardId(newCardId)
+//                        reportViewModel.setImageUrl(uploadedUrl)
+//                    } else {
+//                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+//                        isUploading = false
+//                        return@launch
+//                    }
+//                } catch (e: Exception) {
+//                    Toast.makeText(context, "Error uploading image: ${e.message}", Toast.LENGTH_SHORT).show()
+//                    isUploading = false
+//                    return@launch
+//                }
+//            }
+//
+//            reportViewModel.submitReport().collect { response ->
+//                isUploading = false
+//                if (response?.success == true) {
+//                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+//                    navController.navigate("home")
+//                } else {
+//                    Toast.makeText(context, response?.message ?: "Submit failed", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//        }
+//    }
 
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -435,43 +485,20 @@ fun NewsDraftScreen(navController: NavHostController) {
         )
     }
 
+
     if (showDatePicker) {
         DatePickerBottomSheet(
             onDismissRequest = { showDatePicker = false },
             onDateSelected = { selectedDate ->
-                coroutineScope.launch {
-                    isUploading = true
-                    try {
-                        imageUri?.let { uri ->
-                            val newCardId = UUID.randomUUID().toString()
-                            withContext(Dispatchers.IO) {
-                                val uploadedUrl = SupabaseClient.uploadImage(context, uri, newCardId)
-                                withContext(Dispatchers.Main) {
-                                    if (uploadedUrl != null) {
-                                        reportViewModel.setCardId(newCardId)
-                                        reportViewModel.setImageUrl(uploadedUrl)
-                                        Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
-                                    } else {
-                                        Toast.makeText(context, "Failed to upload image", Toast.LENGTH_SHORT).show()
-                                    }
-                                    reportViewModel.setDate(selectedDate)
-                                }
-                            }
-                        } ?: run {
-                            reportViewModel.setDate(selectedDate)
-                        }
-                    } catch (e: Exception) {
-                        Toast.makeText(context, "Error uploading image: ${e.message}", Toast.LENGTH_SHORT).show()
-                        reportViewModel.setDate(selectedDate)
-                    } finally {
-                        isUploading = false
-                        showDatePicker = false
-                    }
-                }
+
+                reportViewModel.setDate(selectedDate)
+                showDatePicker = false
             }
         )
     }
 }
+
+
 
 @Composable
 fun CustomInputField(label: String, value: String, height: Dp = 60.dp, onValueChange: (String) -> Unit) {
@@ -493,6 +520,8 @@ fun CustomInputField(label: String, value: String, height: Dp = 60.dp, onValueCh
         shape = RoundedCornerShape(15.dp)
     )
 }
+
+
 
 @Composable
 fun DateInputField(
