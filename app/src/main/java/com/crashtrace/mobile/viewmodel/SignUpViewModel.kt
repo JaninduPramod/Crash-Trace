@@ -2,9 +2,16 @@ package com.crashtrace.mobile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.LoginResponse
+import com.crashtrace.mobile.data.entity.UserData
 import com.crashtrace.mobile.data.repository.SignUpRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(private val repository: SignUpRepository) : ViewModel() {
@@ -34,20 +41,13 @@ class SignUpViewModel(private val repository: SignUpRepository) : ViewModel() {
         _password.value = ""
     }
 
-    fun submitSignUpData() {
 
-    viewModelScope.launch {
-        val response = repository.saveSignUpData(_name.value, _nic.value, _email.value, _password.value)
-        if(response?.success == true)
-        {
-
-            println(response?.data)
-
-        }
-        else{
-            println(response?.message)
-        }
-
-    }
+    fun submitSignUpData():Flow<ApiResponse<UserData>?> {
+        return flow{
+            val response = repository.saveSignUpData(_name.value, _nic.value, _email.value, _password.value)
+            emit(response)
+        }.flowOn(Dispatchers.IO)
 }
+
+
 }

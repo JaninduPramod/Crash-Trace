@@ -54,6 +54,8 @@ fun SigningInScreen(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val activity = context as Activity
+    var loading by remember { mutableStateOf(false) } // Loading state
+
 
     val webClientId = "679764917586-ounn6jabilj8qa3n8lup744e4qbu2pi9.apps.googleusercontent.com"
 
@@ -70,7 +72,10 @@ fun SigningInScreen(navController: NavHostController) {
 
     fun handleLogin() {
         coroutineScope.launch {
+            loading = true
             loginViewModel.executeUserLogin().collect { response ->
+                loading = false
+
                 if (response?.success == true) {
                     if(response.data?.role == "admin")
                     {
@@ -95,6 +100,8 @@ fun SigningInScreen(navController: NavHostController) {
             }
         }
     }
+
+
 
     // Google Sign-In launcher
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -121,6 +128,7 @@ fun SigningInScreen(navController: NavHostController) {
             .fillMaxSize()
             .background(Color(0xFFF3F6F8))
     ) {
+
         AppBarSub(title = "Sign In!")
         Box(
             modifier = Modifier
@@ -134,6 +142,7 @@ fun SigningInScreen(navController: NavHostController) {
                     .padding(horizontal = 16.dp, vertical = 0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Text(
                     text = "Sign in to\nyour account",
                     fontWeight = FontWeight.Bold,
@@ -366,7 +375,21 @@ fun SigningInScreen(navController: NavHostController) {
                 }
                 Spacer(modifier = Modifier.height(40.dp))
             }
+
+            // Show loading indicator
+            if (loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.White)
+                }
+            }
+
         }
+
     }
 
     

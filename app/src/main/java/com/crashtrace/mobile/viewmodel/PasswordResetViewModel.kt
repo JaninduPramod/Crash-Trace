@@ -2,9 +2,15 @@ package com.crashtrace.mobile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.EmailVerificationResponse
 import com.crashtrace.mobile.data.repository.PasswordResetRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class PasswordResetViewModel (private val repository: PasswordResetRepository) : ViewModel(){
@@ -34,48 +40,27 @@ class PasswordResetViewModel (private val repository: PasswordResetRepository) :
         _email.value = newEmail
     }
 
-    fun executeResetSendOtp() {
-        viewModelScope.launch {
+    fun executeResetSendOtp(): Flow<ApiResponse<EmailVerificationResponse>?> {
+        return flow{
             val response = repository.resetSendOtp(_email.value)
-            _message.value = response?.message ?: ""
-
-            if(response?.success == true) {
-                println(response?.message)
-                _success.value = true
-
-            } else {
-                println(response?.message)
-                _success.value = false
-            }
-
-        }
+            emit(response)
+        }.flowOn(Dispatchers.IO)
     }
 
 
-
-    fun submitOtpCode(otp: String) {
-        viewModelScope.launch {
+    fun submitOtpCode(otp: String):Flow<ApiResponse<EmailVerificationResponse>?> {
+        return flow {
+            println("Email"+_email.value)
             val response = repository.verifyOtpCode(_email.value, otp)
-
-            println("Message from API: ${response?.message}")
-            println("success: ${response?.success}");
-
-            _message.value = response?.message ?: ""
-
-            _otpSuccess.value = response?.success ?: false
-        }
+            emit(response)
+        }.flowOn(Dispatchers.IO)
     }
 
-    fun resetPassword(password: String, newPassword: String) {
-        viewModelScope.launch {
+    fun resetPassword(password: String, newPassword: String):Flow<ApiResponse<EmailVerificationResponse>?> {
+        return flow {
             val response = repository.resetPassword(_email.value, password, newPassword)
-
-            println("Message from API: ${response?.message}")
-            println("success: ${response?.success}");
-
-            _message.value = response?.message ?: ""
-            _newPasswordSuccess.value = response?.success ?: false
-        }
+            emit(response)
+        }.flowOn(Dispatchers.IO)
     }
 
 

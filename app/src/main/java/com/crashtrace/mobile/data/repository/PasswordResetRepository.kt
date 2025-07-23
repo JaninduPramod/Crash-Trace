@@ -33,7 +33,6 @@ class PasswordResetRepository {
 
 
     suspend fun verifyOtpCode(email: String,otp: String) : ApiResponse<EmailVerificationResponse>?{
-        
 
         val request = OtpVerificationRequest(email, otp)
 
