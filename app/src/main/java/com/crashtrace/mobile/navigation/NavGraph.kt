@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-
 import com.crashtrace.mobile.ui.screens.AdminNewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.AdminNewsViewScreen
 import com.crashtrace.mobile.ui.screens.OnBoardScreen1

@@ -26,6 +26,14 @@ class SignUpViewModel(private val repository: SignUpRepository) : ViewModel() {
     fun setEmail(value: String) { _email.value = value }
     fun setPassword(value: String) { _password.value = value }
 
+    // reset all fields
+    fun resetFields() {
+        _name.value = ""
+        _nic.value = ""
+        _email.value = ""
+        _password.value = ""
+    }
+
     fun submitSignUpData() {
 
     viewModelScope.launch {

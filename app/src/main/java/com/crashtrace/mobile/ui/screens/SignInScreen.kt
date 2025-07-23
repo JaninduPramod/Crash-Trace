@@ -1,7 +1,10 @@
 package com.crashtrace.mobile.ui.screens
 
 
+import android.app.Activity
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +34,9 @@ import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarSub
 import com.crashtrace.mobile.viewmodel.LoginViewModel
 import com.crashtrace.mobile.viewmodel.ProfileViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -47,6 +53,19 @@ fun SigningInScreen(navController: NavHostController) {
     var rememberMe by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    val activity = context as Activity
+
+    val webClientId = "679764917586-ounn6jabilj8qa3n8lup744e4qbu2pi9.apps.googleusercontent.com"
+
+    // Configure Google Sign-In
+    val googleSignInClient = remember {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(webClientId)
+            .requestEmail()
+            .build()
+        GoogleSignIn.getClient(activity, gso)
+    }
+
 
 
     fun handleLogin() {
@@ -64,12 +83,34 @@ fun SigningInScreen(navController: NavHostController) {
                         println("Navigate to home")
                         navController.navigate("home")
                     }
+                    loginViewModel.resetFields()
+
                     Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
                     profileViewModel.executeUserProfile()
 
                 } else {
+                    loginViewModel.resetFields()
                     Toast.makeText(context, response?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+    }
+
+    // Google Sign-In launcher
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            // navigate to home screen or perform any action with the account
+            loginViewModel.setEmail(account.email ?: "")
+            loginViewModel.setPassword(account.idToken ?: "")
+            handleLogin()
+            println("SignIn details:"+account.id)
+        } catch (e: ApiException) {
+
+            println("GoogleSignIn"+ "Sign-in failed with status code: ${e.statusCode}"+ e)
+            if (e.statusCode == 10) {
+                println("GoogleSignIn"+"Possible misconfiguration: Check Web Client ID and SHA-1 in Firebase Console.")
             }
         }
     }
@@ -295,7 +336,12 @@ fun SigningInScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(20.dp))
                 // Google Sign Up Button
                 OutlinedButton(
-                    onClick = { loginViewModel.getJwtToken() },
+                    onClick = {
+                        googleSignInClient.signOut().addOnCompleteListener {
+                            val signInIntent = googleSignInClient.signInIntent
+                            launcher.launch(signInIntent)
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -313,7 +359,7 @@ fun SigningInScreen(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Sign up with Google",
+                        text = "Sign In with Google",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
