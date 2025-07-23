@@ -319,7 +319,7 @@ fun SignUpScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(20.dp))
                 // Google Sign Up Button
                 OutlinedButton(
-                    onClick = { /* TODO: Google sign up */ },
+                    onClick = { navController.navigate("google") }, // Navigate to Google Sign In
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

@@ -295,7 +295,7 @@ fun SigningInScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(20.dp))
                 // Google Sign Up Button
                 OutlinedButton(
-                    onClick = { loginViewModel.getJwtToken() },
+                    onClick = { },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
