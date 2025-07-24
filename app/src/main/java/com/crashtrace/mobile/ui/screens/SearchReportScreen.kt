@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.crashtrace.mobile.R
+import com.crashtrace.mobile.network.SupabaseClient
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.viewmodel.ReportViewModel
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -46,6 +48,7 @@ fun SearchReportScreen(navController: NavHostController) {
 
 
 
+    var searchedVehicleNumber by remember { mutableStateOf("") }
     var loadProfile by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -148,7 +151,10 @@ fun SearchReportScreen(navController: NavHostController) {
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(
-                            onClick = { reportViewModel.searchReport() },
+                            onClick = {
+                                searchedVehicleNumber = vehicleNumber
+                                reportViewModel.searchReport()
+                             },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
@@ -166,183 +172,188 @@ fun SearchReportScreen(navController: NavHostController) {
                 }
 
                 // Accident Report Card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp)
-                        .padding(top = 0.dp)
-                        .shadow(8.dp, RoundedCornerShape(16.dp), clip = false),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Image(
-                            painter = painterResource(id = R.drawable.accident),
-                            contentDescription = "Main News",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .clip(RoundedCornerShape(16.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Spacer(modifier = Modifier.height(30.dp))
-
-                        Text(
-                            text = date,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFFFF4D4D),
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-
-                        // Title + Trust Rate (left) + Icon (right)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 0.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = address,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 24.sp,
-                                    color = Color.Black
-                                )
-
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
+                if (date.isNotBlank()) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp)
+                            .padding(top = 0.dp)
+                            .shadow(8.dp, RoundedCornerShape(16.dp), clip = false),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            if (searchedVehicleNumber.isNotBlank()) {
+                                val imageUrl = SupabaseClient.getImageUrl("$searchedVehicleNumber.jpg")
+                                AsyncImage(
+                                    model = imageUrl,
+                                    contentDescription = "Main News",
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 8.dp)
-                                ) {
-                                    // Icon on the left
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.close_circle),
-                                        contentDescription = "status",
-                                        tint = Color.Red,
-                                        modifier = Modifier
-                                            .padding(end = 12.dp)
-                                            .size(28.dp)
+                                        .height(200.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(Color.LightGray),
+                                    contentScale = ContentScale.Crop
+                                )
+                                Spacer(modifier = Modifier.height(30.dp))
+                            }
+
+                            Text(
+                                text = date,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xFFFF4D4D),
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+
+                            // Title + Trust Rate (left) + Icon (right)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 0.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = address,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 24.sp,
+                                        color = Color.Black
                                     )
 
-                                    // Trust Rate text and progress bar on the right
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(
-                                            text = "Trust Rate",
-                                            fontWeight = FontWeight.Medium,
-                                            fontSize = 14.sp,
-                                            color = Color.Gray
-                                        )
-                                        Box(
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                    ) {
+                                        // Icon on the left
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.close_circle),
+                                            contentDescription = "status",
+                                            tint = Color.Red,
                                             modifier = Modifier
-                                                .fillMaxWidth(0.5f)
-                                                .height(10.dp)
-                                                .clip(RoundedCornerShape(4.dp))
-                                                .background(Color(0xFFFFCDD2)) // Light red
-                                        ) {
+                                                .padding(end = 12.dp)
+                                                .size(28.dp)
+                                        )
 
+                                        // Trust Rate text and progress bar on the right
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = "Trust Rate",
+                                                fontWeight = FontWeight.Medium,
+                                                fontSize = 14.sp,
+                                                color = Color.Gray
+                                            )
                                             Box(
                                                 modifier = Modifier
-                                                    .fillMaxWidth(0.8f) // 38%
-                                                    .fillMaxHeight()
+                                                    .fillMaxWidth(0.5f)
+                                                    .height(10.dp)
                                                     .clip(RoundedCornerShape(4.dp))
-                                                    .background(Color(0xFFFF4155)) // Light red
-                                            )
+                                                    .background(Color(0xFFFFCDD2)) // Light red
+                                            ) {
+
+                                                Box(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth(0.8f) // 38%
+                                                        .fillMaxHeight()
+                                                        .clip(RoundedCornerShape(4.dp))
+                                                        .background(Color(0xFFFF4155)) // Light red
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        Text(
-                            text = description,
-                            color = Color.Black.copy(alpha = 0.5f),
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        Text(
-                            text = "Reporter",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = Color.Black,
-                            modifier = Modifier.padding(top = 0.dp, bottom = 2.dp)
-                        )
-                        Text(
-                            text = reporter,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Black.copy(alpha = 0.4f)
-                        )
-
-                        Text(
-                            text = "Damage Rate",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = Color.Black,
-                            modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
-                        )
-                        Text(
-                            text = "80%",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Black.copy(alpha = 0.4f)
-                        )
-
-                        Text(
-                            text = "Other Details",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = Color.Black,
-                            modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
-                        )
-                        Text(
-                            text = "More details",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Black.copy(alpha = 0.4f)
-                        )
-
-                        Text(
-                            text = "Location",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = Color.Black,
-                            modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
-                        )
-                        Text(
-                            text = address,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Red
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        val accidentPosition = LatLng(lat, lng)
-                        val cameraPositionState = rememberCameraPositionState {
-                            position = CameraPosition.fromLatLngZoom(accidentPosition, 15f)
-                        }
-
-                        GoogleMap(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(330.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            cameraPositionState = cameraPositionState
-                        ) {
-                            Marker(
-                                state = MarkerState(position = accidentPosition),
-                                title = address,
-
-                                snippet = "Accident Location",
-                                icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
-
+                            Text(
+                                text = description,
+                                color = Color.Black.copy(alpha = 0.5f),
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(vertical = 8.dp)
                             )
+
+                            Spacer(modifier = Modifier.height(20.dp))
+
+                            Text(
+                                text = "Reporter",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(top = 0.dp, bottom = 2.dp)
+                            )
+                            Text(
+                                text = reporter,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Black.copy(alpha = 0.4f)
+                            )
+
+                            Text(
+                                text = "Damage Rate",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
+                            )
+                            Text(
+                                text = "80%",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Black.copy(alpha = 0.4f)
+                            )
+
+                            Text(
+                                text = "Other Details",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
+                            )
+                            Text(
+                                text = "More details",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Black.copy(alpha = 0.4f)
+                            )
+
+                            Text(
+                                text = "Location",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
+                            )
+                            Text(
+                                text = address,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Red
+                            )
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            val accidentPosition = LatLng(lat, lng)
+                            val cameraPositionState = rememberCameraPositionState {
+                                position = CameraPosition.fromLatLngZoom(accidentPosition, 15f)
+                            }
+
+                            GoogleMap(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(330.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                cameraPositionState = cameraPositionState
+                            ) {
+                                Marker(
+                                    state = MarkerState(position = accidentPosition),
+                                    title = address,
+
+                                    snippet = "Accident Location",
+                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
+
+                                )
+                            }
                         }
                     }
                 }
