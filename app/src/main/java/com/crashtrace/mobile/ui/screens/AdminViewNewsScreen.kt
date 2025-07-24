@@ -102,8 +102,8 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
             AppBarMain(
                 title = "REPOTER VIEW",
                 BackButton = true,
-                onBackClick = { navController.popBackStack() }, // <-- Add this line
-                onProfileClick = { isProfile -> if (isProfile) loadProfile = true }
+                onBackClick = { navController.navigate("adminGallery") },
+                onProfileClick = { navController.navigate("profile") }
             )
 
 

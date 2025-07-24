@@ -34,7 +34,11 @@ fun NewsGalleryScreen(
 
     val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
 
-    // Collect the news list from the ViewModel
+
+    LaunchedEffect(Unit) {
+        newsGalleryViewModel.getNewsList()
+    }
+
     val newsList by newsGalleryViewModel.newsList.collectAsState()
 
     // Fetch all news when the screen first loads
@@ -49,6 +53,8 @@ fun NewsGalleryScreen(
         navController.navigate("profile")
         loadProfile = false
     }
+
+
 
     if (backToFeed) {
         // Assuming MainNavScreen is the main navigation entry point
@@ -84,8 +90,8 @@ fun NewsGalleryScreen(
             AppBarMain(
                 title = "NEWS GALLERY",
                 BackButton = true,
-                onBackClick = { backToFeed = true },
-                onProfileClick = { isProfile -> if (isProfile) loadProfile = true }
+                onBackClick = { navController.navigate("home") },
+                onProfileClick = { navController.navigate("profile") },
             )
 
             Spacer(modifier = Modifier.height(30.dp))

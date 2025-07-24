@@ -165,7 +165,16 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
             val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
             val response = repository.optionReport(jwtToken,cardId, option)
             println(response)
-
+            if (response?.success == true) {
+                // Update local state on delete
+                if (option == "delete") {
+                    deleteItem(cardId)
+                }
+                // Refresh the list from server for any option
+                getAllReports()
+            } else {
+                println("Failed to $option report: ${'$'}{response?.message ?: }")
+            }
         }
     }
 

@@ -153,6 +153,18 @@ fun ProfileScreen(navController: NavHostController) {
     val email by profileViewModel.email.collectAsState()
     val role by profileViewModel.role.collectAsState()
 
+    fun handleBack() {
+        if(role == "admin") {
+            navController.navigate("adminGallery")
+        } else {
+            navController.navigate("home")
+        }
+
+    }
+
+
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -164,7 +176,7 @@ fun ProfileScreen(navController: NavHostController) {
                 title = "Profile",
                 backButton = true,
                 showOverlay = showLogoutDialog,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = {handleBack() }
             )
 
             Box(
@@ -310,6 +322,7 @@ fun ProfileScreen(navController: NavHostController) {
         }
     }
 }
+
 
 // ✅ Reusable profile info item
 @Composable
