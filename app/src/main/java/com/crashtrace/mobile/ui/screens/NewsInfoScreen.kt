@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,7 +71,12 @@ fun NewsInfoScreen(
         MainNavScreen(navController = navController, selectedIndex = 1)
         return
     }
+    // Initialize ViewModel before usage
     val viewModel: NewsGalleryViewModel = koinViewModel()
+    // Refresh news list when entering the detail screen
+    LaunchedEffect(Unit) {
+        viewModel.getNewsList()
+    }
     val newsList by viewModel.newsList.collectAsState()
 
     val selectedItem = newsList.find { it.cardId == cardId }

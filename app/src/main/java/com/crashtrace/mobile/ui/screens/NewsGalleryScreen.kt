@@ -34,6 +34,9 @@ fun NewsGalleryScreen(
 
     val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
 
+    LaunchedEffect(Unit) {
+        newsGalleryViewModel.getNewsList()
+    }
 
     val newsList by newsGalleryViewModel.newsList.collectAsState()
 
