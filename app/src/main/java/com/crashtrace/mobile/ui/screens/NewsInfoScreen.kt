@@ -2,6 +2,7 @@ package com.crashtrace.mobile.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,12 +35,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.crashtrace.mobile.network.SupabaseClient
 import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.maps.android.compose.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+
 @Composable
 fun NewsInfoScreen(
     navController: NavHostController,
@@ -47,6 +54,7 @@ fun NewsInfoScreen(
 
 ) {
 
+    var isFullScreen by remember { mutableStateOf(false) }
     var loadProfile by remember { mutableStateOf(false) }
     var backToFeed by remember { mutableStateOf(false) }
 
@@ -74,6 +82,8 @@ fun NewsInfoScreen(
         }
         return
     }
+
+    val imageUrl = SupabaseClient.getImageUrl("${selectedItem.vehiclenub}.jpg")
 
     val cameraLatLng = remember(selectedItem.locationUrl) {
         extractLatLngFromUrl(selectedItem.locationUrl) ?: LatLng(6.9271, 79.8612)
@@ -106,13 +116,16 @@ fun NewsInfoScreen(
             ) {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     AsyncImage(
-                        model = selectedItem.imageUrl,
+                        model = imageUrl,
                         contentDescription = "News Image",
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(250.dp)
-                            .background(Color.LightGray),
-                        contentScale = ContentScale.Crop
+                            .background(Color.LightGray)
+                            .clickable { isFullScreen = true },
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
+                        error = painterResource(id = R.drawable.ic_launcher_foreground)
                     )
 
                     Card(
@@ -187,6 +200,46 @@ fun NewsInfoScreen(
 
                 Spacer(modifier = Modifier.height(30.dp))
             }
+        }
+
+        if (isFullScreen) {
+            FullScreenImageView(imageUrl = imageUrl) {
+                isFullScreen = false
+            }
+        }
+    }
+}
+
+@Composable
+fun FullScreenImageView(imageUrl: String, onClose: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.9f))
+            .clickable(onClick = onClose),
+        contentAlignment = Alignment.Center
+    ) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = "Full screen image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            contentScale = ContentScale.Fit,
+            placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
+            error = painterResource(id = R.drawable.ic_launcher_foreground)
+        )
+        IconButton(
+            onClick = onClose,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close full screen",
+                tint = Color.White
+            )
         }
     }
 }
