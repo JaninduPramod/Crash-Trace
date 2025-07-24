@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.crashtrace.mobile.R
+import com.crashtrace.mobile.network.SupabaseClient
 import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -37,17 +38,16 @@ fun MyCustomCard(
 ) {
     val context = LocalContext.current
 
+    // Construct the image URL from the vehicle number
+    val imageUrl = SupabaseClient.getImageUrl("${cardItem.vehiclenub}.jpg")
 
-    val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
-    val newsList by newsGalleryViewModel.newsList.collectAsState()
-    val lastItem = newsList.lastOrNull()
-    // Load image from URL
+    // Load image from the constructed URL
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(context)
-            .data(cardItem.imageUrl)
+            .data(imageUrl) // Use the dynamically constructed URL
             .crossfade(true)
-            .placeholder(R.drawable.loading) // Optional loading GIF
-            .error(R.drawable.loading) // Optional error image
+            .placeholder(R.drawable.loading)
+            .error(R.drawable.loading)
             .build()
     )
 
