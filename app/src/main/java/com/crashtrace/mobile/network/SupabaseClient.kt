@@ -24,6 +24,10 @@ object SupabaseClient {
         }
     }
 
+    fun getImageUrl(imageName: String): String {
+        return "${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/$imageName"
+    }
+
     suspend fun uploadImage(context: Context, uri: Uri, id: String): String? {
         Log.d("SupabaseUpload", "Attempting to upload image for ID: $id, URI: $uri")
         return withContext(Dispatchers.IO) {

@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.crashtrace.mobile.ui.screens.AdminNewsGalleryScreen
 import com.crashtrace.mobile.ui.screens.AdminNewsViewScreen
+import com.crashtrace.mobile.ui.screens.ImageRetrievalScreen
 import com.crashtrace.mobile.ui.screens.OnBoardScreen1
 import com.crashtrace.mobile.ui.screens.OnBoardScreen2
 import com.crashtrace.mobile.ui.screens.OnBoardScreen3
@@ -88,5 +89,8 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
+        composable("image_retrieval") {
+            ImageRetrievalScreen(navController = navController)
+        }
     }
 }
