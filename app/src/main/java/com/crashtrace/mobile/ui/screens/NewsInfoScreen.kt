@@ -44,14 +44,16 @@ import com.google.android.gms.maps.model.LatLng
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+
 
 @Composable
 fun NewsInfoScreen(
     navController: NavHostController,
     cardId: String
-
 ) {
 
     var isFullScreen by remember { mutableStateOf(false) }
@@ -82,6 +84,11 @@ fun NewsInfoScreen(
         }
         return
     }
+
+    // State for like and dislike buttons (true if pressed, false otherwise)
+    var userLiked by remember { mutableStateOf(false) }
+    var userDisliked by remember { mutableStateOf(false) }
+
 
     val imageUrl = SupabaseClient.getImageUrl("${selectedItem.vehiclenub}.jpg")
 
@@ -146,12 +153,59 @@ fun NewsInfoScreen(
                                 modifier = Modifier.padding(bottom = 4.dp)
                             )
 
-                            Text(
-                                text = selectedItem.title,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
-                                color = Color.Black
-                            )
+                            // --- Start of changes for like/dislike buttons ---
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = selectedItem.title,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 24.sp,
+                                    color = Color.Black,
+                                    modifier = Modifier.weight(1f) // Makes the title take up available space
+                                )
+                                Spacer(modifier = Modifier.width(8.dp)) // Spacer between title and buttons
+
+                                // Like Button
+                                IconButton(
+                                    onClick = {
+                                        userLiked = !userLiked // Toggle like state
+                                        if (userLiked) { // If liked, ensure not disliked
+                                            userDisliked = false
+                                        }
+                                        // TODO: Implement your actual like/dislike logic here (e.g., update ViewModel/backend)
+                                        // You might call viewModel.onLikeClicked(selectedItem.cardId, userLiked)
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ThumbUp,
+                                        contentDescription = "Like",
+                                        tint = if (userLiked) Color.Blue else Color.Gray, // Change color based on state
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+
+                                // Dislike Button
+                                IconButton(
+                                    onClick = {
+                                        userDisliked = !userDisliked // Toggle dislike state
+                                        if (userDisliked) { // If disliked, ensure not liked
+                                            userLiked = false
+                                        }
+                                        // TODO: Implement your actual like/dislike logic here (e.g., update ViewModel/backend)
+                                        // You might call viewModel.onDislikeClicked(selectedItem.cardId, userDisliked)
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ThumbDown,
+                                        contentDescription = "Dislike",
+                                        tint = if (userDisliked) Color.Red else Color.Gray, // Change color based on state
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                            // --- End of changes for like/dislike buttons ---
 
                             Text(
                                 text = selectedItem.description,
