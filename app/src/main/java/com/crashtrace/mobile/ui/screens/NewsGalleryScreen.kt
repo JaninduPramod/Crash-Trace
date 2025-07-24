@@ -47,6 +47,8 @@ fun NewsGalleryScreen(
         loadProfile = false
     }
 
+
+
     if (backToFeed) {
         MainNavScreen(navController = navController, selectedIndex = selectedIndex)
         return
@@ -80,8 +82,8 @@ fun NewsGalleryScreen(
             AppBarMain(
                 title = "NEWS GALLERY",
                 BackButton = true,
-                onBackClick = { backToFeed = true },
-                onProfileClick = { isProfile -> if (isProfile) loadProfile = true }
+                onBackClick = { navController.navigate("home") },
+                onProfileClick = { navController.navigate("profile") },
             )
 
             Spacer(modifier = Modifier.height(30.dp))

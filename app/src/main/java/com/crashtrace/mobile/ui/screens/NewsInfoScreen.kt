@@ -112,8 +112,8 @@ fun NewsInfoScreen(
             AppBarMain(
                 title = "",
                 BackButton = true,
-                onBackClick = { navController.popBackStack() },
-                onProfileClick = { /* no-op */ }
+                onBackClick = { navController.navigate("home")},
+                onProfileClick = { navController.navigate("profile")}
             )
 
             Column(
