@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.crashtrace.mobile.R
+import com.crashtrace.mobile.network.SupabaseClient
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.DeletNewsAlertBox
 import com.crashtrace.mobile.ui.components.RejectNewsAlertBox
@@ -262,14 +264,17 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                         colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Image(
-                                painter = painterResource(id = R.drawable.accident),
+                            val imageUrl = SupabaseClient.getImageUrl("${item.vehicleNo}.jpg")
+                            AsyncImage(
+                                model = imageUrl,
                                 contentDescription = "Main News",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(200.dp)
                                     .clip(RoundedCornerShape(16.dp)),
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Crop,
+                                placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
+                                error = painterResource(id = R.drawable.ic_launcher_foreground)
                             )
 
                             Spacer(modifier = Modifier.height(30.dp))
