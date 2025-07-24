@@ -34,13 +34,16 @@ fun NewsGalleryScreen(
 
     val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
 
-
+    // Collect the news list from the ViewModel
     val newsList by newsGalleryViewModel.newsList.collectAsState()
 
+    // Fetch all news when the screen first loads
+    LaunchedEffect(Unit) {
+        newsGalleryViewModel.getNewsList()
+    }
 
     var loadProfile by remember { mutableStateOf(false) }
     var backToFeed by remember { mutableStateOf(false) }
-
 
     if (loadProfile) {
         navController.navigate("profile")
@@ -48,6 +51,7 @@ fun NewsGalleryScreen(
     }
 
     if (backToFeed) {
+        // Assuming MainNavScreen is the main navigation entry point
         MainNavScreen(navController = navController, selectedIndex = selectedIndex)
         return
     }
@@ -102,7 +106,8 @@ fun NewsGalleryScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(0.dp, 8.dp, 8.dp, 8.dp)
             ) {
-                newsList.forEach { item ->
+
+                newsList.reversed().forEach { item ->
                     MyCustomCard(
                         cardItem = item,
                         onClick = {
@@ -113,7 +118,6 @@ fun NewsGalleryScreen(
                 LaunchedEffect(newsList) {
                     println(">>> News list size: ${newsList.size}")
                 }
-
 
                 Spacer(modifier = Modifier.height(16.dp))
             }

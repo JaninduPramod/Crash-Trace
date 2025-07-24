@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,29 +40,30 @@ import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.MyCustomCard
 import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.crashtrace.mobile.network.SupabaseClient
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NewsFeedScreen(
-    navController: NavController
+    navController: NavHostController
 ) {
     val newsGalleryViewModel: NewsGalleryViewModel = koinViewModel()
     val newsList by newsGalleryViewModel.newsList.collectAsState()
-    val lastItem = newsList.lastOrNull()
+    val lastItem = newsList.lastOrNull() // Still assuming this means the latest item in an oldest-first list or just the main item
+    val selectedItem = newsList.find { it.cardId == lastItem?.cardId }
+    val imageUrl2 = SupabaseClient.getImageUrl("${selectedItem?.vehiclenub}.jpg")
     var loadProfile by remember { mutableStateOf(false) }
 
-    // function to handle onShowMore click
     fun handleOnShowMore() {
         newsGalleryViewModel.getNewsList()
         navController.navigate("gallery")
-
     }
 
-    // fetch all the news when the page loads
     LaunchedEffect(Unit) {
         newsGalleryViewModel.getNewsList()
     }
@@ -74,14 +76,12 @@ fun NewsFeedScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Background image
         Image(
             painter = painterResource(id = R.drawable.background_image),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
-        // White top inner shadow (70dp)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,14 +98,12 @@ fun NewsFeedScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Static AppBar
             AppBarMain(
                 title = "HOT NEWS",
                 BackButton = false,
                 onProfileClick = { isProfile -> if (isProfile) loadProfile = true }
             )
 
-            // Scrollable content
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -118,7 +116,7 @@ fun NewsFeedScreen(
                         .height(250.dp)
                         .shadow(
                             elevation = 12.dp,
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp),
+                            shape = RoundedCornerShape(0.dp),
                             clip = false
                         )
                 ) {
@@ -129,24 +127,19 @@ fun NewsFeedScreen(
                             .clip(RoundedCornerShape(0.dp))
                     ) {
 
-                        if (lastItem?.imageUrl != null) {
+
+                        if (lastItem?.vehiclenub != null) {
                             AsyncImage(
-                                model = lastItem.imageUrl,
+                                model = SupabaseClient.getImageUrl("${lastItem?.vehiclenub}.jpg"),
                                 contentDescription = "Main News",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .matchParentSize()
-                                  .background(Color(0xFFF0F0F0)),
-
+                                    .background(Color(0xFFF0F0F0)),
                             )
-
-
                         } else {
                             GoogleBarsPulsePlaceholder(modifier = Modifier.matchParentSize())
                         }
-
-
-
                     }
                     Card(
                         modifier = Modifier
@@ -155,11 +148,11 @@ fun NewsFeedScreen(
                             .offset(y = 200.dp)
                             .shadow(
                                 elevation = 8.dp,
-                                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+                                shape = RoundedCornerShape(16.dp),
                                 clip = false
                             ),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
-                        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color.White)
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp)
@@ -173,7 +166,7 @@ fun NewsFeedScreen(
                                     fontStyle = FontStyle.Italic
                                 )
                                 Text(
-                                    text = lastItem.date, // or formatDate(lastItem.date) if needed
+                                    text = lastItem.date,
                                     color = Color(0xFFFF2D2D),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Normal,
@@ -210,7 +203,7 @@ fun NewsFeedScreen(
                                     .height(52.dp)
                                     .padding(top = 8.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF2D2D)),
-                                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(12.dp)
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -236,7 +229,6 @@ fun NewsFeedScreen(
 
                 Spacer(modifier = Modifier.height(210.dp))
 
-                // HOT NEWS section title
                 Text(
                     text = "HOT NEWS",
                     color = Color(0xFF7A7A7A),
@@ -249,14 +241,15 @@ fun NewsFeedScreen(
                 Column(
                     modifier = Modifier.padding(start = 0.dp, end = 8.dp, bottom = 8.dp)
                 ) {
-                    newsList.takeLast(5).forEach { item ->
+                    // --- THE KEY CHANGE FOR REVERSE ORDER ---
+                    // Take the first 5 (newest items) and then reverse that sublist
+                    newsList.take(5).reversed().forEach { item ->
                         MyCustomCard(
                             cardItem = item,
                             onClick = {
                                 navController.navigate("cardU/${item.cardId}")
                             }
                         )
-
                     }
                 }
 
@@ -269,7 +262,7 @@ fun NewsFeedScreen(
                         .height(52.dp)
                         .padding(horizontal = 16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF2D2D)),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -295,6 +288,8 @@ fun NewsFeedScreen(
         }
     }
 }
+
+
 
 @Composable
 fun GoogleBarsPulsePlaceholder(modifier: Modifier = Modifier) {

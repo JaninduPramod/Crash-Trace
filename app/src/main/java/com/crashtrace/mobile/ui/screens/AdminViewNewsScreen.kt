@@ -27,6 +27,7 @@ import com.crashtrace.mobile.R
 import com.crashtrace.mobile.network.SupabaseClient
 import com.crashtrace.mobile.ui.components.AppBarMain
 import com.crashtrace.mobile.ui.components.DeletNewsAlertBox
+import com.crashtrace.mobile.ui.components.PublicNewsAlertBox
 import com.crashtrace.mobile.ui.components.RejectNewsAlertBox
 import com.crashtrace.mobile.ui.components.SaveNewsAlertBox
 import com.crashtrace.mobile.viewmodel.AdminGalleryViewModel
@@ -478,7 +479,7 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                                     modifier = Modifier.width(175.dp)
                                         .padding(horizontal = 4.dp),
                                     onClick = { isEditing = true },
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                                     shape = RoundedCornerShape(10.dp)
                                 ) {
                                     Text("EDIT", color = Color.White)
@@ -579,7 +580,7 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
         }
 
         if (showPublishDialog) {
-            DeletNewsAlertBox(
+            PublicNewsAlertBox(
                 onConfirm = {
                     showPublishDialog = false
                     viewModel.chooseOptionReport(cardId,"publish")
