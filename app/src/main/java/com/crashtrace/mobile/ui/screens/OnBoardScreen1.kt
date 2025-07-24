@@ -36,7 +36,7 @@ fun OnBoardScreen1(navController: NavController, onSkip: () -> Unit, onNext: () 
             contentScale = androidx.compose.ui.layout.ContentScale.Crop
         )
 
-        // Top Row: Back Arrow and Skip Button on the same line
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()

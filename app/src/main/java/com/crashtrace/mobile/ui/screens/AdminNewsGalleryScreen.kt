@@ -42,11 +42,9 @@ fun AdminNewsGalleryScreen(
     var loadProfile by remember { mutableStateOf(false) }
     var backToFeed by remember { mutableStateOf(false) }
 
-
     LaunchedEffect(Unit) {
-        viewModel.getAllReports()
+        viewModel.getAllReports() // Ensure this fetches the data
     }
-
 
     if (loadProfile) {
         navController.navigate("profile")
@@ -54,6 +52,7 @@ fun AdminNewsGalleryScreen(
     }
 
     if (backToFeed) {
+        // Assuming MainNavScreen is the main navigation entry point
         MainNavScreen(navController = navController, selectedIndex = selectedIndex)
         return
     }
@@ -79,7 +78,11 @@ fun AdminNewsGalleryScreen(
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            AppBarMain(title = "", BackButton = false,onProfileClick = { isProfile -> if (isProfile) loadProfile = true })
+            AppBarMain(
+                title = "", // Title is empty in your current code, consider adding "ADMIN GALLERY"
+                BackButton = false, // Back button is false, adjust if needed
+                onProfileClick = { isProfile -> if (isProfile) loadProfile = true }
+            )
 
             Column(
                 modifier = Modifier
@@ -96,11 +99,13 @@ fun AdminNewsGalleryScreen(
                     modifier = Modifier.padding(start = 16.dp)
                 )
 
-                Column(modifier = Modifier.padding(0.dp,8.dp,8.dp,8.dp)) {
-                    newsList.forEach { item ->
+                Column(modifier = Modifier.padding(0.dp, 8.dp, 8.dp, 8.dp)) {
+                    // --- KEY CHANGE: Applying .reversed() to newsList ---
+                    newsList.reversed().forEach { item ->
                         CardActivityAdminCard(
                             cardItem = item,
                             onClick = {
+                                // Navigate to the detail screen for admin
                                 navController.navigate("card/${item.cardId}")
                             }
                         )

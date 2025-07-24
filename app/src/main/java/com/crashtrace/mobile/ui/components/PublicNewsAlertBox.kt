@@ -65,7 +65,7 @@ fun PublicNewsAlertBox(
             ) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "SAVE",
+                    text = "PUBLISH",
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     color = Color(0xFF222222),
@@ -88,7 +88,7 @@ fun PublicNewsAlertBox(
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Text(
-                        text = "SAVE",
+                        text = "PUBLISH",
                         color = Color.White,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp

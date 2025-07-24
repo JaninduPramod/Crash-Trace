@@ -30,6 +30,7 @@ import com.crashtrace.mobile.network.SupabaseClient
 import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
 import org.koin.androidx.compose.koinViewModel
 
+
 @Composable
 fun MyCustomCard(
     cardItem: CardItem,
@@ -82,10 +83,11 @@ fun MyCustomCard(
                     )
                 }
 
+                // Determine accent color based on damageRate
                 val accentColor = when {
-                    cardItem.damageRate <= 50 -> Color(0xFF00BAFF)
-                    cardItem.damageRate < 75 -> Color(0xFFFF5900)
-                    else -> Color.Red
+                    cardItem.damageRate <= 50 -> Color(0xFF00BAFF) // Blue for low damage
+                    cardItem.damageRate < 75 -> Color(0xFFFF7229) // Orange for medium damage
+                    else -> Color.Red // Red for high damage
                 }
 
                 Spacer(
@@ -93,7 +95,7 @@ fun MyCustomCard(
                         .width(4.dp)
                         .height(70.dp)
                         .align(Alignment.CenterVertically)
-                        .background(accentColor)
+                        .background(accentColor) // Apply the dynamically determined color
                 )
 
                 Column(
@@ -128,8 +130,6 @@ fun MyCustomCard(
                     .fillMaxSize()
                     .clickable { onClick() }
             )
-
-
         }
     }
 }
@@ -138,14 +138,16 @@ data class CardItem(
     val cardId: String,
     val title: String,
     val description: String,
-    val accentColor: Color,
-    val imagePlaceholderColor: Color,
-    val imageUrl: String,
+    val accentColor: Color, // This field is actually redundant if calculated in Composable
+    val imagePlaceholderColor: Color, // This field is actually redundant if using placeholder in AsyncImage
+    val imageUrl: String, // This field is actually redundant if derived from vehiclenub
     val date: String,
     val location: String,
     val damageRate: Int,
     val locationUrl: String,
     val vehiclenub: String,
+    val likesCount: Int? = null, // Added for consistency with previous discussions
+    val dislikesCount: Int? = null // Added for consistency with previous discussions
 )
 
 @Preview(showBackground = true)
@@ -156,14 +158,16 @@ fun MyCustomCardPreview() {
             cardId = "1",
             title = "Sample Title",
             description = "This is a sample description that could be a bit long to trigger ellipsis.",
-            imageUrl = "https://example.com/image1.jpg",
-            accentColor = Color.Green,
-            imagePlaceholderColor = Color.DarkGray,
+            imageUrl = "https://example.com/image1.jpg", // This will be ignored as vehiclenub is used
+            accentColor = Color.Green, // This will be ignored as damageRate determines color
+            imagePlaceholderColor = Color.DarkGray, // This will be ignored as placeholder is used
             date = "2023-10-01",
-            damageRate = 78,
+            damageRate = 98,
             location = "Colombo, Sri Lanka",
-            locationUrl = "https://www.google.com/maps/place/Colombo,+Sri+Lanka/@6.9271,79.8612,12z/data=!3m1!4b1!4m6!3m5!1s0x3ae259a7f8c8c9b5:0x7d8e2f8c8c8c8c8c!8m2!3d6.9271!4d79.8612!16zL20vMDNnYjQ",
+            locationUrl = "https://www.google.com/maps/place/Colombo,+Sri_Lanka/@6.9271,79.8612,12z/data=!3m1!4b1!4m6!3m5!1s0x3ae259a7f8c8c9b5:0x7d8e2f8c8c8c8c8c!8m2!3d6.9271!4d79.8612!16zL20vMDNnYjQ",
             vehiclenub = "azy-1234",
+            likesCount = 10,
+            dislikesCount = 2
         ),
         onClick = {}
     )
