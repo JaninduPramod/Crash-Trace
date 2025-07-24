@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.crashtrace.mobile"
-    compileSdk = 35
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.crashtrace.mobile"
-        minSdk = 34
-        targetSdk = 35
+        minSdk = 26
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
