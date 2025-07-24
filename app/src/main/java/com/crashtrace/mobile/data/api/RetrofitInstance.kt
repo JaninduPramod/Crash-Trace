@@ -13,7 +13,7 @@ object RetrofitInstance {
 
     val api: AuthApi by lazy {
         Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/")
+            .baseUrl("https://crash-trace-server-production.up.railway.app/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -21,10 +21,11 @@ object RetrofitInstance {
     }
     val reportApi: ReportApi by lazy {
         Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/")
+            .baseUrl("https://crash-trace-server-production.up.railway.app/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
             .create(ReportApi::class.java)
     }
 }
+
