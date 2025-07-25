@@ -97,7 +97,6 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
             if (response?.success == true) {
                 println(response.message)
 
-                // Update the adminNewsList with the edited report
                 val updatedList = _adminNewsList.value.map { report ->
                     if (report.cardId == _cardId.value) {
                         report.copy(
@@ -113,7 +112,7 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
                 }
                 _adminNewsList.value = updatedList
 
-                // Optionally reset fields if needed
+
                 resetFields()
             } else {
                 println("Failed to update report: ${response?.message ?: "Unknown error"}")
@@ -137,7 +136,7 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
                         date = report.date ?: "Unknown Date",
                         location = report.address ?: "Unknown Location",
                         locationUrl = report.location?.joinToString(",") ?: "",
-                        imageUrl = "https://example.com/default_image.jpg", // Replace with actual logic if available
+                        imageUrl = "https://example.com/default_image.jpg",
                         vehicleNo = report.vehicleNo ?: "N/A",
                         address = report.address ?: "N/A",
                         reporterId = report.reporterId?.name ?: "Unknown Reporter",
@@ -166,11 +165,11 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
             val response = repository.optionReport(jwtToken,cardId, option)
             println(response)
             if (response?.success == true) {
-                // Update local state on delete
+
                 if (option == "delete") {
                     deleteItem(cardId)
                 }
-                // Refresh the list from server for any option
+
                 getAllReports()
             } else {
                 println("Failed to $option report: ${'$'}{response?.message ?: }")

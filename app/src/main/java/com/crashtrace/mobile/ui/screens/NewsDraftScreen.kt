@@ -5,6 +5,7 @@ import android.R.attr.id
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -49,6 +50,7 @@ import com.crashtrace.mobile.R
 import com.crashtrace.mobile.launchCamera
 import com.crashtrace.mobile.network.SupabaseClient
 import com.crashtrace.mobile.ui.components.AppBarMain
+import com.crashtrace.mobile.ui.components.ImageSourceSelectionDialog
 import com.crashtrace.mobile.viewmodel.ReportViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -220,9 +222,13 @@ fun NewsDraftScreen(navController: NavHostController) {
     var locationCode by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
+    // New state for controlling image source dialog visibility
+    var showImageSourceDialog by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    // For Camera
     val photoFile = remember {
         File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_${System.currentTimeMillis()}.jpg")
     }
@@ -242,6 +248,26 @@ fun NewsDraftScreen(navController: NavHostController) {
         }
     }
 
+    // For Gallery
+    val galleryPermissionToRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        Manifest.permission.READ_MEDIA_IMAGES // For Android 13 (API 33) and above
+    } else {
+        Manifest.permission.READ_EXTERNAL_STORAGE // For Android 12 (API 32) and below
+    }
+
+    val galleryImagePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
+    }
+
+    val galleryPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            galleryImagePickerLauncher.launch("image/*") // MIME type for images
+        } else {
+            Toast.makeText(context, "Gallery permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     LaunchedEffect(locationCode) {
         reportViewModel.setLocation(locationCode)
     }
@@ -253,14 +279,14 @@ fun NewsDraftScreen(navController: NavHostController) {
         }
     }
 
+
+
     fun handleSubmit() {
         coroutineScope.launch {
             isUploading = true
 
-
             val vehicleNumber = reportViewModel.vehicleNumber.value
 
-            // Optional but recommended: Validate that the vehicle number is not empty
             if (vehicleNumber.isBlank()) {
                 Toast.makeText(context, "Vehicle number cannot be empty.", Toast.LENGTH_SHORT).show()
                 isUploading = false
@@ -269,11 +295,9 @@ fun NewsDraftScreen(navController: NavHostController) {
 
             if (imageUri != null && imageUrl == null) {
                 try {
-                    // 2. Use the vehicle number as the unique name for the uploaded image.
                     val uploadedUrl = SupabaseClient.uploadImage(context, imageUri!!, vehicleNumber)
 
                     if (uploadedUrl != null) {
-                        // 3. Set the vehicle number as the ID in the ViewModel.
                         reportViewModel.setCardId(vehicleNumber)
                         reportViewModel.setImageUrl(uploadedUrl)
                     } else {
@@ -288,7 +312,6 @@ fun NewsDraftScreen(navController: NavHostController) {
                 }
             }
 
-            // The rest of the function remains the same
             reportViewModel.submitReport().collect { response ->
                 isUploading = false
                 if (response?.success == true) {
@@ -301,42 +324,6 @@ fun NewsDraftScreen(navController: NavHostController) {
         }
     }
 
-//    fun handleSubmit() {
-//        coroutineScope.launch {
-//            isUploading = true
-//
-//            if (imageUri != null && imageUrl == null) {
-//                try {
-//                    val newCardId = UUID.randomUUID().toString()
-//                    val uploadedUrl = SupabaseClient.uploadImage(context, imageUri!!, newCardId)
-//                    if (uploadedUrl != null) {
-//                        reportViewModel.setCardId(newCardId)
-//                        reportViewModel.setImageUrl(uploadedUrl)
-//                    } else {
-//                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
-//                        isUploading = false
-//                        return@launch
-//                    }
-//                } catch (e: Exception) {
-//                    Toast.makeText(context, "Error uploading image: ${e.message}", Toast.LENGTH_SHORT).show()
-//                    isUploading = false
-//                    return@launch
-//                }
-//            }
-//
-//            reportViewModel.submitReport().collect { response ->
-//                isUploading = false
-//                if (response?.success == true) {
-//                    Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
-//                    navController.navigate("home")
-//                } else {
-//                    Toast.makeText(context, response?.message ?: "Submit failed", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-//    }
-
-
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.background_image),
@@ -345,14 +332,7 @@ fun NewsDraftScreen(navController: NavHostController) {
             contentScale = ContentScale.Crop
         )
 
-        if (isUploading) {
-            Box(
-                Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = Color.White)
-            }
-        }
+
 
         Column(modifier = Modifier.fillMaxSize()) {
             AppBarMain(
@@ -393,13 +373,7 @@ fun NewsDraftScreen(navController: NavHostController) {
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(Color.Gray.copy(alpha = 0.1f))
                                 .clickable {
-                                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                                        == PackageManager.PERMISSION_GRANTED
-                                    ) {
-                                        cameraLauncher.launch(photoUri)
-                                    } else {
-                                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                                    }
+                                    showImageSourceDialog = true // Show dialog on click
                                 }
                         ) {
                             if (imageUri != null) {
@@ -475,6 +449,42 @@ fun NewsDraftScreen(navController: NavHostController) {
             }
         }
     }
+    if (isUploading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0f))
+                .zIndex(1f), // Added zIndex to ensure it's on top
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color.LightGray)
+        }
+    }
+
+    if (showImageSourceDialog) {
+        ImageSourceSelectionDialog(
+            onDismissRequest = { showImageSourceDialog = false },
+            onCameraSelected = {
+                // Launch camera logic
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    cameraLauncher.launch(photoUri)
+                } else {
+                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+                showImageSourceDialog = false // Dismiss dialog after selection
+            },
+            onGallerySelected = {
+                // Launch gallery logic
+                if (ContextCompat.checkSelfPermission(context, galleryPermissionToRequest) == PackageManager.PERMISSION_GRANTED) {
+                    galleryImagePickerLauncher.launch("image/*")
+                } else {
+                    galleryPermissionLauncher.launch(galleryPermissionToRequest)
+                }
+                showImageSourceDialog = false // Dismiss dialog after selection
+            }
+        )
+    }
+
 
     if (showLocationDialog) {
         LocationPickerDialog(
@@ -485,20 +495,19 @@ fun NewsDraftScreen(navController: NavHostController) {
         )
     }
 
-
     if (showDatePicker) {
         DatePickerBottomSheet(
             onDismissRequest = { showDatePicker = false },
             onDateSelected = { selectedDate ->
-
                 reportViewModel.setDate(selectedDate)
                 showDatePicker = false
             }
         )
     }
+
+
+
 }
-
-
 
 @Composable
 fun CustomInputField(label: String, value: String, height: Dp = 60.dp, onValueChange: (String) -> Unit) {
