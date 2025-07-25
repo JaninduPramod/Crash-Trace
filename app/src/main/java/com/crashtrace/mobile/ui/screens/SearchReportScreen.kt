@@ -42,6 +42,9 @@ fun SearchReportScreen(navController: NavHostController) {
     val description by reportViewModel.description.collectAsState()
     val address by reportViewModel.address.collectAsState()
     val reporter by reportViewModel.reporter.collectAsState()
+    val damageRate by reportViewModel.damageRate.collectAsState()
+    val title by reportViewModel.title.collectAsState()
+
     val location by reportViewModel.location.collectAsState()
     val lat by reportViewModel.lat.collectAsState()
     val lng by reportViewModel.lng.collectAsState()
@@ -215,7 +218,7 @@ fun SearchReportScreen(navController: NavHostController) {
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = address,
+                                        text = title,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 24.sp,
                                         color = Color.Black
@@ -297,25 +300,12 @@ fun SearchReportScreen(navController: NavHostController) {
                                 modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
                             )
                             Text(
-                                text = "80%",
+                                text = damageRate.toString() + "%",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Normal,
                                 color = Color.Black.copy(alpha = 0.4f)
                             )
 
-                            Text(
-                                text = "Other Details",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
-                                color = Color.Black,
-                                modifier = Modifier.padding(top = 10.dp, bottom = 2.dp)
-                            )
-                            Text(
-                                text = "More details",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.Black.copy(alpha = 0.4f)
-                            )
 
                             Text(
                                 text = "Location",

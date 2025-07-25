@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
+
 import com.crashtrace.mobile.ui.components.MyCustomCard
 import com.crashtrace.mobile.ui.components.CardItem
 import com.crashtrace.mobile.viewmodel.NewsGalleryViewModel
@@ -90,7 +91,7 @@ fun NewsGalleryScreen(
             AppBarMain(
                 title = "NEWS GALLERY",
                 BackButton = true,
-                onBackClick = { navController.navigate("home") },
+                onBackClick = { navController.navigate("mainScreen/1") },
                 onProfileClick = { navController.navigate("profile") },
             )
 
@@ -117,7 +118,7 @@ fun NewsGalleryScreen(
                     MyCustomCard(
                         cardItem = item,
                         onClick = {
-                            navController.navigate("cardU/${item.cardId}")
+                            navController.navigate("cardU/${item.cardId}?origin=from_gallery")
                         }
                     )
                 }

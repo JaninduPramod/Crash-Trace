@@ -1,3 +1,4 @@
+// NewsInfoScreen.kt
 package com.crashtrace.mobile.ui.screens
 
 import androidx.compose.foundation.Image
@@ -51,15 +52,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 
 
+
 @Composable
 fun NewsInfoScreen(
     navController: NavHostController,
-    cardId: String
+    cardId: String,
+    origin: String = "unknown" // NEW: Receive the origin argument
 ) {
 
     var isFullScreen by remember { mutableStateOf(false) }
     var loadProfile by remember { mutableStateOf(false) }
-    var backToFeed by remember { mutableStateOf(false) }
+    // backToFeed is now handled by origin argument
+    // var backToFeed by remember { mutableStateOf(false) }
 
 
     if (loadProfile) {
@@ -67,10 +71,14 @@ fun NewsInfoScreen(
         loadProfile = false
     }
 
+    // REMOVED: No longer needed due to dynamic back navigation
+    /*
     if (backToFeed) {
         MainNavScreen(navController = navController, selectedIndex = 1)
         return
     }
+    */
+
     // Initialize ViewModel before usage
     val viewModel: NewsGalleryViewModel = koinViewModel()
     // Refresh news list when entering the detail screen
@@ -118,7 +126,14 @@ fun NewsInfoScreen(
             AppBarMain(
                 title = "",
                 BackButton = true,
-                onBackClick = { navController.navigate("home")},
+                onBackClick = {
+                    // MODIFIED: Navigate based on the 'origin' argument
+                    when (origin) {
+                        "from_gallery" -> navController.navigate("gallery")
+                        "from_newsFeed" -> navController.navigate("mainScreen/1") // Assuming 1 is the index for NewsFeed
+                        else -> navController.popBackStack() // Default behavior
+                    }
+                },
                 onProfileClick = { navController.navigate("profile")}
             )
 
@@ -150,14 +165,14 @@ fun NewsInfoScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                        Column(modifier = Modifier.padding(16.dp,16.dp,16.dp,0.dp)) {
                             Text(
                                 text = selectedItem.date,
                                 fontWeight = FontWeight.Medium,
                                 color = Color(0xFFFF2D2D),
                                 fontSize = 12.sp,
-                                modifier = Modifier.padding(bottom = 4.dp)
-                            )
+
+                                )
 
                             // --- Start of changes for like/dislike buttons ---
                             Row(
@@ -169,9 +184,9 @@ fun NewsInfoScreen(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 24.sp,
                                     color = Color.Black,
-                                    modifier = Modifier.weight(1f) // Makes the title take up available space
+                                    modifier = Modifier.weight(1f)
                                 )
-                                Spacer(modifier = Modifier.width(8.dp)) // Spacer between title and buttons
+
 
                                 // Like Button
                                 IconButton(
@@ -254,6 +269,7 @@ fun NewsInfoScreen(
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
                                 )
                             }
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
                 }
@@ -266,6 +282,8 @@ fun NewsInfoScreen(
             FullScreenImageView(imageUrl = imageUrl) {
                 isFullScreen = false
             }
+
+
         }
     }
 }

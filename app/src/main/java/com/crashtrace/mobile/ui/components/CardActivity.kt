@@ -114,6 +114,8 @@ fun MyCustomCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+
+
                     Text(
                         text = cardItem.description,
                         fontSize = 10.sp,

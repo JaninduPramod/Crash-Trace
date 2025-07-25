@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
@@ -38,22 +40,17 @@ fun HomeFeedScreen(navController: NavHostController) {
     if (loadProfile) {
         navController.navigate("profile")
         loadProfile = false
-
-
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // ✅ Background Image
+        // Background Image
         Image(
-            painter = painterResource(id = R.drawable.background_image), // replace with your actual image name
+            painter = painterResource(id = R.drawable.back2), // replace with your actual image name
             contentDescription = "Background Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-
-
-
 
         Column(
             modifier = Modifier.fillMaxSize()
@@ -69,34 +66,38 @@ fun HomeFeedScreen(navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            )
-
-            {
-
-                    Box(
+                    .verticalScroll(rememberScrollState()) // Single vertical scroll
+            ) {
+                // Top promotional banner
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(280.dp)
+                        .background(Color(0xFFEB0404))
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.red_back),
+                        contentDescription = "Background Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(280.dp)
-                            .background(Color(0xFFEB0404))
+                            .fillMaxSize()
+                            .padding(horizontal = 24.dp)
+                            .offset(y = (-65).dp),
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.red_back),
-                            contentDescription = "Background Image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(horizontal = 24.dp)
-                                .offset(y = (-65).dp),
+                                .offset(y = (-25).dp),
                             verticalArrangement = Arrangement.Center
-                        )
-                        {
+                        ) {
                             Text(
                                 text = "Bringing the World to Your Screen",
                                 color = Color.White,
+
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium
                             )
@@ -138,16 +139,194 @@ fun HomeFeedScreen(navController: NavHostController) {
                             }
                         }
                     }
+                }
+                // Main content area with offset for overlap
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .offset(y = (-90).dp),
                 ) {
                     AnalysisCard()
-                    Spacer(modifier = Modifier.height(24.dp))
-                    CrashTraceOptionsCard()
 
-                    Spacer(modifier = Modifier.height(0.dp))
+                }
+                Column(
+                    modifier = Modifier
+                        .zIndex(-1f)
+
+                ) {
+
+
+                    Box(
+                        modifier = Modifier.offset(y = -150.dp)
+                    ) {
+                        Column {
+                            CrashTraceMiddleCard()
+
+                            CrashTraceOptionsCard()
+                        }
+                    }
+
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+@Composable
+fun CrashTraceMiddleCard() {
+    // Outer Box for the black background and overall padding
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Black)
+            .padding(top = 0.dp, bottom = 40.dp)
+            // Offset to the right by 200dp
+    ) {
+        // Column to arrange the three black cards vertically
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 0.dp), // Apply horizontal padding for cards inside
+            verticalArrangement = Arrangement.spacedBy(40.dp) // Add 40dp vertical space between cards
+        ) {
+            // --- First Black Card ---
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp)
+                    .shadow(10.dp, RoundedCornerShape(2.dp), ambientColor = Color.Black.copy(alpha = 0.2f)),
+                shape = RoundedCornerShape(2.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Black)
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.h2),
+                        contentDescription = "Black Card 1 Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(260.dp)
+                            .clip(RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp))
+                    )
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart) // Align to bottom-left
+                            .fillMaxWidth()
+                            .offset(y = (-30).dp)
+                            .padding(horizontal = 24.dp)
+                    ) {
+                        Text(
+                            text = "Trusted News, Verified by You",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Stay informed with reliable, real-time news shared by everyday people like you. Every report is reviewed for authenticity, ensuring that what you read is accurate and trustworthy. Be part of a platform where truth matters.",
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal
+                        )
+
+                    }
+                }
+            }
+
+            // --- Second Black Card ---
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp)
+                    .shadow(10.dp, RoundedCornerShape(2.dp), ambientColor = Color.Black.copy(alpha = 0.2f)),
+                shape = RoundedCornerShape(2.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Black)
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.h_2),
+                        contentDescription = "Everyone’s a Reporter",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .clip(RoundedCornerShape(topStart =2.dp, topEnd = 2.dp))
+                    )
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd) // Align to bottom-right
+                            .fillMaxWidth()
+                            .offset(y = (-30).dp)
+                            .padding(horizontal = 24.dp),
+                        horizontalAlignment = Alignment.End // Align content within column to the right
+                    ) {
+                        Text(
+                            text = "Everyone’s a Reporter",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.End // Align text content to the right
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Empower your voice by reporting news around you. From minor incidents to major events, your contribution brings real-time updates to the community. It's easy, fast, and impactful—because every person has the right to report the truth.",
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            textAlign = TextAlign.End // Align text content to the right
+                        )
+
+                    }
+                }
+            }
+
+            // --- Third Black Card ---
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(380.dp)
+                    .shadow(10.dp, RoundedCornerShape(2.dp), ambientColor = Color.Black.copy(alpha = 0.2f)),
+                shape = RoundedCornerShape(2.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Black)
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.h_3),
+                        contentDescription = "Black Card 3 Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                            .clip(RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp))
+                    )
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart) // Align to bottom-left (as requested in original)
+                            .fillMaxWidth()
+                            .offset(y = (-30).dp)
+                            .padding(horizontal = 24.dp)
+                    ) {
+                        Text(
+                            text = "Accident History Checker",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "TBefore buying any vehicle, check its past. Our app helps you view accident history and reports, ensuring you make safer, smarter choices. Avoid hidden risks and drive with confidence by staying informed about a vehicle’s true background.",
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
                 }
             }
         }
@@ -159,7 +338,7 @@ fun AnalysisCard() {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(388.dp)
+            .height(388.dp) // Reverted to original height
             .shadow(20.dp, RoundedCornerShape(18.dp), ambientColor = Color.Black.copy(alpha = 0.25f)),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -192,13 +371,15 @@ fun AnalysisCard() {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    // Corrected Image with height and clip applied to the background
                     Image(
                         painter = painterResource(id = R.drawable.cardred),
                         contentDescription = "Background",
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize() // Make the image fill its parent Card
+                            .clip(RoundedCornerShape(12.dp)), // Apply border radius
                         contentScale = ContentScale.Crop
                     )
-
 
                     Column(
                         modifier = Modifier
@@ -363,6 +544,7 @@ fun AnalysisCard() {
     }
 }
 
+
 @Composable
 fun CrashTraceOptionsCard() {
     Card(
@@ -416,6 +598,8 @@ fun CrashTraceOptionsCard() {
                 title = "DAILY NEWS",
                 subtitle = "Scroll Less. Learn More"
             )
+            Spacer(modifier = Modifier.height(30.dp))
+
         }
     }
 }

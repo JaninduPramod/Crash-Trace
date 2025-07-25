@@ -195,7 +195,7 @@ fun NewsFeedScreen(
                             Button(
                                 onClick = {
                                     lastItem?.let {
-                                        navController.navigate("cardU/${it.cardId}")
+                                        navController.navigate("cardU/${it.cardId}?origin=from_newsFeed")
                                     }
                                 },
                                 modifier = Modifier
@@ -230,7 +230,7 @@ fun NewsFeedScreen(
                 Spacer(modifier = Modifier.height(210.dp))
 
                 Text(
-                    text = "HOT NEWS",
+                    text = "LATEST NEWS",
                     color = Color(0xFF7A7A7A),
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Italic,
@@ -241,13 +241,13 @@ fun NewsFeedScreen(
                 Column(
                     modifier = Modifier.padding(start = 0.dp, end = 8.dp, bottom = 8.dp)
                 ) {
-                    // --- THE KEY CHANGE FOR REVERSE ORDER ---
-                    // Take the first 5 (newest items) and then reverse that sublist
-                    newsList.take(5).reversed().forEach { item ->
+                    // Take the last 7 items from the newsList (assuming oldest to newest order)
+                    // and then reverse them to show the latest on top.
+                    newsList.takeLast(5).reversed().forEach { item ->
                         MyCustomCard(
                             cardItem = item,
                             onClick = {
-                                navController.navigate("cardU/${item.cardId}")
+                                navController.navigate("cardU/${item.cardId}?origin=from_newsFeed")
                             }
                         )
                     }

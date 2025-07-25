@@ -99,7 +99,10 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:postgrest-kt:2.0.0")
     implementation("io.github.jan-tennert.supabase:storage-kt:2.0.0")
 
-   
+
+
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
     implementation("io.ktor:ktor-client-okhttp:2.3.11")
 
     // Add Google Sign-In & Firebase Authentication dependencies
