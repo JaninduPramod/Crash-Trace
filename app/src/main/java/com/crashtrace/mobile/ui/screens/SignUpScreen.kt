@@ -98,28 +98,35 @@ fun SignUpScreen(navController: NavHostController) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
-            // navigate to home screen or perform any action with the account
-
+            
+            // Set user details from the Google account
             signUpViewModel.setEmail(account.email ?: "")
             signUpViewModel.setName(account.displayName ?: "")
-            signUpViewModel.setNIC(account.id ?: "")
+            // Note: Using Google ID for NIC and a long token for password might have issues
+            // if the backend has validation rules (e.g., length limits).
+            signUpViewModel.setNIC(account.id ?: "google_user")
             signUpViewModel.setPassword(account.idToken ?: "")
-            signUpViewModel.submitSignUpData()
 
-            signUpViewModel.resetFields()
-
-
-            Toast.makeText(context, "Google SignUp Successfull", Toast.LENGTH_SHORT).show()
-            navController.navigate("signin")
-
-
+            // Launch a coroutine to call the sign-up API and collect the result
+            coroutineScope.launch {
+                signUpViewModel.submitSignUpData().collect { response ->
+                    if (response?.success == true) {
+                        signUpViewModel.resetFields()
+                        Toast.makeText(context, "Google SignUp Successful", Toast.LENGTH_SHORT).show()
+                        navController.navigate("signin")
+                    } else {
+                        signUpViewModel.resetFields()
+                        Toast.makeText(context, response?.message ?: "Google Sign up failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
 
         } catch (e: ApiException) {
-
             println("GoogleSignIn"+ "Sign-in failed with status code: ${e.statusCode}"+ e)
             if (e.statusCode == 10) {
                 println("GoogleSignIn"+"Possible misconfiguration: Check Web Client ID and SHA-1 in Firebase Console.")
             }
+            Toast.makeText(context, "Google Sign-in failed.", Toast.LENGTH_SHORT).show()
         }
     }
 
