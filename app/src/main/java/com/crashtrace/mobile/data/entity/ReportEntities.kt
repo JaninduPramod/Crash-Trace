@@ -14,6 +14,7 @@ data class Report(
     val date: String,
     val status: String,
     val trustRate: Int,
+    val damageRate: Int,
 )
 
 data class ReportRequest(
