@@ -13,7 +13,7 @@ data class Report(
     val reporterId: String,
     val date: String,
     val status: String,
-    val trustRate: Int,
+    val trustRate: Double,
 )
 
 data class ReportRequest(
@@ -45,7 +45,16 @@ data class Reporter(
     val name: String
 )
 
+data class Vote(
+    @SerializedName("_id")
+    val id: String,
+    val userId: String,
+    val type: String
+)
+
 data class AllReports(
+    @SerializedName("_id")
+    val id: String,
     val cardID: String,
     val vehicleNo: String,
     val title: String,
@@ -55,8 +64,9 @@ data class AllReports(
     val reporterId: Reporter?,
     val date: String,
     val status: String,
-    val trustRate: Int,
+    val trustRate: Double,
     val damageRate: Int,
+    val votes: List<Vote>
 )
 
 data class UpdateReportRequest(

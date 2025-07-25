@@ -141,7 +141,7 @@ class AdminGalleryViewModel(private val repository: ReportRepository, private va
                         vehicleNo = report.vehicleNo ?: "N/A",
                         address = report.address ?: "N/A",
                         reporterId = report.reporterId?.name ?: "Unknown Reporter",
-                        trustRate = report.trustRate,
+                        trustRate = report.trustRate ?: 0.0,
                         damageRate = report.damageRate,
                         status = report.status ?: "pending",
                         accentColor = Color.Blue, // Customize as needed
