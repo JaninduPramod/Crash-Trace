@@ -43,7 +43,7 @@ fun AppNavGraph(navController: NavHostController) {
         composable("newsFeed") { NewsFeedScreen(navController) }
         composable("gallery") { NewsGalleryScreen(navController) }
         composable("adminGallery") { AdminNewsGalleryScreen(navController) }
-        composable("nd") { NewsDraftScreen(navController) }
+
 
 
         // MODIFIED: Added optional 'origin' argument

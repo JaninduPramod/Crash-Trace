@@ -35,6 +35,12 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
     private val _reporter = MutableStateFlow("")
     val reporter: StateFlow<String> get() = _reporter
 
+    private val _title = MutableStateFlow("")
+    val title: StateFlow<String> get() = _title
+
+    private val _damageRate = MutableStateFlow(0)
+    val damageRate: StateFlow<Int> get() = _damageRate
+
     private val _lat = MutableStateFlow(0.0)
     val lat: StateFlow<Double> get() = _lat
 
@@ -78,6 +84,8 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
         _location.value = ""
         _address.value = ""
         _date.value = ""
+        _title.value = ""
+        _damageRate.value = 0
         _reporter.value = ""
         _cardId.value = null
         _imageUrl.value = null
@@ -120,6 +128,8 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
                 _address.value = response.data?.address ?: ""
                 _description.value = response.data?.description ?: ""
                 _reporter.value = response.data?.reporterId?.name ?: ""
+                _title.value = response.data?.title ?: ""
+                _damageRate.value = response.data?.damageRate ?: 0
 
                 _lat.value = response.data?.location?.get(0)?.toDoubleOrNull() ?: 0.0
                 _lng.value = response.data?.location?.get(1)?.toDoubleOrNull() ?: 0.0

@@ -37,9 +37,12 @@ data class SearchReportResponse(
     val description: String,
     val location: List<String>,
     val address: String,
-    val reporterId: Reporter?, // This will now map correctly
+    val reporterId: Reporter?,
     val date: String,
     val trustRate: Int,
+    val damageRate: Int,
+    val title: String,
+
 )
 
 data class Reporter(
