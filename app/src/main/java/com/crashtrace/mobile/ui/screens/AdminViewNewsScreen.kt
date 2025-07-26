@@ -313,14 +313,16 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
 
                                         val (iconRes, iconColor) = when {
                                             // Convert item.trustRate (e.g., 0.85) to a percentage (e.g., 85) for comparison
-                                            (item.trustRate * 100).toInt() <= 50 -> R.drawable.tick_circle to Color(
-                                                0xFF4CAF50
+                                            (item.trustRate * 100).toInt() <= 50 -> R.drawable.close_circle to Color(
+                                                0xFFAF4C4C
                                             )
                                             // Use the scaled integer for the range check
                                             (item.trustRate * 100).toInt() in 51..74 -> R.drawable.minus_cirlce to Color(
                                                 0xFFFF9800
                                             )
-                                            else -> R.drawable.close_circle to Color.Red
+                                            else -> R.drawable.tick_circle to Color(
+                                                0xFF4CAF50
+                                            )
                                         }
 
                                         Icon(
@@ -342,9 +344,9 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                                             )
 
                                             val backgroundColor = when {
-                                                trustRateForBar <= 50 -> Color(0xFFD2FCD3) // light green
+                                                trustRateForBar <= 50 -> Color(0xFFFCD2D2) // light green
                                                 trustRateForBar in 51..74 -> Color(0xFFFFE0B2) // light orange
-                                                else -> Color(0xFFFFCDD2) // light red
+                                                else -> Color(0xFFD2FCD3) // light red
                                             }
 
                                             Box(
@@ -355,9 +357,9 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                                                     .background(backgroundColor)
                                             ) {
                                                 val foregroundColor = when {
-                                                    trustRateForBar <= 50 -> Color(0xFF00F508) // Light Green
-                                                    trustRateForBar in 51..74 -> Color(0xFFFF9800) // Orange
-                                                    else -> Color(0xFFFF4155) // Red
+                                                    trustRateForBar <= 50 -> Color(0xFFF50000)
+                                                    trustRateForBar in 51..74 -> Color(0xFFFF9800)
+                                                    else -> Color(0xFF00F508)
                                                 }
 
                                                 Box(

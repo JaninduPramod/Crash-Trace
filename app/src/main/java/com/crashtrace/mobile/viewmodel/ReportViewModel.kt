@@ -164,6 +164,7 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
                 _reporter.value = response.data?.reporterId?.name ?: ""
                 _title.value = response.data?.title ?: ""
                 _damageRate.value = response.data?.damageRate ?: 0
+                _trustRate.value = (response.data?.trustRate?.toDouble() ?: 0.0)
 
                 _lat.value = response.data?.location?.get(0)?.toDoubleOrNull() ?: 0.0
                 _lng.value = response.data?.location?.get(1)?.toDoubleOrNull() ?: 0.0

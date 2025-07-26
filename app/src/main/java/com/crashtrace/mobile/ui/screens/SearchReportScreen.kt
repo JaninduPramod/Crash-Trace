@@ -50,8 +50,6 @@ fun SearchReportScreen(navController: NavHostController) {
     val lat by reportViewModel.lat.collectAsState()
     val lng by reportViewModel.lng.collectAsState()
 
-
-
     var searchedVehicleNumber by remember { mutableStateOf("") }
     var loadProfile by remember { mutableStateOf(false) }
 
@@ -59,12 +57,10 @@ fun SearchReportScreen(navController: NavHostController) {
         reportViewModel.resetFields()
     }
 
-
     if (loadProfile) {
         navController.navigate("profile")
         loadProfile = false
     }
-
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -89,8 +85,7 @@ fun SearchReportScreen(navController: NavHostController) {
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            AppBarMain(title = "REPOTER VIEW", BackButton = false,
-
+            AppBarMain(title = "REPORTER VIEW", BackButton = false,
                 onProfileClick = { isProfile ->
                     if (isProfile) loadProfile = true
                 }
@@ -158,7 +153,7 @@ fun SearchReportScreen(navController: NavHostController) {
                             onClick = {
                                 searchedVehicleNumber = vehicleNumber
                                 reportViewModel.searchReport()
-                             },
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp),
@@ -230,17 +225,14 @@ fun SearchReportScreen(navController: NavHostController) {
                                             .fillMaxWidth()
                                             .padding(vertical = 8.dp)
                                     ) {
+                                        // Convert trustRate (0.0-1.0 Double) to a percentage (0-100 Int) for comparison
+                                        val trustRatePercentage = (trustRate * 100).toInt()
 
+                                        // CORRECTED: Icon and color logic to match AdminNewsViewScreen
                                         val (iconRes, iconColor) = when {
-                                            // Convert item.trustRate (e.g., 0.85) to a percentage (e.g., 85) for comparison
-                                            (trustRate * 100).toInt() <= 50 -> R.drawable.tick_circle to Color(
-                                                0xFF4CAF50
-                                            )
-                                            // Use the scaled integer for the range check
-                                            (trustRate * 100).toInt() in 51..74 -> R.drawable.minus_cirlce to Color(
-                                                0xFFFF9800
-                                            )
-                                            else -> R.drawable.close_circle to Color.Red
+                                            trustRatePercentage <= 50 -> R.drawable.close_circle to Color(0xFFAF4C4C) // Red for low trust
+                                            trustRatePercentage in 51..74 -> R.drawable.minus_cirlce to Color(0xFFFF9800) // Orange for medium trust
+                                            else -> R.drawable.tick_circle to Color(0xFF4CAF50) // Green for high trust
                                         }
 
                                         Icon(
@@ -257,14 +249,15 @@ fun SearchReportScreen(navController: NavHostController) {
                                             Text(
                                                 text = "Trust Rate " + trustRateForBar.toString() + "%",
                                                 fontWeight = FontWeight.Medium,
-                                                fontSize = 14.sp, // You might want to adjust font size if it becomes too long
+                                                fontSize = 14.sp,
                                                 color = Color.Gray
                                             )
 
+                                            // CORRECTED: Background color logic to match AdminNewsViewScreen
                                             val backgroundColor = when {
-                                                trustRateForBar <= 50 -> Color(0xFFD2FCD3) // light green
-                                                trustRateForBar in 51..74 -> Color(0xFFFFE0B2) // light orange
-                                                else -> Color(0xFFFFCDD2) // light red
+                                                trustRateForBar <= 50 -> Color(0xFFFCD2D2) // light red for low trust
+                                                trustRateForBar in 51..74 -> Color(0xFFFFE0B2) // light orange for medium trust
+                                                else -> Color(0xFFD2FCD3) // light green for high trust
                                             }
 
                                             Box(
@@ -274,15 +267,15 @@ fun SearchReportScreen(navController: NavHostController) {
                                                     .clip(RoundedCornerShape(4.dp))
                                                     .background(backgroundColor)
                                             ) {
+                                                // CORRECTED: Foreground color logic to match AdminNewsViewScreen
                                                 val foregroundColor = when {
-                                                    trustRateForBar <= 50 -> Color(0xFF00F508) // Light Green
-                                                    trustRateForBar in 51..74 -> Color(0xFFFF9800) // Orange
-                                                    else -> Color(0xFFFF4155) // Red
+                                                    trustRateForBar <= 50 -> Color(0xFFF50000) // Red for low trust
+                                                    trustRateForBar in 51..74 -> Color(0xFFFF9800) // Orange for medium trust
+                                                    else -> Color(0xFF00F508) // Green for high trust
                                                 }
 
                                                 Box(
                                                     modifier = Modifier
-                                                        // Use the 0-100 scaled value divided by 100f for fillMaxWidth (e.g., 75 / 100f = 0.75f)
                                                         .fillMaxWidth(trustRateForBar / 100f)
                                                         .fillMaxHeight()
                                                         .clip(RoundedCornerShape(6.dp))
@@ -363,10 +356,8 @@ fun SearchReportScreen(navController: NavHostController) {
                                 Marker(
                                     state = MarkerState(position = accidentPosition),
                                     title = address,
-
                                     snippet = "Accident Location",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.car_accident)
-
                                 )
                             }
                         }

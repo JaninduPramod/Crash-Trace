@@ -29,11 +29,10 @@ import com.crashtrace.mobile.ui.screens.NewsInfoScreen
 @Composable
 fun AppNavGraph(navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = "signin") {
+    NavHost(navController = navController, startDestination = "first") {
 //        composable("splash") {SplashScreen(navController) }
-
-        composable("signup") { SignUpScreen(navController) }
         composable("signin") { SigningInScreen(navController) }
+        composable("signup") { SignUpScreen(navController) }
         composable("reset") { VerificationScreen(navController) }
         composable("otpVerify") { OtpCodeScreen(navController) }
         composable("newPassword") { ResetScreen(navController) }

@@ -68,7 +68,7 @@ fun OnBoardScreen2(navController: NavController, onSkip: () -> Unit, onNext: () 
                 )
             }
             TextButton(
-                onClick = { navController.navigate("signup") },
+                onClick = { navController.navigate("signin") },
             ) {
                 Text(
                     text = "Skip",

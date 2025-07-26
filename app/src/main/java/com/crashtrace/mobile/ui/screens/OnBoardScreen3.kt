@@ -144,7 +144,7 @@ fun OnBoardScreen3(navController: NavController, onSkip: () -> Unit, onNext: () 
         }
         // Place the Button at the bottom of the Box
         Button(
-            onClick = { navController.navigate("signup") },
+            onClick = { navController.navigate("signin") },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(start = 24.dp, end = 24.dp, bottom = 32.dp)
