@@ -5,6 +5,7 @@ import okhttp3.Address
 
 data class Report(
     val _id: String,
+    val cardID: String,
     val title: String,
     val vehicleNo: String,
     val description: String,
@@ -85,4 +86,9 @@ data class UpdateReportRequest(
 data class ReportOptionRequest(
     val cardID: String,
     val option: String,
+)
+
+data class VoteReportRequest(
+    val reportId: String,
+    val voteType: String,
 )

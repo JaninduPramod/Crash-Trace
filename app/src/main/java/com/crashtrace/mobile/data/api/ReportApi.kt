@@ -10,6 +10,7 @@ import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.entity.SearchReportRequest
 import com.crashtrace.mobile.data.entity.SearchReportResponse
 import com.crashtrace.mobile.data.entity.UpdateReportRequest
+import com.crashtrace.mobile.data.entity.VoteReportRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -36,9 +37,11 @@ interface ReportApi {
     @POST("/api/reports/processReport")
     suspend fun reportOption(@Header("Authorization")token:String, @Body request: ReportOptionRequest): Response<ApiResponse<ReportResponse>>
 
-
     @GET("/api/stats")
     suspend fun getHomeStat(@Header("Authorization") token: String): Response<ApiResponse<HomeStatResponse>>
+
+    @POST("/api/reports/vote")
+    suspend fun voteReport(@Header("Authorization") token: String, @Body request: VoteReportRequest): Response<ApiResponse<ReportResponse>>
 
 
 }

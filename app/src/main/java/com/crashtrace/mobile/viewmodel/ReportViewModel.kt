@@ -50,6 +50,12 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
     private val _cardId = MutableStateFlow<String?>(null)
     val cardId: StateFlow<String?> get() = _cardId
 
+    private val _reportDocumentId = MutableStateFlow<String?>("")
+    val reportDocumentId: StateFlow<String?> get() = _reportDocumentId
+
+    private val _voteType = MutableStateFlow<String?>(null)
+    val voteType: StateFlow<String?> get() = _voteType
+
     private val _imageUrl = MutableStateFlow<String?>(null)
     val imageUrl: StateFlow<String?> get() = _imageUrl
 
@@ -81,6 +87,13 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
 
     fun setCardId(id: String?) {
         _cardId.value = id
+    }
+    fun setReportDocumentId(id: String?) {
+        _reportDocumentId.value = id
+    }
+
+    fun setVoteType(type: String?) {
+        _voteType.value = type
     }
 
     fun setImageUrl(url: String?) {
@@ -173,6 +186,18 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
             }
         }
     }
+
+    fun executeVoteReport(): Flow<ApiResponse<ReportResponse>?> {
+        return flow {
+
+            val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
+            val response =  repository.voteReport(jwtToken,_reportDocumentId.value ?: "", _voteType.value ?: "")
+            emit(response)
+
+        }.flowOn(Dispatchers.IO)
+
+    }
+
 
 
 }

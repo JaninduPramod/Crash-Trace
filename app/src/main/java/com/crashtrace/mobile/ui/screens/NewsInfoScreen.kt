@@ -1,6 +1,8 @@
 // NewsInfoScreen.kt
 package com.crashtrace.mobile.ui.screens
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,7 +52,10 @@ import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import com.crashtrace.mobile.viewmodel.ReportViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -60,8 +65,15 @@ fun NewsInfoScreen(
     origin: String = "unknown" // NEW: Receive the origin argument
 ) {
 
+    // Initialize ViewModel before usage
+    val viewModel: NewsGalleryViewModel = koinViewModel()
+    val reportViewModel: ReportViewModel = koinViewModel()
+
     var isFullScreen by remember { mutableStateOf(false) }
     var loadProfile by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val activity = context as Activity
     // backToFeed is now handled by origin argument
     // var backToFeed by remember { mutableStateOf(false) }
 
@@ -71,16 +83,20 @@ fun NewsInfoScreen(
         loadProfile = false
     }
 
-    // REMOVED: No longer needed due to dynamic back navigation
-    /*
-    if (backToFeed) {
-        MainNavScreen(navController = navController, selectedIndex = 1)
-        return
-    }
-    */
 
-    // Initialize ViewModel before usage
-    val viewModel: NewsGalleryViewModel = koinViewModel()
+    fun handleVote() {
+        coroutineScope.launch {
+
+            reportViewModel.executeVoteReport().collect { response ->
+
+                    Toast.makeText(context, "Successfully Voted", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+
+
     // Refresh news list when entering the detail screen
     LaunchedEffect(Unit) {
         viewModel.getNewsList()
@@ -195,8 +211,11 @@ fun NewsInfoScreen(
                                         if (userLiked) { // If liked, ensure not disliked
                                             userDisliked = false
                                         }
-                                        // TODO: Implement your actual like/dislike logic here (e.g., update ViewModel/backend)
-                                        // You might call viewModel.onLikeClicked(selectedItem.cardId, userLiked)
+
+                                        reportViewModel.setVoteType("up")
+                                        reportViewModel.setReportDocumentId(cardId)
+                                        handleVote()
+
                                     }
                                 ) {
                                     Icon(
@@ -214,8 +233,9 @@ fun NewsInfoScreen(
                                         if (userDisliked) { // If disliked, ensure not liked
                                             userLiked = false
                                         }
-                                        // TODO: Implement your actual like/dislike logic here (e.g., update ViewModel/backend)
-                                        // You might call viewModel.onDislikeClicked(selectedItem.cardId, userDisliked)
+                                        reportViewModel.setVoteType("down")
+                                        reportViewModel.setReportDocumentId(cardId)
+                                        handleVote()
                                     }
                                 ) {
                                     Icon(
@@ -287,6 +307,7 @@ fun NewsInfoScreen(
         }
     }
 }
+
 
 @Composable
 fun FullScreenImageView(imageUrl: String, onClose: () -> Unit) {

@@ -11,6 +11,7 @@ import com.crashtrace.mobile.data.entity.ReportResponse
 import com.crashtrace.mobile.data.entity.SearchReportRequest
 import com.crashtrace.mobile.data.entity.SearchReportResponse
 import com.crashtrace.mobile.data.entity.UpdateReportRequest
+import com.crashtrace.mobile.data.entity.VoteReportRequest
 
 class ReportRepository() {
     suspend fun submitReport(
@@ -158,6 +159,27 @@ class ReportRepository() {
 
         return try {
             val response = RetrofitInstance.reportApi.getHomeStat("Bearer $token")
+            if (response.isSuccessful) {
+                val apiResponse = response.body()
+
+                apiResponse // Return the ApiResponse object
+
+            } else {
+                val errorMessage = response.errorBody()?.string() ?: "Unknown error"
+                println("API call failed: $errorMessage")
+                null // Return null for unsuccessful responses
+            }
+        } catch (e: Exception) {
+            println("API call failed: ${e.message}")
+            null // Return null in case of an exception
+        }
+    }
+
+    suspend fun voteReport(token: String,reportId: String, voteType:String): ApiResponse<ReportResponse>? {
+
+        val request = VoteReportRequest(reportId, voteType)
+        return try {
+            val response = RetrofitInstance.reportApi.voteReport("Bearer $token", request)
             if (response.isSuccessful) {
                 val apiResponse = response.body()
 
