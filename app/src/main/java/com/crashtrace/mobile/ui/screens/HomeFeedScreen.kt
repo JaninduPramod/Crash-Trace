@@ -340,13 +340,16 @@ fun CrashTraceMiddleCard() {
         }
     }
 }
-
 @Composable
-fun AnalysisCard() {
+fun AnalysisCard(reportViewModel: ReportViewModel = koinViewModel()) { // Inject ReportViewModel
+    val reportCount by reportViewModel.reportCount.collectAsState()
+    val userCount by reportViewModel.userCount.collectAsState()
+    val approvedPercentage by reportViewModel.approvedPercentage.collectAsState()
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(388.dp) // Reverted to original height
+            .height(388.dp)
             .shadow(20.dp, RoundedCornerShape(18.dp), ambientColor = Color.Black.copy(alpha = 0.25f)),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -379,13 +382,12 @@ fun AnalysisCard() {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // Corrected Image with height and clip applied to the background
                     Image(
                         painter = painterResource(id = R.drawable.cardred),
                         contentDescription = "Background",
                         modifier = Modifier
-                            .fillMaxSize() // Make the image fill its parent Card
-                            .clip(RoundedCornerShape(12.dp)), // Apply border radius
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(12.dp)),
                         contentScale = ContentScale.Crop
                     )
 
@@ -404,23 +406,22 @@ fun AnalysisCard() {
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = "2120",
+                            text = "${reportCount ?: 0}",
                             color = Color(0xFFF0F0F0),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium
                         )
                     }
 
-                    // Circular Progress
                     CircularProgressIndicator(
-                        progress = 0.75f,
+                        progress = (approvedPercentage?.toFloat() ?: 0f) * 1f / 100f,
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
                             .padding(end = 24.dp)
                             .size(100.dp),
                         strokeColor = Color.White,
                         backgroundColor = Color(0xFFD30000).copy(alpha = 0.4f),
-                        percentage = "75%"
+                        percentage = "${(approvedPercentage?.toInt() ?: 0)}%"
                     )
                 }
             }
@@ -465,25 +466,22 @@ fun AnalysisCard() {
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
-                                text = "1431",
+                                text = "${reportCount ?: 0}", // Display fetched report count
                                 color = Color.White.copy(alpha = 0.97f),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium
                             )
-
-
                         }
 
                         CircularProgressIndicator2(
-                            progress = 0.75f,
+                            progress = (approvedPercentage?.toFloat() ?: 0f) * 1.1f / 100f,
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(end = 16.dp, bottom = 16.dp)
                                 .size(52.dp),
                             strokeColor = Color.White,
                             backgroundColor = Color(0xFFC40000),
-                            percentage = "75%"
-
+                            percentage = "${((approvedPercentage?.toFloat() ?: 0f) * 1.1f).toInt()}%" // Converted to Int
                         )
                     }
                 }
@@ -522,7 +520,7 @@ fun AnalysisCard() {
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
-                                text = "40321",
+                                text = "${userCount ?: 0}", // Display fetched user count
                                 color = Color.White.copy(alpha = 0.97f),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium
@@ -534,25 +532,22 @@ fun AnalysisCard() {
                         ) {
 
                             CircularProgressIndicator2(
-                                progress = 0.75f,
+                                progress = (approvedPercentage?.toFloat() ?: 0f) * 0.1f / 100f,
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .padding(end = 16.dp, top = 75.dp)
                                     .size(52.dp),
                                 strokeColor = Color.White,
                                 backgroundColor = Color(0xFFC40000),
-                                percentage = "75%"
+                                percentage = "${((approvedPercentage?.toFloat() ?: 0f) * 0.1f).toInt()}%" // Converted to Int
                             )
                         }
-
                     }
                 }
             }
         }
     }
 }
-
-
 @Composable
 fun CrashTraceOptionsCard() {
     Card(

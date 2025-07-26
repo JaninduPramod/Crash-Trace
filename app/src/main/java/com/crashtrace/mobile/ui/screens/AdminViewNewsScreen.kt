@@ -56,6 +56,7 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
     var reporterId by remember { mutableStateOf(item.reporterId) }
     var vehicleNo by remember { mutableStateOf(item.vehicleNo) }
     var location by remember { mutableStateOf(item.location) }
+    var trustRate by remember { mutableStateOf(item.trustRate.toDouble()) }
 
 
 
@@ -246,6 +247,7 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                                 reporterId = item.reporterId
                                 vehicleNo = item.vehicleNo
                                 location = item.location
+                                trustRate = item.trustRate.toDouble()
                                 isEditing = false
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -308,15 +310,16 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                                             .fillMaxWidth()
                                             .padding(vertical = 8.dp)
                                     ) {
+
                                         val (iconRes, iconColor) = when {
-                                            item.damageRate <= 50 -> R.drawable.tick_circle to Color(
+                                            // Convert item.trustRate (e.g., 0.85) to a percentage (e.g., 85) for comparison
+                                            (item.trustRate * 100).toInt() <= 50 -> R.drawable.tick_circle to Color(
                                                 0xFF4CAF50
                                             )
-
-                                            item.damageRate in 51..74 -> R.drawable.minus_cirlce to Color(
+                                            // Use the scaled integer for the range check
+                                            (item.trustRate * 100).toInt() in 51..74 -> R.drawable.minus_cirlce to Color(
                                                 0xFFFF9800
                                             )
-
                                             else -> R.drawable.close_circle to Color.Red
                                         }
 
@@ -330,15 +333,17 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                                         )
 
                                         Column(modifier = Modifier.weight(1f)) {
+                                            val trustRateForBar = (item.trustRate * 100).toInt()
                                             Text(
-                                                text = "Trust Rate",
+                                                text = "Trust Rate " + trustRateForBar.toString() + "%",
                                                 fontWeight = FontWeight.Medium,
-                                                fontSize = 14.sp,
+                                                fontSize = 14.sp, // You might want to adjust font size if it becomes too long
                                                 color = Color.Gray
                                             )
+
                                             val backgroundColor = when {
-                                                item.damageRate <= 50 -> Color(0xFFD2FCD3) // light green
-                                                item.damageRate in 51..74 -> Color(0xFFFFE0B2) // light orange
+                                                trustRateForBar <= 50 -> Color(0xFFD2FCD3) // light green
+                                                trustRateForBar in 51..74 -> Color(0xFFFFE0B2) // light orange
                                                 else -> Color(0xFFFFCDD2) // light red
                                             }
 
@@ -350,14 +355,15 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                                                     .background(backgroundColor)
                                             ) {
                                                 val foregroundColor = when {
-                                                    item.damageRate <= 50 -> Color(0xFF00F508) // Light Green
-                                                    item.damageRate in 51..74 -> Color(0xFFFF9800) // Orange
+                                                    trustRateForBar <= 50 -> Color(0xFF00F508) // Light Green
+                                                    trustRateForBar in 51..74 -> Color(0xFFFF9800) // Orange
                                                     else -> Color(0xFFFF4155) // Red
                                                 }
 
                                                 Box(
                                                     modifier = Modifier
-                                                        .fillMaxWidth(item.damageRate / 100f)
+                                                        // Use the 0-100 scaled value divided by 100f for fillMaxWidth (e.g., 75 / 100f = 0.75f)
+                                                        .fillMaxWidth(trustRateForBar / 100f)
                                                         .fillMaxHeight()
                                                         .clip(RoundedCornerShape(6.dp))
                                                         .background(foregroundColor)
@@ -556,6 +562,7 @@ fun AdminNewsViewScreen(navController: NavHostController, cardId: String) {
                     viewModel.setDescription(description)
                     viewModel.setDamageRate(damageRate.toIntOrNull() ?: 0)
                     viewModel.setReporterId(reporterId)
+
                     viewModel.setVehicleNo(vehicleNo)
                     viewModel.setLocation(location)
                     showSaveDialog = false

@@ -112,7 +112,7 @@ fun CardActivityAdminCard(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .padding(horizontal = 10.dp),
+                        .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
@@ -120,7 +120,7 @@ fun CardActivityAdminCard(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
-                        modifier = Modifier.padding(bottom = 4.dp),
+                        modifier = Modifier.padding(0.dp, 0.dp, 24.dp, 4.dp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -216,8 +216,16 @@ fun PreviewCardActivityAdminCard() {
     CardActivityAdminCard(
         cardItem = CardItemAdmin(
             cardId = "0023",
-            title = "Test Accident",
-            description = "Minor accident occurred at junction.",
+            title = "Test Accident Test Accident Test Accident Test Accident",
+            description = "Minor accident occurred at junction." +
+                    "Minor accident occurred at junction." +
+                    "Minor accident occurred at junction." +
+                    "Minor accident occurred at junction." +
+                    "Minor accident occurred at junction." +
+                    "Minor accident occurred at junction." +
+                    "Minor accident occurred at junction." +
+                    "Minor accident occurred at junction." +
+                    "Minor accident occurred at junction.",
             date = "2023-12-01",
             location = "Colombo, Sri Lanka",
             locationUrl = "6.9271, 79.8612",
