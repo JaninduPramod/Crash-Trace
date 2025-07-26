@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Crash_Trace"
+rootProject.name = "CrashTrace"
 include(":app")
  
