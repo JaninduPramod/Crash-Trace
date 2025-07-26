@@ -2,6 +2,7 @@ package com.crashtrace.mobile.data.api
 
 import com.crashtrace.mobile.data.entity.AllReports
 import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.HomeStatResponse
 import com.crashtrace.mobile.data.entity.Report
 import com.crashtrace.mobile.data.entity.ReportOptionRequest
 import com.crashtrace.mobile.data.entity.ReportRequest
@@ -34,5 +35,10 @@ interface ReportApi {
 
     @POST("/api/reports/processReport")
     suspend fun reportOption(@Header("Authorization")token:String, @Body request: ReportOptionRequest): Response<ApiResponse<ReportResponse>>
+
+
+    @GET("/api/stats")
+    suspend fun getHomeStat(@Header("Authorization") token: String): Response<ApiResponse<HomeStatResponse>>
+
 
 }

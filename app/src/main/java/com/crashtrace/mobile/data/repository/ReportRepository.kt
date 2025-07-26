@@ -3,6 +3,7 @@ package com.crashtrace.mobile.data.repository
 import com.crashtrace.mobile.data.api.RetrofitInstance
 import com.crashtrace.mobile.data.entity.AllReports
 import com.crashtrace.mobile.data.entity.ApiResponse
+import com.crashtrace.mobile.data.entity.HomeStatResponse
 import com.crashtrace.mobile.data.entity.Report
 import com.crashtrace.mobile.data.entity.ReportOptionRequest
 import com.crashtrace.mobile.data.entity.ReportRequest
@@ -136,6 +137,27 @@ class ReportRepository() {
 
         return try {
             val response = RetrofitInstance.reportApi.reportOption("Bearer $token", request)
+            if (response.isSuccessful) {
+                val apiResponse = response.body()
+
+                apiResponse // Return the ApiResponse object
+
+            } else {
+                val errorMessage = response.errorBody()?.string() ?: "Unknown error"
+                println("API call failed: $errorMessage")
+                null // Return null for unsuccessful responses
+            }
+        } catch (e: Exception) {
+            println("API call failed: ${e.message}")
+            null // Return null in case of an exception
+        }
+    }
+
+    suspend fun homeStats(token: String): ApiResponse<HomeStatResponse>? {
+
+
+        return try {
+            val response = RetrofitInstance.reportApi.getHomeStat("Bearer $token")
             if (response.isSuccessful) {
                 val apiResponse = response.body()
 

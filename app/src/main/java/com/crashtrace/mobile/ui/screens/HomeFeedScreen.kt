@@ -32,10 +32,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.crashtrace.mobile.R
 import com.crashtrace.mobile.ui.components.AppBarMain
+import com.crashtrace.mobile.viewmodel.LoginViewModel
+import com.crashtrace.mobile.viewmodel.ReportViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeFeedScreen(navController: NavHostController) {
     var loadProfile by remember { mutableStateOf(false) }
+    val reportViewModel: ReportViewModel = koinViewModel()
+
+    LaunchedEffect(Unit) {
+        reportViewModel.getHomeStat() // Fetch home statistics
+    }
 
     if (loadProfile) {
         navController.navigate("profile")

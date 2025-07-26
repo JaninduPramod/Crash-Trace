@@ -53,6 +53,16 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
     private val _imageUrl = MutableStateFlow<String?>(null)
     val imageUrl: StateFlow<String?> get() = _imageUrl
 
+    private val _reportCount = MutableStateFlow<Int?>(null)
+    val reportCount: StateFlow<Int?> get() = _reportCount
+
+    private val _userCount = MutableStateFlow<Int?>(null)
+    val userCount: StateFlow<Int?> get() = _userCount
+
+    private val _approvedPercentage = MutableStateFlow<Int?>(null)
+    val approvedPercentage: StateFlow<Int?> get() = _approvedPercentage
+
+
     fun setVehicleNumber(newVehicleNumber: String) {
         _vehicleNumber.value = newVehicleNumber
     }
@@ -89,6 +99,9 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
         _reporter.value = ""
         _cardId.value = null
         _imageUrl.value = null
+        _reportCount.value = 0
+        _userCount.value = 0
+        _approvedPercentage.value = 0
     }
 
 
@@ -135,6 +148,25 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
                 _lng.value = response.data?.location?.get(1)?.toDoubleOrNull() ?: 0.0
 
                 _vehicleNumber.value = ""
+
+            } else {
+                resetFields()
+            }
+        }
+    }
+
+
+    fun getHomeStat() {
+        viewModelScope.launch {
+            val jwtToken = dataStoreManager.jwtToken.firstOrNull() ?: ""
+            val response = repository.homeStats(jwtToken)
+
+            println("here is the response:"+response?.data)
+
+            if (response?.success == true) {
+                _reportCount.value = response.data?.totalReports ?: 0
+                _userCount.value = response.data?.totalUsers ?: 0
+                _approvedPercentage.value = response.data?.approvedPercentage ?: 0
 
             } else {
                 resetFields()
