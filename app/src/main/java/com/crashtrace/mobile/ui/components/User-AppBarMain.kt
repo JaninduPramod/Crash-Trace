@@ -63,6 +63,14 @@ fun AppBarMain(
                     .alpha(1f), // Adjust transparency here
                 contentScale = ContentScale.Crop
             )
+            Image(
+                painter = painterResource(id = R.drawable.app_backgroung),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(1f), // Adjust transparency here
+                contentScale = ContentScale.Crop
+            )
         }
 
 

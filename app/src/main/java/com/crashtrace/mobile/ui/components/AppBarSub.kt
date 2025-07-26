@@ -1,5 +1,6 @@
 package com.crashtrace.mobile.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,8 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,7 +57,30 @@ fun AppBarSub(
                     .zIndex(999f)
             )
         }
-        // --- Inner shadow at the bottom of the red area ---
+        Image(
+            painter = painterResource(id = R.drawable.app_backgroung),
+            contentDescription = null,
+            modifier = Modifier
+                .height(100.dp),
+            contentScale = ContentScale.Crop
+        )
+        Image(
+            painter = painterResource(id = R.drawable.app_backgroung),
+            contentDescription = null,
+            modifier = Modifier
+                .height(100.dp),
+            contentScale = ContentScale.Crop
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.app_backgroung),
+            contentDescription = null,
+            modifier = Modifier
+                .height(10.dp),
+            contentScale = ContentScale.Crop
+        )
+
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()

@@ -32,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,7 +114,7 @@ fun NewsFeedScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(250.dp)
+                        .height(270.dp)
                         .shadow(
                             elevation = 12.dp,
                             shape = RoundedCornerShape(0.dp),
@@ -123,7 +124,7 @@ fun NewsFeedScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(250.dp)
+                            .height(270.dp)
                             .clip(RoundedCornerShape(0.dp))
                     ) {
 
@@ -176,13 +177,16 @@ fun NewsFeedScreen(
                                     text = lastItem.title,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp,
+                                    maxLines = 5,
                                     color = Color.Black
                                 )
                                 Text(
                                     text = lastItem.description,
                                     color = Color.Black.copy(alpha = 0.5f),
                                     fontSize = 12.sp,
-                                    modifier = Modifier.padding(vertical = 8.dp)
+                                    modifier = Modifier.padding(vertical = 8.dp),
+                                    maxLines = 5,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             } else {
                                 Text(
@@ -227,7 +231,7 @@ fun NewsFeedScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(210.dp))
+                Spacer(modifier = Modifier.height(230.dp))
 
                 Text(
                     text = "LATEST NEWS",
@@ -241,8 +245,7 @@ fun NewsFeedScreen(
                 Column(
                     modifier = Modifier.padding(start = 0.dp, end = 8.dp, bottom = 8.dp)
                 ) {
-                    // Take the last 7 items from the newsList (assuming oldest to newest order)
-                    // and then reverse them to show the latest on top.
+
                     newsList.takeLast(5).reversed().forEach { item ->
                         MyCustomCard(
                             cardItem = item,

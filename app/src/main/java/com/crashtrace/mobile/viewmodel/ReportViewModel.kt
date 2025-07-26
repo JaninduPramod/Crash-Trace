@@ -38,6 +38,9 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> get() = _title
 
+    private val _trustRate = MutableStateFlow(0.0)
+    val trustRate: StateFlow<Double> get() = _trustRate
+
     private val _damageRate = MutableStateFlow(0)
     val damageRate: StateFlow<Int> get() = _damageRate
 
@@ -72,6 +75,10 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
     fun setLocation(newLocation: String) {
         _location.value = newLocation
     }
+    fun setTrustRate(newTrustRate: Double) {
+        _trustRate.value = newTrustRate
+    }
+
     fun setAddress(newAddress: String) {
         _address.value = newAddress
     }
@@ -99,6 +106,7 @@ class ReportViewModel(private val repository: ReportRepository,private val dataS
         _reporter.value = ""
         _cardId.value = null
         _imageUrl.value = null
+        _trustRate.value = 0.0
         _reportCount.value = 0
         _userCount.value = 0
         _approvedPercentage.value = 0

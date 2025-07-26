@@ -44,6 +44,7 @@ fun SearchReportScreen(navController: NavHostController) {
     val reporter by reportViewModel.reporter.collectAsState()
     val damageRate by reportViewModel.damageRate.collectAsState()
     val title by reportViewModel.title.collectAsState()
+    val trustRate by reportViewModel.trustRate.collectAsState()
 
     val location by reportViewModel.location.collectAsState()
     val lat by reportViewModel.lat.collectAsState()
@@ -223,45 +224,69 @@ fun SearchReportScreen(navController: NavHostController) {
                                         fontSize = 24.sp,
                                         color = Color.Black
                                     )
-
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = 8.dp)
                                     ) {
-                                        // Icon on the left
+
+                                        val (iconRes, iconColor) = when {
+                                            // Convert item.trustRate (e.g., 0.85) to a percentage (e.g., 85) for comparison
+                                            (trustRate * 100).toInt() <= 50 -> R.drawable.tick_circle to Color(
+                                                0xFF4CAF50
+                                            )
+                                            // Use the scaled integer for the range check
+                                            (trustRate * 100).toInt() in 51..74 -> R.drawable.minus_cirlce to Color(
+                                                0xFFFF9800
+                                            )
+                                            else -> R.drawable.close_circle to Color.Red
+                                        }
+
                                         Icon(
-                                            painter = painterResource(id = R.drawable.close_circle),
-                                            contentDescription = "status",
-                                            tint = Color.Red,
+                                            painter = painterResource(id = iconRes),
+                                            contentDescription = "Status",
+                                            tint = iconColor,
                                             modifier = Modifier
-                                                .padding(end = 12.dp)
-                                                .size(28.dp)
+                                                .padding(end = 10.dp)
+                                                .size(36.dp)
                                         )
 
-                                        // Trust Rate text and progress bar on the right
                                         Column(modifier = Modifier.weight(1f)) {
+                                            val trustRateForBar = (trustRate * 100).toInt()
                                             Text(
-                                                text = "Trust Rate",
+                                                text = "Trust Rate " + trustRateForBar.toString() + "%",
                                                 fontWeight = FontWeight.Medium,
-                                                fontSize = 14.sp,
+                                                fontSize = 14.sp, // You might want to adjust font size if it becomes too long
                                                 color = Color.Gray
                                             )
+
+                                            val backgroundColor = when {
+                                                trustRateForBar <= 50 -> Color(0xFFD2FCD3) // light green
+                                                trustRateForBar in 51..74 -> Color(0xFFFFE0B2) // light orange
+                                                else -> Color(0xFFFFCDD2) // light red
+                                            }
+
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth(0.5f)
                                                     .height(10.dp)
                                                     .clip(RoundedCornerShape(4.dp))
-                                                    .background(Color(0xFFFFCDD2)) // Light red
+                                                    .background(backgroundColor)
                                             ) {
+                                                val foregroundColor = when {
+                                                    trustRateForBar <= 50 -> Color(0xFF00F508) // Light Green
+                                                    trustRateForBar in 51..74 -> Color(0xFFFF9800) // Orange
+                                                    else -> Color(0xFFFF4155) // Red
+                                                }
 
                                                 Box(
                                                     modifier = Modifier
-                                                        .fillMaxWidth(0.8f) // 38%
+                                                        // Use the 0-100 scaled value divided by 100f for fillMaxWidth (e.g., 75 / 100f = 0.75f)
+                                                        .fillMaxWidth(trustRateForBar / 100f)
                                                         .fillMaxHeight()
-                                                        .clip(RoundedCornerShape(4.dp))
-                                                        .background(Color(0xFFFF4155)) // Light red
+                                                        .clip(RoundedCornerShape(6.dp))
+                                                        .background(foregroundColor)
                                                 )
                                             }
                                         }

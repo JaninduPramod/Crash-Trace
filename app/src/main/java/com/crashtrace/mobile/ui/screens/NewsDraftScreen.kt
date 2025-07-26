@@ -398,7 +398,7 @@ fun NewsDraftScreen(navController: NavHostController) {
                         Spacer(modifier = Modifier.height(20.dp))
                         Text("Confirm News Information", fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 16.dp))
 
-                        CustomInputField("Vehicle Number", vehicleNumber, height = 60.dp) {
+                        CustomInputField("Vehicle Number", vehicleNumber, height = 64.dp) {
                             reportViewModel.setVehicleNumber(it)
                         }
 
@@ -406,7 +406,7 @@ fun NewsDraftScreen(navController: NavHostController) {
                             reportViewModel.setDescription(it)
                         }
 
-                        CustomInputField("Address", address, height = 60.dp) {
+                        CustomInputField("Address", address, height = 64.dp) {
                             reportViewModel.setAddress(it)
                         }
 
