@@ -13,7 +13,7 @@ object RetrofitInstance {
 
     val api: AuthApi by lazy {
         Retrofit.Builder()
-            .baseUrl("http://13.215.162.106:3000")
+            .baseUrl("http://13.229.233.218:3000")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -21,7 +21,7 @@ object RetrofitInstance {
     }
     val reportApi: ReportApi by lazy {
         Retrofit.Builder()
-            .baseUrl("http://13.215.162.106:3000")
+            .baseUrl("http://13.229.233.218:3000")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

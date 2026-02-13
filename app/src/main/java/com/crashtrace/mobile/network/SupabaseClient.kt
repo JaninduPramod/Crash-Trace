@@ -11,8 +11,8 @@ import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException
 
 object SupabaseClient {
-    private const val SUPABASE_URL = "https://stkdtcpydslyreapshwg.supabase.co"
-    private const val SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0a2R0Y3B5ZHNseXJlYXBzaHdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMyOTI4MTQsImV4cCI6MjA2ODg2ODgxNH0.Vyb3kzVZJ7r7hbNx5BKyKrsfJwHX2d8Y1gxXaKYm_Hk"
+    private const val SUPABASE_URL = "https://onzejfkzekucylrbrxhx.supabase.co"
+    private const val SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uemVqZmt6ZWt1Y3lscmJyeGh4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDk2NTU3OSwiZXhwIjoyMDg2NTQxNTc5fQ.810KaKBF5E0NK28WBRve5ywX4OpPxQHt10S891Nbbo0"
     private const val STORAGE_BUCKET = "crash-reports"
 
     private val client by lazy { // Use lazy initialization for client
